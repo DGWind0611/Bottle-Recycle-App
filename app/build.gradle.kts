@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.map.secret)
 }
 
 android {
@@ -44,8 +45,13 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    // qr code
     implementation(libs.qr.generator)
+    // google maps
+    implementation(libs.google.maps)
+    implementation(libs.google.maps.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 }

@@ -10,6 +10,11 @@ lifecycleLivedataKtx = "2.8.4"
 lifecycleViewmodelKtx = "2.8.4"
 navigationFragment = "2.7.7"
 navigationUi = "2.7.7"
+mapSecret = "2.0.1"
+googleMaps= "17.0.0"
+googleMapsLocation = "21.0.1"
+qrVersion = "4.3.0"
+
 
 
 [libraries]
@@ -23,7 +28,10 @@ lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-lived
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
-qr-generator = { group = "com.journeyapps", name = "zxing-android-embedded", version = "4.3.0" }
+qr-generator = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "qrVersion" }
+google-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "googleMaps" }
+google-maps-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "googleMaps" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+map-secret = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapSecret" }
 
