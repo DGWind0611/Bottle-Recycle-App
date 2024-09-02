@@ -2,21 +2,195 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/t"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
     <TextView
-        android:id="@+id/text_home"
-        android:layout_width="match_parent"
+        android:id="@+id/tv_Title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="愛地球-寶特瓶回收"
+        android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_earn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:text="回收賺取金額"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_Title" />
+
+    <TextView
+        android:id="@+id/tv_donate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:text="捐贈金額"
+        app:layout_constraintStart_toEndOf="@+id/tv_earn"
+        app:layout_constraintTop_toTopOf="@+id/tv_earn" />
+
+    <TextView
+        android:id="@+id/tv_recycle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="回收次數"
+        app:layout_constraintStart_toStartOf="@+id/tv_earn"
+        app:layout_constraintTop_toBottomOf="@+id/tv_earn_value" />
+
+    <TextView
+        android:id="@+id/tv_Carbon_Reduction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="已減碳"
+        app:layout_constraintStart_toStartOf="@+id/tv_donate"
+        app:layout_constraintTop_toBottomOf="@+id/tv_donate_value" />
+
+    <TextView
+        android:id="@+id/tv_earn_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="$8900.50"
+        app:layout_constraintStart_toStartOf="@+id/tv_earn"
+        app:layout_constraintTop_toBottomOf="@+id/tv_earn" />
+
+    <TextView
+        android:id="@+id/tv_donate_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$250.50"
+        app:layout_constraintStart_toStartOf="@+id/tv_donate"
+        app:layout_constraintTop_toTopOf="@+id/tv_earn_value" />
+
+    <TextView
+        android:id="@+id/tv_recycle_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="5次"
+        app:layout_constraintStart_toStartOf="@+id/tv_earn_value"
+        app:layout_constraintTop_toBottomOf="@+id/tv_recycle" />
+
+    <TextView
+        android:id="@+id/tv_Carbon_Reduction_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="250克"
+        app:layout_constraintStart_toStartOf="@+id/tv_Carbon_Reduction"
+        app:layout_constraintTop_toBottomOf="@+id/tv_Carbon_Reduction" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/rounded_coner3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_Carbon_Reduction_value">
+
+        <Button
+            android:id="@+id/btn_transfer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/ic_dashboard_black_24dp"
+            android:gravity="center"
+            android:text="轉出"
+            android:textColor="@color/black"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_donate"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_donate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/ic_dashboard_black_24dp"
+            android:gravity="center"
+            android:text="捐贈"
+            android:textColor="@color/black"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_transfer"
+            app:layout_constraintEnd_toStartOf="@+id/btn_plant_tree"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/btn_transfer"
+            app:layout_constraintTop_toTopOf="@+id/btn_transfer" />
+
+        <Button
+            android:id="@+id/btn_plant_tree"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/ic_dashboard_black_24dp"
+            android:gravity="center"
+            android:text="種樹"
+            android:textColor="@color/black"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_transfer"
+            app:layout_constraintEnd_toStartOf="@+id/btn_rewards"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/btn_donate"
+            app:layout_constraintTop_toTopOf="@+id/btn_donate" />
+
+        <Button
+            android:id="@+id/btn_rewards"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/ic_dashboard_black_24dp"
+            android:gravity="center"
+            android:text="兌換"
+            android:textColor="@color/black"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_transfer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/btn_plant_tree"
+            app:layout_constraintTop_toTopOf="@+id/btn_plant_tree" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <TextView
+        android:id="@+id/tv_activity_title2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="活動消息"
+        app:layout_constraintStart_toStartOf="@+id/frameLayout3"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout3" />
+
+    <ListView
+        android:layout_width="409dp"
+        android:layout_height="423dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_activity_title2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_activity_title2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

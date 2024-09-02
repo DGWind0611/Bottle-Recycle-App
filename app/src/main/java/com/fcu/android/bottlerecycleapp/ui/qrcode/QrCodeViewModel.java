@@ -9,7 +9,7 @@ public class QrCodeViewModel extends ViewModel {
 
     public QrCodeViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is QrCode fragment");
+        mText.setValue("QR-CODE");
     }
 
     public LiveData<String> getText() {
