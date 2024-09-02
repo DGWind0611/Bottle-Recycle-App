@@ -10,7 +10,7 @@ public class RecycleMapViewModel extends ViewModel {
 
     public RecycleMapViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is Recycle Map fragment");
+        mText.setValue("回收站地圖");
     }
 
     public LiveData<String> getText() {
