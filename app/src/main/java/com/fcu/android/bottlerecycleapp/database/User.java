@@ -2,18 +2,15 @@ package com.fcu.android.bottlerecycleapp.database;
 
 public class User {
     private String id;
-    private String firstName;
-    private String lastName;
+    private String userName;
     private String email;
     private String password;
     private String phoneNumber;
     private String earnMoney;
     private String donateMoney;
 
-    public User(String id, String firstName, String lastName, String email, String password, String phoneNumber, String earnMoney, String donateMoney) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String userName, String email, String password, String phoneNumber, String earnMoney, String donateMoney) {
+        this.userName = userName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
@@ -32,20 +29,11 @@ public class User {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public String getUserName() {
+        return userName;
     }
 
     public String getEmail() {

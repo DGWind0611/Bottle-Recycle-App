@@ -23,8 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // 建立資料表 "User"
         String User = "CREATE TABLE IF NOT EXISTS User ("
                 + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "First_Name TEXT NOT NULL,"
-                + "Last_Name TEXT NOT NULL,"
+                + "User_Name TEXT NOT NULL,"
                 + "E_mail TEXT NOT NULL,"
                 + "Password TEXT NOT NULL,"
                 + "Phone_Number TEXT,"
@@ -116,9 +115,9 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(User_recycle_Record);
     }
     // User Table Add Data
-    public void addUser(String First_Name, String Last_Name, String E_mail, String Password, String Phone_Number, double Earn_Money, double Donate_Money) {
+    public void addUser(String User_Name, String E_mail, String Password, String Phone_Number, double Earn_Money, double Donate_Money) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("INSERT INTO User (First_Name, Last_Name, E_mail, Password, Phone_Number, Earn_Money, Donate_Money) VALUES ('" + First_Name + "', '" + Last_Name + "', '" + E_mail + "', '" + Password + "', '" + Phone_Number + "', '" + Earn_Money + "', '" + Donate_Money + "')");
+        db.execSQL("INSERT INTO User (User_Name, E_mail, Password, Phone_Number, Earn_Money, Donate_Money) VALUES ('" + User_Name + "', '" + E_mail + "', '" + Password + "', '" + Phone_Number + "', '" + Earn_Money + "', '" + Donate_Money + "')");
     }
     // Staff Table Add Data
     public void addStaff(String Staff_Work_Area, String First_Name, String Last_Name) {
@@ -161,9 +160,9 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO User_recycle_Record (Date, Weight, Price, User_ID) VALUES ('" + Date + "', '" + Weight + "', '" + Price + "', '" + User_ID + "')");
     }
     // User Table Update Data
-    public void updateUser(int ID, String First_Name, String Last_Name, String E_mail, String Password, String Phone_Number, double Earn_Money, double Donate_Money) {
+    public void updateUser(int ID, String User_Name, String E_mail, String Password, String Phone_Number, double Earn_Money, double Donate_Money) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("UPDATE User SET First_Name = '" + First_Name + "', Last_Name = '" + Last_Name + "', E_mail = '" + E_mail + "', Password = '" + Password + "', Phone_Number = '" + Phone_Number + "', Earn_Money = '" + Earn_Money + "', Donate_Money = '" + Donate_Money + "' WHERE ID = " + ID);
+        db.execSQL("UPDATE User SET User_Name = '" + User_Name + "', E_mail = '" + E_mail + "', Password = '" + Password + "', Phone_Number = '" + Phone_Number + "', Earn_Money = '" + Earn_Money + "', Donate_Money = '" + Donate_Money + "' WHERE ID = " + ID);
     }
     // Staff Table Update Data
     public void updateStaff(int Staff_ID, String Staff_Work_Area, String First_Name, String Last_Name) {

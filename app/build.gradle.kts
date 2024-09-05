@@ -50,6 +50,7 @@ dependencies {
     // google maps
     implementation(libs.google.maps)
     implementation(libs.google.maps.location)
+    implementation(libs.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
