@@ -2,17 +2,18 @@ package com.fcu.android.bottlerecycleapp.sign_up;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.User;
+import com.fcu.android.bottlerecycleapp.login.LoginActivity;
 
 import java.io.Serializable;
 
@@ -21,6 +22,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText etUserName;
     private EditText etEmail;
     private EditText etPhoneNumber;
+    private TextView tvBackToLogin;
     private Button btnSignUpNext;
 
     @Override
@@ -33,6 +35,7 @@ public class SignUpActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.et_email);
         etPhoneNumber = findViewById(R.id.et_phone_number);
         btnSignUpNext = findViewById(R.id.btn_sing_up_next_page);
+        tvBackToLogin = findViewById(R.id.tv_back_to_login2);
 
         btnSignUpNext.setOnClickListener(v -> {
             String userName = etUserName.getText().toString().trim();
@@ -40,27 +43,31 @@ public class SignUpActivity extends AppCompatActivity {
             String phoneNumber = etPhoneNumber.getText().toString().trim();
 
             if (userName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty()) {
-                Toast.makeText(SignUpActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-            } else {
-                // Create User object
+                Toast.makeText(SignUpActivity.this, "請填寫相關資料", Toast.LENGTH_SHORT).show();
+            }
+            else if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+                etEmail.setError("請輸入正確的電子郵件格式");
+            }
+            else if (!phoneNumber.matches("^09\\d{8}$")) {
+                etPhoneNumber.setError("請輸入正確的手機號碼格式");
+            }
+            else {
                 User user = new User();
                 user.setUserName(userName);
                 user.setEmail(email);
                 user.setPhoneNumber(phoneNumber);
 
-                // Pass the User object to the next Fragment
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("user", (Serializable) user);
-
-                // Replace the current activity content with the SignUp2Fragment
-                SignUp2Fragment signUp2Fragment = new SignUp2Fragment();
-                signUp2Fragment.setArguments(bundle);
-
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, signUp2Fragment)
-                        .addToBackStack(null)  // Optional, to allow the user to go back to previous step
-                        .commit();
+                // 將資料傳遞給 SignUp2Activity
+                Intent intent = new Intent(SignUpActivity.this, SignUp2Activity.class);
+                intent.putExtra("user", user);  // 傳遞 User 物件
+                startActivity(intent);
             }
+        });
+
+        tvBackToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 }

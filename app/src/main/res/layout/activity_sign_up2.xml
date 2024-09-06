@@ -5,7 +5,7 @@
     android:id="@+id/frameLayout4"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".sign_up.SignUp2Fragment">
+    tools:context=".sign_up.SignUp2Activity">
 
     <TextView
         android:id="@+id/tv_password_title"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <EditText
-        android:id="@+id/et_password"
+        android:id="@+id/et_singup_password"
         android:layout_width="0dp"
         android:layout_height="32dp"
         android:layout_marginTop="16dp"
@@ -27,7 +27,7 @@
         android:backgroundTint="#DEDEDE"
         android:ems="10"
         android:hint=" ********"
-        android:inputType="text"
+        android:inputType="textPassword"
         android:textColorHint="#80888888"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -41,8 +41,8 @@
         android:layout_marginTop="16dp"
         android:text="確認密碼"
         android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@+id/et_password"
-        app:layout_constraintTop_toBottomOf="@+id/et_password" />
+        app:layout_constraintStart_toStartOf="@+id/et_singup_password"
+        app:layout_constraintTop_toBottomOf="@+id/et_singup_password" />
 
     <EditText
         android:id="@+id/et_confirm_password"
@@ -54,7 +54,7 @@
         android:backgroundTint="#DEDEDE"
         android:ems="10"
         android:hint=" *********"
-        android:inputType="text"
+        android:inputType="textPassword"
         android:textColorHint="#80888888"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -62,7 +62,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_comfirm_password" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/cb_agree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -71,18 +71,18 @@
         app:layout_constraintTop_toBottomOf="@+id/et_confirm_password" />
 
     <Button
-        android:id="@+id/btn_sing_up_next_page"
+        android:id="@+id/btn_sing_up"
         android:layout_width="0dp"
-        android:layout_height="64dp"
+        android:layout_height="48dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:background="#00B140"
-        android:text="下一步"
+        android:text="註冊"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox" />
+        app:layout_constraintTop_toBottomOf="@+id/cb_agree" />
 
     <TextView
         android:id="@+id/textView3"
@@ -103,7 +103,7 @@
         android:text="或者用以下帳號註冊"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_sing_up_next_page" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_sing_up" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -159,4 +159,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView12"
         app:layout_constraintTop_toTopOf="@+id/textView12" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -114,142 +114,178 @@ public class DBHelper extends SQLiteOpenHelper {
                 + ")";
         db.execSQL(User_recycle_Record);
     }
+
     // User Table Add Data
-    public void addUser(String User_Name, String E_mail, String Password, String Phone_Number, double Earn_Money, double Donate_Money) {
+    public boolean addUser(User user) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("INSERT INTO User (User_Name, E_mail, Password, Phone_Number, Earn_Money, Donate_Money) VALUES ('" + User_Name + "', '" + E_mail + "', '" + Password + "', '" + Phone_Number + "', '" + Earn_Money + "', '" + Donate_Money + "')");
+        db.execSQL("INSERT INTO User (User_Name, E_mail, Password, Phone_Number, Earn_Money, Donate_Money)" +
+                " VALUES ('" + user.getUserName() + "', '" + user.getEmail() + "', '" + user.getPassword() +
+                "', '" + user.getPhoneNumber() + "', '" + user.getEarnMoney() + "', '" + user.getDonateMoney() + "')");
+        db.close();
+        return true;
     }
+
     // Staff Table Add Data
     public void addStaff(String Staff_Work_Area, String First_Name, String Last_Name) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO Staff (Staff_Work_Area, First_Name, Last_Name) VALUES ('" + Staff_Work_Area + "', '" + First_Name + "', '" + Last_Name + "')");
     }
+
     // Donation_Record Table Add Data
     public void addDonation_Record(int money, String Date, String Text, int User_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO Donation_Record (money, Date, Text, User_ID) VALUES ('" + money + "', '" + Date + "', '" + Text + "', '" + User_ID + "')");
     }
+
     // Notifications Table Add Data
     public void addNotifications(int User_ID, String Tittle, String Text) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO Notifications (User_ID, Tittle, Text) VALUES ('" + User_ID + "', '" + Tittle + "', '" + Text + "')");
     }
+
     // QR_Cord Table Add Data
     public void addQR_Cord(String Agency_Name, String QR_Cord_Origin_Data, String User_Custom_name) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO QR_Cord (Agency_Name, QR_Cord_Origin_Data, User_Custom_name) VALUES ('" + Agency_Name + "', '" + QR_Cord_Origin_Data + "', '" + User_Custom_name + "')");
     }
+
     // Recycle_Station Table Add Data
     public void addRecycleStation(String Location, int Status, int Traffic, String Set_Up_Date, String Fix_Date) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO RecycleStation (Location, Status, Traffic, Set_Up_Date, Fix_Date) VALUES ('" + Location + "', '" + Status + "', '" + Traffic + "', '" + Set_Up_Date + "', '" + Fix_Date + "')");
     }
+
     // Remittance_Record Table Add Data
     public void addRemittance_Record(String Date, double Money, String Text, int User_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO Remittance_Record (Date, Money, Text, User_ID) VALUES ('" + Date + "', '" + Money + "', '" + Text + "', '" + User_ID + "')");
     }
+
     // Station_Fix_Record Table Add Data
     public void addStation_Fix_Record(String Fix_Date, int Fix_Reason, int Fix_Staff) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO Station_Fix_Record (Fix_Date, Fix_Reason, Fix_Staff) VALUES ('" + Fix_Date + "', '" + Fix_Reason + "', '" + Fix_Staff + "')");
     }
+
     // User_recycle_Record Table Add Data
     public void addUser_recycle_Record(String Date, String Weight, int Price, int User_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO User_recycle_Record (Date, Weight, Price, User_ID) VALUES ('" + Date + "', '" + Weight + "', '" + Price + "', '" + User_ID + "')");
     }
+
     // User Table Update Data
     public void updateUser(int ID, String User_Name, String E_mail, String Password, String Phone_Number, double Earn_Money, double Donate_Money) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE User SET User_Name = '" + User_Name + "', E_mail = '" + E_mail + "', Password = '" + Password + "', Phone_Number = '" + Phone_Number + "', Earn_Money = '" + Earn_Money + "', Donate_Money = '" + Donate_Money + "' WHERE ID = " + ID);
     }
+
     // Staff Table Update Data
     public void updateStaff(int Staff_ID, String Staff_Work_Area, String First_Name, String Last_Name) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE Staff SET Staff_Work_Area = '" + Staff_Work_Area + "', First_Name = '" + First_Name + "', Last_Name = '" + Last_Name + "' WHERE Staff_ID = " + Staff_ID);
     }
+
     // Donation_Record Table Update Data
     public void updateDonation_Record(int ID, int money, String Date, String Text, int User_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE Donation_Record SET money = '" + money + "', Date = '" + Date + "', Text = '" + Text + "', User_ID = '" + User_ID + "' WHERE ID = " + ID);
     }
+
     // Notifications Table Update Data
     public void updateNotifications(int ID, int User_ID, String Tittle, String Text) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE Notifications SET User_ID = '" + User_ID + "', Tittle = '" + Tittle + "', Text = '" + Text + "' WHERE ID = " + ID);
     }
+
     // QR_Cord Table Update Data
     public void updateQR_Cord(int QR_Cord_ID, String Agency_Name, String QR_Cord_Origin_Data, String User_Custom_name) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE QR_Cord SET Agency_Name = '" + Agency_Name + "', QR_Cord_Origin_Data = '" + QR_Cord_Origin_Data + "', User_Custom_name = '" + User_Custom_name + "' WHERE QR_Cord_ID = " + QR_Cord_ID);
     }
+
     // RecycleStation Table Update Data
     public void updateRecycleStation(int Station_ID, String Location, int Status, int Traffic, String Set_Up_Date, String Fix_Date) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE RecycleStation SET Location = '" + Location + "', Status = '" + Status + "', Traffic = '" + Traffic + "', Set_Up_Date = '" + Set_Up_Date + "', Fix_Date = '" + Fix_Date + "' WHERE Station_ID = " + Station_ID);
     }
+
     // Remittance_Record Table Update Data
     public void updateRemittance_Record(int Remittance_Record_ID, String Date, double Money, String Text, int User_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE Remittance_Record SET Date = '" + Date + "', Money = '" + Money + "', Text = '" + Text + "', User_ID = '" + User_ID + "' WHERE Remittance_Record_ID = " + Remittance_Record_ID);
     }
+
     // Station_Fix_Record Table Update Data
     public void updateStation_Fix_Record(int Record_ID, String Fix_Date, int Fix_Reason, int Fix_Staff) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE Station_Fix_Record SET Fix_Date = '" + Fix_Date + "', Fix_Reason = '" + Fix_Reason + "', Fix_Staff = '" + Fix_Staff + "' WHERE Record_ID = " + Record_ID);
     }
+
     // User_recycle_Record Table Update Data
     public void updateUser_recycle_Record(int Record_ID, String Date, String Weight, int Price, int User_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE User_recycle_Record SET Date = '" + Date + "', Weight = '" + Weight + "', Price = '" + Price + "', User_ID = '" + User_ID + "' WHERE Record_ID = " + Record_ID);
     }
+
     // User Table Delete Data
     public void deleteUser(int ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM User WHERE ID = " + ID);
     }
+
     // Staff Table Delete Data
     public void deleteStaff(int Staff_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM Staff WHERE Staff_ID = " + Staff_ID);
     }
+
     // Donation_Record Table Delete Data
     public void deleteDonation_Record(int ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM Donation_Record WHERE ID = " + ID);
     }
+
     // Notifications Table Delete Data
     public void deleteNotifications(int ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM Notifications WHERE ID = " + ID);
     }
+
     // QR_Cord Table Delete Data
     public void deleteQR_Cord(int QR_Cord_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM QR_Cord WHERE QR_Cord_ID = " + QR_Cord_ID);
     }
+
     // RecycleStation Table Delete Data
     public void deleteRecycleStation(int Station_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM RecycleStation WHERE Station_ID = " + Station_ID);
     }
+
     // Remittance_Record Table Delete Data
     public void deleteRemittance_Record(int Remittance_Record_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM Remittance_Record WHERE Remittance_Record_ID = " + Remittance_Record_ID);
     }
+
     // Station_Fix_Record Table Delete Data
     public void deleteStation_Fix_Record(int Record_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM Station_Fix_Record WHERE Record_ID = " + Record_ID);
     }
+
     // User_recycle_Record Table Delete Data
     public void deleteUser_recycle_Record(int Record_ID) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM User_recycle_Record WHERE Record_ID = " + Record_ID);
     }
+
     // TODO 查詢資料
+    public Cursor findUserByUserName(String User_Name) {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.rawQuery("SELECT * FROM User WHERE User_Name = '" + User_Name + "'", null);
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

@@ -1,15 +1,18 @@
 package com.fcu.android.bottlerecycleapp.database;
 
-public class User {
-    private String id;
+import java.io.Serializable;
+
+public class User implements Serializable {
+    private int id;
     private String userName;
     private String email;
     private String password;
     private String phoneNumber;
-    private String earnMoney;
-    private String donateMoney;
+    private Double earnMoney;
+    private Double donateMoney;
 
-    public User(String userName, String email, String password, String phoneNumber, String earnMoney, String donateMoney) {
+    public User(int id, String userName, String email, String password, String phoneNumber, Double earnMoney, Double donateMoney) {
+        this.id = id;
         this.userName = userName;
         this.email = email;
         this.password = password;
@@ -21,19 +24,20 @@ public class User {
 
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-    public String getUserName() {
-        return userName;
     }
 
     public String getEmail() {
@@ -60,19 +64,19 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getEarnMoney() {
+    public Double getEarnMoney() {
         return earnMoney;
     }
 
-    public void setEarnMoney(String earnMoney) {
+    public void setEarnMoney(Double earnMoney) {
         this.earnMoney = earnMoney;
     }
 
-    public String getDonateMoney() {
+    public Double getDonateMoney() {
         return donateMoney;
     }
 
-    public void setDonateMoney(String donateMoney) {
+    public void setDonateMoney(Double donateMoney) {
         this.donateMoney = donateMoney;
     }
 }
