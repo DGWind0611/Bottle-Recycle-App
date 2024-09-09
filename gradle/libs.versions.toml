@@ -1,5 +1,5 @@
 [versions]
-agp = "8.4.0"
+agp = "8.6.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -14,7 +14,8 @@ mapSecret = "2.0.1"
 googleMaps= "17.0.0"
 googleMapsLocation = "21.0.1"
 qrVersion = "4.3.0"
-
+activity = "1.9.1"
+jbCrypt = "0.4"
 
 
 [libraries]
@@ -31,6 +32,9 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version
 qr-generator = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "qrVersion" }
 google-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "googleMaps" }
 google-maps-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "googleMaps" }
+activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+jbcrypt = { group = "org.mindrot", name = "jbcrypt", version.ref = "jbCrypt" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 map-secret = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapSecret" }
