@@ -56,7 +56,8 @@ public class SignUpActivity extends AppCompatActivity {
                 user.setUserName(userName);
                 user.setEmail(email);
                 user.setPhoneNumber(phoneNumber);
-
+                user.setEarnMoney(0.0);
+                user.setDonateMoney(0.0);
                 // 將資料傳遞給 SignUp2Activity
                 Intent intent = new Intent(SignUpActivity.this, SignUp2Activity.class);
                 intent.putExtra("user", user);  // 傳遞 User 物件

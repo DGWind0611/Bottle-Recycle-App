@@ -54,31 +54,34 @@ public class LoginActivity extends AppCompatActivity {
             String userName = etUserName.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
+            if (userName.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "請輸入帳號與密碼", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             // 檢查帳號是否存在
             Cursor userCursor = dbHelper.findUserByUserName(userName);
             if (userCursor != null && userCursor.moveToFirst()) {
-                // 取得儲存的加密密碼
-                String storedPassword = userCursor.getString(userCursor.getColumnIndexOrThrow("password"));
+                String storedPassword = userCursor.getString(userCursor.getColumnIndexOrThrow("Password"));
 
                 // 使用 BCrypt 進行密碼驗證
-                if (!BCrypt.checkpw(password, storedPassword)) {
-                    Toast.makeText(this, "密碼錯誤", Toast.LENGTH_SHORT).show();
-                } else {
+                if (BCrypt.checkpw(password, storedPassword)) {
                     // 密碼正確，進入主頁面
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
+                } else {
+                    Toast.makeText(this, "密碼錯誤", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                // 該帳號尚未註冊
                 Toast.makeText(this, "該帳號尚未註冊", Toast.LENGTH_SHORT).show();
             }
 
-            // 關閉 cursor
             if (userCursor != null) {
                 userCursor.close();
             }
         });
+
 
         // 點擊前往註冊頁面
         tvGoToSignUp.setOnClickListener(v1 -> {
