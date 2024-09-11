@@ -66,9 +66,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="我以了解使用者 政策  規範"
+        android:text="我以了解使用者 政策 &amp; 規範"
         app:layout_constraintStart_toStartOf="@+id/et_confirm_password"
         app:layout_constraintTop_toBottomOf="@+id/et_confirm_password" />
+
 
     <Button
         android:id="@+id/btn_sing_up"

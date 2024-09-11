@@ -10,6 +10,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.util.Date;
+
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "bottle_recycle.db";
@@ -19,10 +21,12 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_DONATION_RECORD = "Donation_Record";
     private static final String TABLE_NOTIFICATIONS = "Notifications";
     private static final String TABLE_QR_CORD = "QR_Cord";
+    private static final String TABLE_QR_CORD_AGENCY = "QR_Cord_Agency";
     private static final String TABLE_RECYCLE_STATION = "RecycleStation";
     private static final String TABLE_REMITTANCE_RECORD = "Remittance_Record";
     private static final String TABLE_STATION_FIX_RECORD = "Station_Fix_Record";
     private static final String TABLE_USER_RECYCLE_RECORD = "User_recycle_Record";
+
 
 
     public DBHelper(@NonNull Context context, @NonNull String name, @NonNull CursorFactory factory,
@@ -33,16 +37,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        // 重新建立資料表
         createTableUser(db);
         createTableStaff(db);
         createTableDonationRecord(db);
         createTableNotifications(db);
         createTableQrCord(db);
+        createTableQrCordAgency(db);
         createTableRecycleStation(db);
         createTableRemittanceRecord(db);
         createTableStationFixRecord(db);
         createTableUserRecycleRecord(db);
     }
+
 
     private void createTableUser(@NonNull SQLiteDatabase db) {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER + " ("
@@ -89,9 +97,17 @@ public class DBHelper extends SQLiteOpenHelper {
     private void createTableQrCord(@NonNull SQLiteDatabase db) {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_QR_CORD + " ("
                 + "QR_Cord_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "QR_Cord TEXT, "
-                + "RecycleStation_ID INTEGER, "
-                + "FOREIGN KEY(RecycleStation_ID) REFERENCES RecycleStation(RecycleStation_ID))";
+                + "User_ID TEXT, "
+                + "FOREIGN KEY(User_ID) REFERENCES User(User_ID))";
+        db.execSQL(sql);
+    }
+
+    private void createTableQrCordAgency(@NonNull SQLiteDatabase db) {
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_QR_CORD_AGENCY + " ("
+                + "QR_Cord_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "Agency_Name TEXT, "
+                + "QR_CODE_ORIGIN_Name INTEGER, "
+                + "User_Custom_Name TEXT )";
         db.execSQL(sql);
     }
 
@@ -171,9 +187,65 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.rawQuery(query, new String[]{userName});
     }
 
+    public Cursor findUserIdByUserName(String userName) {
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT User_ID FROM User WHERE User_Name = ?";
+        return db.rawQuery(query, new String[]{userName});
+    }
+
+    /**
+     * 新增QE CODE
+     */
+    public void createQRCode(int userId) {
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM QR_Cord";
+        Cursor cursor = db.rawQuery(query, null);
+        int length = cursor.getCount();
+        StringBuilder qrCode = new StringBuilder();
+        Date date = new Date();
+        qrCode.append(date.getTime());
+        qrCode.append(length);
+        cursor.close();  // 關閉 Cursor
+
+        ContentValues values = new ContentValues();
+        values.put("QR_Cord_ID", qrCode.toString());
+        values.put("User_ID", userId);
+        db.insert(TABLE_QR_CORD, null, values);
+        db.close();  // 在最後才關閉資料庫
+    }
+
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // onUpgrade 則是如果資料庫結構有改變了就會觸發 onUpgrade
+    }
+    /** 檢查電子郵件是否已經註冊過
+     *
+     * @param email 電子郵件
+     * @return 是否已經註冊過
+     */
+    public boolean checkEmail(String email) {
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM User WHERE E_mail = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+        boolean result = cursor.getCount() == 0;
+        cursor.close();
+        db.close();
+        return result;
+    }
+    /** 檢查手機號碼是否已經註冊過
+     *
+     * @param phoneNumber 手機號碼
+     * @return 是否已經註冊過
+     */
+    public boolean checkPhoneNumber(String phoneNumber) {
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM User WHERE Phone_Number = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{phoneNumber});
+        boolean result = cursor.getCount() == 0;
+        cursor.close();
+        db.close();
+        return result;
     }
 }

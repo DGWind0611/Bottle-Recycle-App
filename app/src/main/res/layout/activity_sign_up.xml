@@ -174,7 +174,7 @@
         android:layout_marginEnd="32dp"
         android:clickable="true"
         android:text="登入"
-        android:textColor="#00B140"
+        android:textColor="@color/green"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView13"
         app:layout_constraintTop_toTopOf="@+id/textView13" />

@@ -1,14 +1,24 @@
 package com.fcu.android.bottlerecycleapp.sign_up;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.fcu.android.bottlerecycleapp.R;
@@ -42,6 +52,9 @@ public class SignUp2Activity extends AppCompatActivity {
         cbAgree = findViewById(R.id.cb_agree);
         btnSignUp = findViewById(R.id.btn_sing_up);
 
+        // 設定使用者政策和條款
+        setupPolicyAndTerms();
+
         // 註冊按鈕點擊事件
         btnSignUp.setOnClickListener(v -> {
             String password = etPassword.getText().toString().trim();
@@ -69,6 +82,9 @@ public class SignUp2Activity extends AppCompatActivity {
                 if (dbHelper.addUser(user)) {
                     Toast.makeText(this, "註冊成功", Toast.LENGTH_SHORT).show();
                     Log.d("SignUp2Activity", user.toString());
+                    //建立個人 QR Code
+                    Cursor userId = dbHelper.findUserIdByUserName(user.getUserName());
+                    dbHelper.createQRCode(Cursor.FIELD_TYPE_INTEGER);
                     // 註冊成功後，導向登入頁面
                     Intent intent = new Intent(SignUp2Activity.this, LoginActivity.class);
                     startActivity(intent);
@@ -79,4 +95,34 @@ public class SignUp2Activity extends AppCompatActivity {
             }
         });
     }
+
+
+    private void setupPolicyAndTerms() {
+        String fullText = "我已了解使用者政策 & 規範";
+        SpannableString spannableString = new SpannableString(fullText);
+
+        // 點擊「政策」
+        ClickableSpan policyClick = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View widget) {
+                // 跳轉到政策頁面
+                Intent intent = new Intent(SignUp2Activity.this, PolicyActivity.class);
+                startActivity(intent);
+            }
+        };
+        // 設定「政策&規範」的可點擊範圍
+        int policyStart = fullText.indexOf("政");
+        int policyEnd = policyStart + "政策 & 規範".length();
+        spannableString.setSpan(policyClick, policyStart, policyEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);;
+
+        // 設定點擊後的文字顏色
+        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.green)),
+                policyStart, policyEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // 將文字設置到 CheckBox 並啟用可點擊功能
+        cbAgree.setText(spannableString);
+        cbAgree.setMovementMethod(LinkMovementMethod.getInstance());
+        cbAgree.setHighlightColor(ContextCompat.getColor(this, android.R.color.transparent));
+    }
+
 }
