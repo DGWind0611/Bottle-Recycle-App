@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fcu.android.bottlerecycleapp.R;
+import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.User;
 import com.fcu.android.bottlerecycleapp.login.LoginActivity;
 
@@ -24,6 +25,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText etPhoneNumber;
     private TextView tvBackToLogin;
     private Button btnSignUpNext;
+    private DBHelper dbHelper = new DBHelper(this, "bottle_recycle.db", null, 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,12 @@ public class SignUpActivity extends AppCompatActivity {
             }
             else if (!phoneNumber.matches("^09\\d{8}$")) {
                 etPhoneNumber.setError("請輸入正確的手機號碼格式");
+            }
+            else if(!dbHelper.checkEmail(email)) {
+                etEmail.setError("此電子郵件已經註冊過");
+            }
+            else if(!dbHelper.checkPhoneNumber(phoneNumber)) {
+                etPhoneNumber.setError("此手機號碼已經註冊過");
             }
             else {
                 User user = new User();

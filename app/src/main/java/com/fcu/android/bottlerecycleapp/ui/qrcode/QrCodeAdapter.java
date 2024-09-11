@@ -8,11 +8,14 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.fcu.android.bottlerecycleapp.R;
+import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import java.util.Date;
 import java.util.List;
 
 public class QrCodeAdapter extends RecyclerView.Adapter<QrCodeAdapter.ViewHolder> {
@@ -23,10 +26,14 @@ public class QrCodeAdapter extends RecyclerView.Adapter<QrCodeAdapter.ViewHolder
         this.data = data;
     }
 
+    private DBHelper dbHelper;
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.qrcode_item, parent, false);
+        dbHelper = new DBHelper(parent.getContext(), "bottle_recycle.db", null, 1);
+
         return new ViewHolder(view);
     }
 
@@ -57,4 +64,6 @@ public class QrCodeAdapter extends RecyclerView.Adapter<QrCodeAdapter.ViewHolder
             qrCodeImageView = view.findViewById(R.id.imageView);
         }
     }
+
+
 }
