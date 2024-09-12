@@ -1,7 +1,10 @@
 package com.fcu.android.bottlerecycleapp.sign_up;
 
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -25,6 +28,8 @@ import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.User;
 import com.fcu.android.bottlerecycleapp.login.LoginActivity;
+
+import java.util.Date;
 
 public class SignUp2Activity extends AppCompatActivity {
 
@@ -74,28 +79,41 @@ public class SignUp2Activity extends AppCompatActivity {
             } else {
                 // 密碼有效，對密碼進行加密
                 String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
+                // 建立個人 QR Code
+                int userLength = dbHelper.getUserLength();
+                String qrcode = createQRCode(userLength);
+                user.setQrCode(qrcode);
                 // 將加密的密碼設置到 User 物件
                 user.setPassword(hashedPassword);
-
                 // 儲存 User 到資料庫
-                if (dbHelper.addUser(user)) {
-                    Toast.makeText(this, "註冊成功", Toast.LENGTH_SHORT).show();
-                    Log.d("SignUp2Activity", user.toString());
-                    //建立個人 QR Code
-                    Cursor userId = dbHelper.findUserIdByUserName(user.getUserName());
-                    dbHelper.createQRCode(Cursor.FIELD_TYPE_INTEGER);
-                    // 註冊成功後，導向登入頁面
-                    Intent intent = new Intent(SignUp2Activity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish(); // 結束註冊頁面，返回到登入頁面
-                } else {
-                    Toast.makeText(this, "註冊失敗，請重試", Toast.LENGTH_SHORT).show();
+                try {
+                    boolean isCreate = dbHelper.addUser(user);
+                    if (isCreate) {
+                        user.setQrCode(qrcode);
+                        Toast.makeText(this, "註冊成功", Toast.LENGTH_SHORT).show();
+
+                        // 註冊成功後，導向登入頁面
+                        Intent intent = new Intent(SignUp2Activity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish(); // 結束註冊頁面，返回到登入頁面
+                    } else {
+                        Toast.makeText(this, "註冊失敗，請重試", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.e("SignUp2Activity", "資料庫操作錯誤", e);
+                    Toast.makeText(this, "發生錯誤，請稍後再試", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
+    /**
+     * 新增 QR CODE
+     */
+    public String createQRCode(int userLength) {
+        Date date = new Date();
+        return String.valueOf(date.getTime()) + userLength + 1;
+    }
 
     private void setupPolicyAndTerms() {
         String fullText = "我已了解使用者政策 & 規範";
@@ -110,10 +128,11 @@ public class SignUp2Activity extends AppCompatActivity {
                 startActivity(intent);
             }
         };
+
         // 設定「政策&規範」的可點擊範圍
         int policyStart = fullText.indexOf("政");
         int policyEnd = policyStart + "政策 & 規範".length();
-        spannableString.setSpan(policyClick, policyStart, policyEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);;
+        spannableString.setSpan(policyClick, policyStart, policyEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         // 設定點擊後的文字顏色
         spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.green)),
