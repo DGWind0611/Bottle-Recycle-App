@@ -9,20 +9,22 @@ public class User implements Serializable {
     private String password;
     private String phoneNumber;
     private Double earnMoney;
-    private String QrCode;
+    private String qrCode;
     private Double donateMoney;
+    private String userImage;
 
 
     public User(int id, String userName, String email, String password, String phoneNumber,
-                Double earnMoney, String qrCode, Double donateMoney) {
+                Double earnMoney, String qrCode, Double donateMoney, String userImage) {
         this.id = id;
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.earnMoney = earnMoney;
-        QrCode = qrCode;
+        this.qrCode = qrCode;
         this.donateMoney = donateMoney;
+        this.userImage = userImage;
     }
 
     public User(){
@@ -79,11 +81,19 @@ public class User implements Serializable {
     }
 
     public String getQrCode() {
-        return QrCode;
+        return qrCode;
     }
 
     public void setQrCode(String qrCode) {
-        QrCode = qrCode;
+        this.qrCode = qrCode;
+    }
+
+    public String getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
     }
 
     public Double getDonateMoney() {

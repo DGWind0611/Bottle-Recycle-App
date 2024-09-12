@@ -55,7 +55,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "Phone_Number TEXT NOT NULL UNIQUE, "
                 + "Earn_Money REAL, "
                 + "QR_Code String, "
-                + "Donate_Money REAL) ";
+                + "Donate_Money REAL, "
+                + "UserImage TEXT ) ";
         db.execSQL(sql);
     }
 
@@ -158,7 +159,7 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put("Earn_Money", user.getEarnMoney());
             values.put("QR_Code", user.getQrCode());
             values.put("Donate_Money", user.getDonateMoney());
-
+            values.put("UserImage", user.getUserImage());
             long result = db.insert(TABLE_USER, null, values);
             return result != -1;
         } finally {
@@ -167,6 +168,7 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         }
     }
+
     // 建立user物件
     private User buildUserObject(Cursor cursor) {
         User user = new User();
@@ -178,6 +180,7 @@ public class DBHelper extends SQLiteOpenHelper {
         user.setEarnMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Earn_Money")));
         user.setQrCode(cursor.getString(cursor.getColumnIndexOrThrow("QR_Code")));
         user.setDonateMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Donate_Money")));
+        user.setUserImage(cursor.getString(cursor.getColumnIndexOrThrow("UserImage")));
         cursor.close();
         return user;
     }
@@ -201,6 +204,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 透過電子郵件尋找使用者
+     *
      * @param email 電子郵件
      * @return 使用者資料
      */
@@ -253,7 +257,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    //取得User Table 長度
+    /**
+     * 取得當前使用者數量
+     * @return 使用者數量
+     */
     public int getUserLength() {
         SQLiteDatabase db = getReadableDatabase();
         String query = "SELECT * FROM User";
