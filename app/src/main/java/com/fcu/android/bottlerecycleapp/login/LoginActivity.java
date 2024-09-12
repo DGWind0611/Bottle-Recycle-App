@@ -3,6 +3,7 @@ package com.fcu.android.bottlerecycleapp.login;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.fcu.android.bottlerecycleapp.MainActivity;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
+import com.fcu.android.bottlerecycleapp.database.User;
 import com.fcu.android.bottlerecycleapp.sign_up.SignUpActivity;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -28,6 +30,9 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvGoToSignUp;
     private Button btnLogin;
     private DBHelper dbHelper;
+    private final String TestEmail = "test@test.com";
+    private final String TestPassword = "Test123456";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,26 +53,28 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.et_login_password);
         btnLogin = findViewById(R.id.btn_login);
         tvGoToSignUp = findViewById(R.id.tv_go_to_sign_up);
-
+        testLogin();
         // 點擊登入按鈕
         btnLogin.setOnClickListener(v -> {
-            String userName = etUserName.getText().toString().trim();
+            String userEmail = etUserName.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
-            if (userName.isEmpty() || password.isEmpty()) {
+            if (userEmail.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "請輸入帳號與密碼", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             // 檢查帳號是否存在
-            Cursor userCursor = dbHelper.findUserByUserName(userName);
-            if (userCursor != null && userCursor.moveToFirst()) {
-                String storedPassword = userCursor.getString(userCursor.getColumnIndexOrThrow("Password"));
-
+            User user = dbHelper.findUserByEmail(userEmail);
+            if (user != null) {
+                String storedPassword = user.getPassword();
+                Log.d("LoginActivity", "storedPassword: " + storedPassword);
                 // 使用 BCrypt 進行密碼驗證
                 if (BCrypt.checkpw(password, storedPassword)) {
                     // 密碼正確，進入主頁面
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    //傳送user至 其他Activity
+                    intent.putExtra("userEmail", userEmail);
                     startActivity(intent);
                     finish();
                 } else {
@@ -75,10 +82,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             } else {
                 Toast.makeText(this, "該帳號尚未註冊", Toast.LENGTH_SHORT).show();
-            }
-
-            if (userCursor != null) {
-                userCursor.close();
             }
         });
 
@@ -89,5 +92,10 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+    }
+
+    private void testLogin() {
+        etUserName.setText(TestEmail);
+        etPassword.setText(TestPassword);
     }
 }

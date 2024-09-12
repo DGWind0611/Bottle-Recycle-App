@@ -2,10 +2,9 @@ package com.fcu.android.bottlerecycleapp.sign_up;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,8 +15,6 @@ import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.User;
 import com.fcu.android.bottlerecycleapp.login.LoginActivity;
 
-import java.io.Serializable;
-
 public class SignUpActivity extends AppCompatActivity {
 
     private EditText etUserName;
@@ -26,6 +23,7 @@ public class SignUpActivity extends AppCompatActivity {
     private TextView tvBackToLogin;
     private Button btnSignUpNext;
     private DBHelper dbHelper = new DBHelper(this, "bottle_recycle.db", null, 1);
+    private ImageButton btnBackToLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +36,7 @@ public class SignUpActivity extends AppCompatActivity {
         etPhoneNumber = findViewById(R.id.et_phone_number);
         btnSignUpNext = findViewById(R.id.btn_sing_up_next_page);
         tvBackToLogin = findViewById(R.id.tv_back_to_login2);
+        btnBackToLog = findViewById(R.id.btn_back_to_log);
 
         btnSignUpNext.setOnClickListener(v -> {
             String userName = etUserName.getText().toString().trim();
@@ -74,6 +73,11 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
         tvBackToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        });
+        btnBackToLog.setOnClickListener(v -> {
             Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();

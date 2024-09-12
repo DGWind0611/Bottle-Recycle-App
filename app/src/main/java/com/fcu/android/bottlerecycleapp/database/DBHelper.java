@@ -6,11 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
-
-import java.util.Date;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -20,13 +17,11 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_STAFF = "Staff";
     private static final String TABLE_DONATION_RECORD = "Donation_Record";
     private static final String TABLE_NOTIFICATIONS = "Notifications";
-    private static final String TABLE_QR_CORD = "QR_Cord";
     private static final String TABLE_QR_CORD_AGENCY = "QR_Cord_Agency";
     private static final String TABLE_RECYCLE_STATION = "RecycleStation";
     private static final String TABLE_REMITTANCE_RECORD = "Remittance_Record";
     private static final String TABLE_STATION_FIX_RECORD = "Station_Fix_Record";
     private static final String TABLE_USER_RECYCLE_RECORD = "User_recycle_Record";
-
 
 
     public DBHelper(@NonNull Context context, @NonNull String name, @NonNull CursorFactory factory,
@@ -43,7 +38,6 @@ public class DBHelper extends SQLiteOpenHelper {
         createTableStaff(db);
         createTableDonationRecord(db);
         createTableNotifications(db);
-        createTableQrCord(db);
         createTableQrCordAgency(db);
         createTableRecycleStation(db);
         createTableRemittanceRecord(db);
@@ -56,11 +50,13 @@ public class DBHelper extends SQLiteOpenHelper {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER + " ("
                 + "User_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "User_Name TEXT, "
-                + "E_mail TEXT, "
-                + "Password TEXT, "
-                + "Phone_Number TEXT, "
+                + "E_mail TEXT NOT NULL UNIQUE, "
+                + "Password TEXT NOT NULL, "
+                + "Phone_Number TEXT NOT NULL UNIQUE, "
                 + "Earn_Money REAL, "
-                + "Donate_Money REAL)";
+                + "QR_Code String, "
+                + "Donate_Money REAL, "
+                + "UserImage TEXT ) ";
         db.execSQL(sql);
     }
 
@@ -90,14 +86,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "User_ID INTEGER, "
                 + "Notification_Content TEXT, "
                 + "Notification_Date TEXT, "
-                + "FOREIGN KEY(User_ID) REFERENCES User(User_ID))";
-        db.execSQL(sql);
-    }
-
-    private void createTableQrCord(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_QR_CORD + " ("
-                + "QR_Cord_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "User_ID TEXT, "
                 + "FOREIGN KEY(User_ID) REFERENCES User(User_ID))";
         db.execSQL(sql);
     }
@@ -153,7 +141,12 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-    // User Table Add Data
+    /**
+     * 新增使用者
+     *
+     * @param user 使用者資料
+     * @return 是否新增成功
+     */
     public boolean addUser(User user) {
         SQLiteDatabase db = null;
         try {
@@ -164,8 +157,9 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put("Password", user.getPassword());
             values.put("Phone_Number", user.getPhoneNumber());
             values.put("Earn_Money", user.getEarnMoney());
+            values.put("QR_Code", user.getQrCode());
             values.put("Donate_Money", user.getDonateMoney());
-
+            values.put("UserImage", user.getUserImage());
             long result = db.insert(TABLE_USER, null, values);
             return result != -1;
         } finally {
@@ -175,52 +169,64 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    // 建立user物件
+    private User buildUserObject(Cursor cursor) {
+        User user = new User();
+        user.setId(cursor.getInt(cursor.getColumnIndexOrThrow("User_ID")));
+        user.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("User_Name")));
+        user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("E_mail")));
+        user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow("Password")));
+        user.setPhoneNumber(cursor.getString(cursor.getColumnIndexOrThrow("Phone_Number")));
+        user.setEarnMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Earn_Money")));
+        user.setQrCode(cursor.getString(cursor.getColumnIndexOrThrow("QR_Code")));
+        user.setDonateMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Donate_Money")));
+        user.setUserImage(cursor.getString(cursor.getColumnIndexOrThrow("UserImage")));
+        cursor.close();
+        return user;
+    }
+
     /**
-     * 透過使用者名稱尋找使用者
+     * 根據使用者 ID 取得使用者資料
      *
-     * @param userName 使用者名稱
+     * @param userId 使用者 ID
      * @return 使用者資料
      */
-    public Cursor findUserByUserName(String userName) {
-        SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT * FROM User WHERE User_Name = ?";
-        return db.rawQuery(query, new String[]{userName});
-    }
-
-    public Cursor findUserIdByUserName(String userName) {
-        SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT User_ID FROM User WHERE User_Name = ?";
-        return db.rawQuery(query, new String[]{userName});
+    public User findUserById(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("User", null, "id = ?", new String[]{String.valueOf(userId)}, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            User user = new User();
+            user = buildUserObject(cursor);
+            return user;
+        }
+        return null;
     }
 
     /**
-     * 新增QE CODE
+     * 透過電子郵件尋找使用者
+     *
+     * @param email 電子郵件
+     * @return 使用者資料
      */
-    public void createQRCode(int userId) {
-        SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM QR_Cord";
-        Cursor cursor = db.rawQuery(query, null);
-        int length = cursor.getCount();
-        StringBuilder qrCode = new StringBuilder();
-        Date date = new Date();
-        qrCode.append(date.getTime());
-        qrCode.append(length);
-        cursor.close();  // 關閉 Cursor
-
-        ContentValues values = new ContentValues();
-        values.put("QR_Cord_ID", qrCode.toString());
-        values.put("User_ID", userId);
-        db.insert(TABLE_QR_CORD, null, values);
-        db.close();  // 在最後才關閉資料庫
+    public User findUserByEmail(String email) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USER, null, "E_mail = ?", new String[]{email}, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            User user = new User();
+            user = buildUserObject(cursor);
+            return user;
+        }
+        return null;
     }
-
 
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // onUpgrade 則是如果資料庫結構有改變了就會觸發 onUpgrade
     }
-    /** 檢查電子郵件是否已經註冊過
+
+    /**
+     * 檢查電子郵件是否已經註冊過
      *
      * @param email 電子郵件
      * @return 是否已經註冊過
@@ -234,7 +240,9 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return result;
     }
-    /** 檢查手機號碼是否已經註冊過
+
+    /**
+     * 檢查手機號碼是否已經註冊過
      *
      * @param phoneNumber 手機號碼
      * @return 是否已經註冊過
@@ -244,6 +252,20 @@ public class DBHelper extends SQLiteOpenHelper {
         String query = "SELECT * FROM User WHERE Phone_Number = ?";
         Cursor cursor = db.rawQuery(query, new String[]{phoneNumber});
         boolean result = cursor.getCount() == 0;
+        cursor.close();
+        db.close();
+        return result;
+    }
+
+    /**
+     * 取得當前使用者數量
+     * @return 使用者數量
+     */
+    public int getUserLength() {
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM User";
+        Cursor cursor = db.rawQuery(query, null);
+        int result = cursor.getCount();
         cursor.close();
         db.close();
         return result;

@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.google.zxing.BarcodeFormat;
@@ -40,12 +42,16 @@ public class QrCodeAdapter extends RecyclerView.Adapter<QrCodeAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String qrCodeText = data.get(position);
+        createQrCode(qrCodeText, holder.qrCodeImageView);
+    }
+
+    public static void createQrCode(String qrCodeText, ImageView qrCodeImageView) {
         try {
             MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
             BitMatrix bitMatrix = multiFormatWriter.encode(qrCodeText, BarcodeFormat.QR_CODE, 250, 250);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-            holder.qrCodeImageView.setImageBitmap(bitmap);
+            qrCodeImageView.setImageBitmap(bitmap);
         } catch (WriterException e) {
             e.printStackTrace();
         }
