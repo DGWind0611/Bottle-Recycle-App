@@ -25,13 +25,13 @@
             android:text="洪聖諺"
             android:textAlignment="center"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_avaster"
-            app:layout_constraintStart_toEndOf="@+id/iv_avaster"
-            app:layout_constraintTop_toTopOf="@+id/iv_avaster"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_avatar"
+            app:layout_constraintStart_toEndOf="@+id/iv_avatar"
+            app:layout_constraintTop_toTopOf="@+id/iv_avatar"
             app:layout_constraintVertical_bias="0.418" />
 
         <ImageView
-            android:id="@+id/iv_avaster"
+            android:id="@+id/iv_avatar"
             android:layout_width="93dp"
             android:layout_height="93dp"
             android:layout_marginStart="32dp"
@@ -104,7 +104,7 @@
             android:elevation="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/iv_avaster">
+            app:layout_constraintStart_toStartOf="@+id/iv_avatar">
 
         </FrameLayout>
 

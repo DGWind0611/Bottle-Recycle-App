@@ -1,5 +1,6 @@
 package com.fcu.android.bottlerecycleapp.ui.notifications;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,7 +19,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
+import com.fcu.android.bottlerecycleapp.MainActivity;
 import com.fcu.android.bottlerecycleapp.R;
+import com.fcu.android.bottlerecycleapp.SharedViewModel;
+import com.fcu.android.bottlerecycleapp.database.User;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentPersonalDataBinding;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.ShapeAppearanceModel;
@@ -46,7 +51,31 @@ public class PersonalDataFragment extends Fragment {
 
         final TextView tvUserName = binding.tvUserName;
         final TextView tvPriceValue = binding.tvPriceValue;
-        final ImageView ivAvaster = binding.ivAvaster;
+        final ImageView ivAvaster = binding.ivAvatar;
+
+        SharedViewModel sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        sharedViewModel.getData().observe(getViewLifecycleOwner(), data -> {
+            if (data != null) {
+                String userName = data.getUserName();
+                Double userPrice = data.getEarnMoney();
+                String avatarUrl = data.getUserImage();
+                tvUserName.setText(userName);
+                tvPriceValue.setText(userPrice.toString());
+                if (avatarUrl == null) {
+                    ivAvaster.setImageResource(R.drawable.avatar);
+                } else {
+                    Glide.with(this).load(avatarUrl).into(ivAvaster);
+                }
+
+            }
+        });
+        User user = sharedViewModel.getData().getValue();
+        btnSetting.setOnClickListener(v -> {
+            // 跳轉到個人資料設定頁面
+            Intent intent = new Intent(requireActivity(), PersonalDataSettingActivity.class);
+            intent.putExtra("userData", user);
+            startActivity(intent);
+        });
 
 
 

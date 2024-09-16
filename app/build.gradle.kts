@@ -50,6 +50,8 @@ dependencies {
     // google maps
     implementation(libs.google.maps)
     implementation(libs.google.maps.location)
+    // glide
+    implementation(libs.glide)
     implementation(libs.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
