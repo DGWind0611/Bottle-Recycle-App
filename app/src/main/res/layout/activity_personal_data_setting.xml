@@ -68,6 +68,7 @@
                 android:enabled="false"
                 android:gravity="end"
                 android:inputType="text"
+                android:clickable="false"
                 android:text="洪聖諺" />
 
             <ImageButton
@@ -78,6 +79,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
+                android:backgroundTint="#00FFFFFF"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/pen" />
         </LinearLayout>
@@ -112,6 +114,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
+                android:backgroundTint="#00FFFFFF"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/pen" />
         </LinearLayout>
@@ -128,25 +131,13 @@
                 android:text="性別"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/et_gender_setting"
+            <Spinner
+                android:id="@+id/sp_gender_setting"
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:enabled="false"
                 android:gravity="end"
-                android:inputType="text"
-                android:text="男/女/未知" />
-            <ImageButton
-                android:id="@+id/btn_edit_gender"
-                android:layout_width="5dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_gravity="bottom|end"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/pen" />
+                android:layout_weight="1" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -170,14 +161,16 @@
                 android:gravity="end"
                 android:inputType="text"
                 android:text="********" />
+
             <ImageButton
                 android:id="@+id/btn_edit_password"
                 android:layout_width="5dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_gravity="bottom|end"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#00FFFFFF"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/pen" />
         </LinearLayout>
@@ -212,6 +205,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
+                android:backgroundTint="#00FFFFFF"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/pen" />
         </LinearLayout>
@@ -234,6 +228,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="#00FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_media_previous" />

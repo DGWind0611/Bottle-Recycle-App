@@ -68,6 +68,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginEnd="8dp"
+            android:background="#00FFFFFF"
             android:src="@drawable/ic_notifications_black_24dp"
             app:layout_constraintEnd_toStartOf="@+id/btn_setting"
             app:layout_constraintTop_toTopOf="@+id/btn_setting" />
@@ -78,6 +79,7 @@
             android:layout_height="32dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:background="#00FFFFFF"
             android:src="@android:drawable/ic_menu_preferences"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

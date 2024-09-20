@@ -49,9 +49,8 @@ public class DBHelper extends SQLiteOpenHelper {
         createTableRemittanceRecord(db);
         createTableStationFixRecord(db);
         createTableUserRecycleRecord(db);
-        if(getUserLength() == 0){
-            testUser(db);
-        }
+        testUser(db);
+
     }
 
 
@@ -152,7 +151,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-
     /**
      * 新增使用者
      *
@@ -193,6 +191,7 @@ public class DBHelper extends SQLiteOpenHelper {
         user.setEarnMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Earn_Money")));
         user.setQrCode(cursor.getString(cursor.getColumnIndexOrThrow("QR_Code")));
         user.setDonateMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Donate_Money")));
+        user.setGender(Gender.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("Gender"))));
         user.setUserImage(cursor.getString(cursor.getColumnIndexOrThrow("UserImage")));
         cursor.close();
         return user;
@@ -234,6 +233,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 更新使用者資料
+     *
      * @param user 使用者資料
      * @return 是否更新成功
      */
@@ -316,7 +316,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("Earn_Money", 0);
         values.put("QR_Code", date.getTime() + getUserLength());
         values.put("Donate_Money", 0);
-        values.put("Gender", Gender.Undefine.toString());
+        values.put("Gender", Gender.UNDEFINED.toString());
         values.put("UserImage", R.drawable.avatar);
         db.insert(TABLE_USER, null, values);
     }

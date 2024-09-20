@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fcu.android.bottlerecycleapp.Gender;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.User;
@@ -65,6 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
                 user.setPhoneNumber(phoneNumber);
                 user.setEarnMoney(0.0);
                 user.setDonateMoney(0.0);
+                user.setGender(Gender.UNDEFINED);
                 // 將資料傳遞給 SignUp2Activity
                 Intent intent = new Intent(SignUpActivity.this, SignUp2Activity.class);
                 intent.putExtra("user", user);  // 傳遞 User 物件
