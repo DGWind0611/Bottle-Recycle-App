@@ -1,5 +1,7 @@
 package com.fcu.android.bottlerecycleapp.database;
 
+import com.fcu.android.bottlerecycleapp.Gender;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -11,11 +13,12 @@ public class User implements Serializable {
     private Double earnMoney;
     private String qrCode;
     private Double donateMoney;
+    private Gender gender;
     private String userImage;
 
 
     public User(int id, String userName, String email, String password, String phoneNumber,
-                Double earnMoney, String qrCode, Double donateMoney, String userImage) {
+                Double earnMoney, String qrCode, Double donateMoney,Gender gender, String userImage) {
         this.id = id;
         this.userName = userName;
         this.email = email;
@@ -24,6 +27,7 @@ public class User implements Serializable {
         this.earnMoney = earnMoney;
         this.qrCode = qrCode;
         this.donateMoney = donateMoney;
+        this.gender = gender;
         this.userImage = userImage;
     }
 
@@ -88,19 +92,27 @@ public class User implements Serializable {
         this.qrCode = qrCode;
     }
 
-    public String getUserImage() {
-        return userImage;
-    }
-
-    public void setUserImage(String userImage) {
-        this.userImage = userImage;
-    }
-
     public Double getDonateMoney() {
         return donateMoney;
     }
 
     public void setDonateMoney(Double donateMoney) {
         this.donateMoney = donateMoney;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public String getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
     }
 }

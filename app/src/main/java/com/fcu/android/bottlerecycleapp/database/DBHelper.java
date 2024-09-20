@@ -6,8 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+
+import com.fcu.android.bottlerecycleapp.Gender;
+import com.fcu.android.bottlerecycleapp.R;
+
+import java.util.Date;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -43,6 +49,8 @@ public class DBHelper extends SQLiteOpenHelper {
         createTableRemittanceRecord(db);
         createTableStationFixRecord(db);
         createTableUserRecycleRecord(db);
+        testUser(db);
+
     }
 
 
@@ -56,6 +64,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "Earn_Money REAL, "
                 + "QR_Code String, "
                 + "Donate_Money REAL, "
+                + "Gender TEXT, "
                 + "UserImage TEXT ) ";
         db.execSQL(sql);
     }
@@ -141,6 +150,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+
     /**
      * 新增使用者
      *
@@ -159,6 +169,7 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put("Earn_Money", user.getEarnMoney());
             values.put("QR_Code", user.getQrCode());
             values.put("Donate_Money", user.getDonateMoney());
+            values.put("Gender", user.getGender().toString());
             values.put("UserImage", user.getUserImage());
             long result = db.insert(TABLE_USER, null, values);
             return result != -1;
@@ -180,6 +191,7 @@ public class DBHelper extends SQLiteOpenHelper {
         user.setEarnMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Earn_Money")));
         user.setQrCode(cursor.getString(cursor.getColumnIndexOrThrow("QR_Code")));
         user.setDonateMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Donate_Money")));
+        user.setGender(Gender.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("Gender"))));
         user.setUserImage(cursor.getString(cursor.getColumnIndexOrThrow("UserImage")));
         cursor.close();
         return user;
@@ -219,6 +231,27 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    /**
+     * 更新使用者資料
+     *
+     * @param user 使用者資料
+     * @return 是否更新成功
+     */
+    public boolean updateUser(User user) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("User_Name", user.getUserName());
+        values.put("E_mail", user.getEmail());
+        values.put("Password", user.getPassword());
+        values.put("Phone_Number", user.getPhoneNumber());
+        values.put("Earn_Money", user.getEarnMoney());
+        values.put("QR_Code", user.getQrCode());
+        values.put("Donate_Money", user.getDonateMoney());
+        values.put("Gender", user.getGender().toString());
+        values.put("UserImage", user.getUserImage());
+        int result = db.update(TABLE_USER, values, "User_ID = ?", new String[]{String.valueOf(user.getId())});
+        return result > 0;
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -259,6 +292,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 取得當前使用者數量
+     *
      * @return 使用者數量
      */
     public int getUserLength() {
@@ -269,5 +303,21 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return result;
+    }
+
+    // 測試資料
+    private void testUser(@NonNull SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        Date date = new Date();
+        values.put("User_Name", "test");
+        values.put("E_mail", "test@test.com");
+        values.put("Password", "Test123456");
+        values.put("Phone_Number", "0912345678");
+        values.put("Earn_Money", 0);
+        values.put("QR_Code", date.getTime() + getUserLength());
+        values.put("Donate_Money", 0);
+        values.put("Gender", Gender.UNDEFINED.toString());
+        values.put("UserImage", R.drawable.avatar);
+        db.insert(TABLE_USER, null, values);
     }
 }

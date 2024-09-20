@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                     // 密碼正確，進入主頁面
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     //傳送user至 其他Activity
-                    intent.putExtra("userEmail", userEmail);
+                    intent.putExtra("user", user);
                     startActivity(intent);
                     finish();
                 } else {

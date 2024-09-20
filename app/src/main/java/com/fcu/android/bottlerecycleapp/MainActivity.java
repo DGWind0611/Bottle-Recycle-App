@@ -2,6 +2,7 @@ package com.fcu.android.bottlerecycleapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.User;
@@ -18,10 +19,11 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.fcu.android.bottlerecycleapp.databinding.ActivityMainBinding;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private String userEmail;
     private User user;
     private DBHelper dbHelper = new DBHelper(this, "bottle_recycle.db", null, 1);
 
@@ -41,29 +43,24 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
         //TODO 將ActionBar 清除
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         // 接收 Email
-        userEmail = getIntent().getStringExtra("userEmail");
-
-        if (userEmail != null && !userEmail.isEmpty()) {
-            user = dbHelper.findUserByEmail(userEmail);
-            if (user != null) {
-                SharedViewModel sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
-                sharedViewModel.setData(user);
-            }
+        user = getIntent().getSerializableExtra("user") != null ? (User) getIntent().getSerializableExtra("user") : null;
+        assert user != null;
+        Log.d("MainActivity", "user: " + user.getGender());
+        if (user != null) {
+            SharedViewModel sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+            sharedViewModel.setData(user);
         } else {
-            new AlertDialog.Builder(this)
-                    .setTitle("錯誤")
-                    .setMessage("未能取得使用者資訊，請重新登入")
-                    .setPositiveButton("返回登入頁", (dialog, which) -> {
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .setNegativeButton("關閉", (dialog, which) -> finish())
-                    .setCancelable(false)
-                    .show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("錯誤");
+            builder.setMessage("請重新登入");
+            builder.setPositiveButton("確定", (dialog, which) -> {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            });
+            builder.show();
         }
     }
 }

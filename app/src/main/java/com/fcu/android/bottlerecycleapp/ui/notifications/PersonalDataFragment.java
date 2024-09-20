@@ -1,7 +1,7 @@
 package com.fcu.android.bottlerecycleapp.ui.notifications;
 
-import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,22 +12,45 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.fcu.android.bottlerecycleapp.R;
+import com.fcu.android.bottlerecycleapp.SharedViewModel;
+import com.fcu.android.bottlerecycleapp.database.User;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentPersonalDataBinding;
-import com.google.android.material.imageview.ShapeableImageView;
-import com.google.android.material.shape.ShapeAppearanceModel;
-
-import org.w3c.dom.Text;
 
 public class PersonalDataFragment extends Fragment {
 
     private FragmentPersonalDataBinding binding;
+    private SharedViewModel sharedViewModel;
+    private ActivityResultLauncher<Intent> settingActivityLauncher;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+        settingActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            User updatedUser = (User) data.getSerializableExtra("userData");
+                            if (updatedUser != null) {
+                                sharedViewModel.setData(updatedUser);
+                            }
+                        }
+                    }
+                }
+        );
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -37,19 +60,33 @@ public class PersonalDataFragment extends Fragment {
         binding = FragmentPersonalDataBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final ListView lvActivityTasks = binding.lvActivityTasks;
-        final ImageView ivActivityChart = binding.ivActivityChart;
-        final Button btnTransferRecord  = binding.btnTransferRecord;
-        final Button btnRecycleRecord = binding.btnRecycleRecord;
-        final ImageButton btnNotification = binding.btnNotification;
         final ImageButton btnSetting = binding.btnSetting;
 
         final TextView tvUserName = binding.tvUserName;
         final TextView tvPriceValue = binding.tvPriceValue;
-        final ImageView ivAvaster = binding.ivAvaster;
+        final ImageView ivAvatar = binding.ivAvatar;
 
+        sharedViewModel.getData().observe(getViewLifecycleOwner(), data -> {
+            if (data != null) {
+                String userName = data.getUserName();
+                Double userPrice = data.getEarnMoney();
+                String avatarUrl = data.getUserImage();
+                tvUserName.setText(userName);
+                tvPriceValue.setText(userPrice.toString());
+                if (avatarUrl == null) {
+                    ivAvatar.setImageResource(R.drawable.avatar);
+                } else {
+                    Glide.with(this).load(avatarUrl).into(ivAvatar);
+                }
+            }
+        });
 
-
+        btnSetting.setOnClickListener(v -> {
+            // 跳轉到個人資料設定頁面
+            Intent intent = new Intent(requireActivity(), PersonalDataSettingActivity.class);
+            intent.putExtra("userData", sharedViewModel.getData().getValue());
+            settingActivityLauncher.launch(intent);
+        });
 
         final TextView textView = binding.tvUserName;
         personalDataViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
