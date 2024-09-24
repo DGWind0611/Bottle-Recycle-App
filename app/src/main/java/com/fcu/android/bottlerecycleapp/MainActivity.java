@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private User user;
-    private DBHelper dbHelper = new DBHelper(this, "bottle_recycle.db", null, 1);
+    private DBHelper dbHelper = new DBHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

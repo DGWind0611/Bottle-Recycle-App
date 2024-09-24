@@ -34,7 +34,7 @@ public class QrCodeAdapter extends RecyclerView.Adapter<QrCodeAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.qrcode_item, parent, false);
-        dbHelper = new DBHelper(parent.getContext(), "bottle_recycle.db", null, 1);
+        dbHelper = new DBHelper(parent.getContext());
 
         return new ViewHolder(view);
     }
