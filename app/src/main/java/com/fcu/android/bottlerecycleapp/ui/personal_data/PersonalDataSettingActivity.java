@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.ui.notifications;
+package com.fcu.android.bottlerecycleapp.ui.personal_data;
 
 import android.app.Activity;
 import android.content.Intent;

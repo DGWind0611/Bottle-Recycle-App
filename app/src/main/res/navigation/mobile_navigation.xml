@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_PersonalData"
-        android:name="com.fcu.android.bottlerecycleapp.ui.notifications.PersonalDataFragment"
+        android:name="com.fcu.android.bottlerecycleapp.ui.personal_data.PersonalDataFragment"
         android:label="@string/title_personal_data"
         tools:layout="@layout/fragment_personal_data" />
 

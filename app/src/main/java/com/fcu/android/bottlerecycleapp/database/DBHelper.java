@@ -11,6 +11,9 @@ import androidx.annotation.Nullable;
 
 import com.fcu.android.bottlerecycleapp.Gender;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "bottle_recycle.db";
@@ -311,6 +314,65 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put("RecycleStation_Latitude", recycleStation.getLatitude());
             values.put("RecycleStation_Longitude", recycleStation.getLongitude());
             return db.insert(TABLE_RECYCLE_STATION, null, values) != -1;
+        }
+    }
+
+    /**
+     * 根據用戶 ID 獲取剛用戶的所有回收記錄
+     * @param userId 用戶 ID
+     * @return 回收記錄列表
+     */
+    public List<RecycleRecord> getAllRecycleRecordsByUserId(int userId) {
+        String query = "SELECT * FROM " + TABLE_USER_RECYCLE_RECORD + " WHERE User_ID = ?";
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                List<RecycleRecord> records = new ArrayList<>();
+                do {
+                    RecycleRecord record = new RecycleRecord();
+                    record.setRecycleRecordId(cursor.getInt(cursor.getColumnIndexOrThrow("User_Recycle_Record_ID")));
+                    record.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("User_ID")));
+                    record.setRecycleStationId(cursor.getInt(cursor.getColumnIndexOrThrow("RecycleStation_ID")));
+                    record.setRecycleTime(cursor.getString(cursor.getColumnIndexOrThrow("Recycle_Date")));
+                    record.setRecycleWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Recycle_Weight")));
+                    records.add(record);
+                } while (cursor.moveToNext());
+                return records;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根據回收站 ID 查找回收站
+     * @param recycleStationId 回收站 ID
+     * @return 回收站
+     */
+    public RecycleStation findStationById(int recycleStationId) {
+        String query = "SELECT * FROM " + TABLE_RECYCLE_STATION + " WHERE RecycleStation_ID = ?";
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(recycleStationId)})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                RecycleStation station = new RecycleStation();
+                station.setId(cursor.getInt(cursor.getColumnIndexOrThrow("RecycleStation_ID")));
+                station.setName(cursor.getString(cursor.getColumnIndexOrThrow("RecycleStation_Name")));
+                station.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("RecycleStation_Address")));
+                station.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Latitude")));
+                station.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Longitude")));
+                return station;
+            }
+        }
+        return null;
+    }
+
+    public boolean addRecycleRecord(@NonNull RecycleRecord record) {
+        try (SQLiteDatabase db = getWritableDatabase()) {
+            ContentValues values = new ContentValues();
+            values.put("User_ID", record.getUserId());
+            values.put("RecycleStation_ID", record.getRecycleStationId());
+            values.put("Recycle_Date", record.getRecycleTime());
+            values.put("Recycle_Weight", record.getRecycleWeight());
+            return db.insert(TABLE_USER_RECYCLE_RECORD, null, values) != -1;
         }
     }
 }
