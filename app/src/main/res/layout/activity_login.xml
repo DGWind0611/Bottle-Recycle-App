@@ -51,47 +51,38 @@
 
     <EditText
         android:id="@+id/et_user_name"
+        style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:background="#DEDEDE"
-        android:backgroundTint="#DEDEDE"
-        android:ems="10"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:hint="ex: jon.smith@email.com"
         android:inputType="text"
-        android:textColorHint="#80888888"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tv_email"
         app:layout_constraintTop_toBottomOf="@+id/tv_email" />
 
     <EditText
         android:id="@+id/et_login_password"
+        style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:background="#DEDEDE"
-        android:ems="10"
-        android:hint="*********"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="********"
         android:inputType="textPassword"
-        android:textColorHint="#80888888"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_email"
         app:layout_constraintTop_toBottomOf="@+id/tv_password" />
 
     <Button
         android:id="@+id/btn_login"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
-        android:background="#00B140"
+        style="@style/CustomButtonStyle"
+        android:layout_marginTop="16dp"
         android:text="登入"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/et_login_password"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/et_login_password"
         app:layout_constraintTop_toBottomOf="@+id/et_login_password" />
 
     <TextView
@@ -118,24 +109,32 @@
 
         <ImageButton
             android:id="@+id/imageButton"
-            android:layout_width="109dp"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:backgroundTint="#F4F4F4"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/googleg_standard_color_18" />
 
         <ImageButton
             android:id="@+id/imageButton2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_disabled" />
+            android:backgroundTint="#F4F4F4"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/facebook" />
 
         <ImageButton
             android:id="@+id/imageButton3"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal" />
+            android:backgroundTint="#F4F4F4"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/twitter" />
     </LinearLayout>
+
 
     <TextView
         android:id="@+id/textView6"

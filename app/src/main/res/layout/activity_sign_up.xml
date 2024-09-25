@@ -8,26 +8,22 @@
     tools:context=".sign_up.SignUpActivity">
 
 
-
     <ImageButton
-        android:id="@+id/btn_back_to_log"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:id="@+id/btn_back_to_singup"
+        style="@style/CustomImageButtonStyle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_media_previous" />
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="建立你的使用者"
         android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="@+id/btn_back_to_log"
-        app:layout_constraintTop_toBottomOf="@+id/btn_back_to_log" />
+        app:layout_constraintStart_toStartOf="@+id/btn_back_to_singup"
+        app:layout_constraintTop_toBottomOf="@+id/btn_back_to_singup" />
 
     <TextView
         android:id="@+id/tv_user_name_title"
@@ -41,16 +37,13 @@
 
     <EditText
         android:id="@+id/et_user_name"
+        style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:background="#DEDEDE"
-        android:backgroundTint="#DEDEDE"
-        android:ems="10"
-        android:hint=" Jon Smith"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="ex: jon.smith"
         android:inputType="text"
-        android:textColorHint="#80888888"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_user_name_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_user_name_title" />
@@ -67,16 +60,13 @@
 
     <EditText
         android:id="@+id/et_email"
+        style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:background="#DEDEDE"
-        android:backgroundTint="#DEDEDE"
-        android:ems="10"
-        android:hint=" ex: jon.smith@email.com"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="ex: jon.smith@email.com"
         android:inputType="text"
-        android:textColorHint="#80888888"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_email_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_email_title" />
@@ -95,32 +85,25 @@
 
     <EditText
         android:id="@+id/et_phone_number"
+        style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:background="#DEDEDE"
-        android:backgroundTint="#DEDEDE"
-        android:ems="10"
-        android:hint=" 09XX-XXXXXX"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="09xxxxxxxx"
         android:inputType="number"
-        android:textColorHint="#80888888"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <Button
         android:id="@+id/btn_sing_up_next_page"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="#00B140"
-        android:text="下一步"
-        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/CustomButtonStyle"
+        android:layout_marginTop="16dp"
+        android:text="同意"
+        app:layout_constraintEnd_toEndOf="@+id/et_phone_number"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/et_phone_number"
         app:layout_constraintTop_toBottomOf="@+id/et_phone_number" />
 
     <LinearLayout
@@ -137,24 +120,32 @@
 
         <ImageButton
             android:id="@+id/imageButton"
-            android:layout_width="109dp"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:backgroundTint="#F4F4F4"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/googleg_standard_color_18" />
 
         <ImageButton
             android:id="@+id/imageButton2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_disabled" />
+            android:backgroundTint="#F4F4F4"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/facebook" />
 
         <ImageButton
             android:id="@+id/imageButton3"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal" />
+            android:backgroundTint="#F4F4F4"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/twitter" />
     </LinearLayout>
+
 
     <TextView
         android:id="@+id/textView13"

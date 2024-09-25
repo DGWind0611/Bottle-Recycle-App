@@ -7,6 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".sign_up.SignUp2Activity">
 
+    <ImageButton
+        android:id="@+id/btn_back_to_singup"
+        style="@style/CustomImageButtonStyle"
+        android:layout_marginStart="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tv_password_title"
         android:layout_width="wrap_content"
@@ -19,18 +26,14 @@
 
     <EditText
         android:id="@+id/et_singup_password"
+        style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:background="#DEDEDE"
-        android:backgroundTint="#DEDEDE"
-        android:ems="10"
-        android:hint=" ********"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="*********"
         android:inputType="textPassword"
-        android:textColorHint="#80888888"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tv_password_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_password_title" />
 
@@ -46,18 +49,14 @@
 
     <EditText
         android:id="@+id/et_confirm_password"
+        style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:background="#DEDEDE"
-        android:backgroundTint="#DEDEDE"
-        android:ems="10"
-        android:hint=" *********"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="*********"
         android:inputType="textPassword"
-        android:textColorHint="#80888888"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tv_comfirm_password"
         app:layout_constraintTop_toBottomOf="@+id/tv_comfirm_password" />
 
@@ -66,23 +65,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="我以了解使用者 政策 &amp; 規範"
+        android:clickable="false"
+        android:enabled="false"
         app:layout_constraintStart_toStartOf="@+id/et_confirm_password"
         app:layout_constraintTop_toBottomOf="@+id/et_confirm_password" />
 
 
     <Button
         android:id="@+id/btn_sing_up"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="#00B140"
-        android:text="註冊"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        style="@style/CustomButtonStyle"
+        android:layout_marginTop="16dp"
+        android:text="同意"
+        app:layout_constraintEnd_toEndOf="@+id/et_singup_password"
+        app:layout_constraintStart_toStartOf="@+id/cb_agree"
         app:layout_constraintTop_toBottomOf="@+id/cb_agree" />
 
     <TextView
@@ -90,11 +85,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:text="建立密碼"
         android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_back_to_singup" />
 
     <TextView
         android:id="@+id/textView5"
@@ -107,37 +102,45 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_sing_up" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5">
+    android:id="@+id/linearLayout"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="32dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="32dp"
+    android:orientation="horizontal"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/textView5">
 
         <ImageButton
             android:id="@+id/imageButton"
-            android:layout_width="109dp"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:backgroundTint="#F4F4F4"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/googleg_standard_color_18" />
 
         <ImageButton
             android:id="@+id/imageButton2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_disabled" />
+            android:backgroundTint="#F4F4F4"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/facebook" />
 
         <ImageButton
             android:id="@+id/imageButton3"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal" />
-    </LinearLayout>
+            android:backgroundTint="#F4F4F4"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/twitter" />
+</LinearLayout>
+
 
     <TextView
         android:id="@+id/textView12"
@@ -160,5 +163,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView12"
         app:layout_constraintTop_toTopOf="@+id/textView12" />
+
+    <TextView
+        android:id="@+id/tv_policy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="我以了解使用者 政策 &amp; 規範"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cb_agree"
+        app:layout_constraintStart_toEndOf="@+id/cb_agree"
+        app:layout_constraintTop_toTopOf="@+id/cb_agree" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
