@@ -22,6 +22,7 @@ import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.SharedViewModel;
 import com.fcu.android.bottlerecycleapp.database.User;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentPersonalDataBinding;
+import com.fcu.android.bottlerecycleapp.notification.NotificationActivity;
 import com.fcu.android.bottlerecycleapp.recycle_record.RecycleRecordActivity;
 
 public class PersonalDataFragment extends Fragment {
@@ -29,7 +30,7 @@ public class PersonalDataFragment extends Fragment {
     private FragmentPersonalDataBinding binding;
     private SharedViewModel sharedViewModel;
     private ActivityResultLauncher<Intent> settingActivityLauncher;
-
+    private int userId;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,9 +67,11 @@ public class PersonalDataFragment extends Fragment {
         final TextView tvPriceValue = binding.tvPriceValue;
         final ImageView ivAvatar = binding.ivAvatar;
         final Button btnRecycleRecord = binding.btnRecycleRecord;
+        final ImageButton btnNotification = binding.btnNotification;
 
         sharedViewModel.getData().observe(getViewLifecycleOwner(), data -> {
             if (data != null) {
+                userId = data.getId();
                 String userName = data.getUserName();
                 Double userPrice = data.getEarnMoney();
                 String avatarUrl = data.getUserImage();
@@ -92,6 +95,13 @@ public class PersonalDataFragment extends Fragment {
         btnRecycleRecord.setOnClickListener(v -> {
             // 跳轉到回收記錄頁面
             Intent intent = new Intent(requireActivity(), RecycleRecordActivity.class);
+            startActivity(intent);
+        });
+
+        btnNotification.setOnClickListener(v -> {
+            // 跳轉到通知頁面
+            Intent intent = new Intent(requireActivity(), NotificationActivity.class);
+            intent.putExtra("userId", userId);
             startActivity(intent);
         });
         final TextView textView = binding.tvUserName;
