@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void testLogin() {
-        etUserName.setText(ADMIN_EMAIL);
+        etUserName.setText(USER_EMAIL);
         etPassword.setText(TEST_PASSWORD);
     }
 

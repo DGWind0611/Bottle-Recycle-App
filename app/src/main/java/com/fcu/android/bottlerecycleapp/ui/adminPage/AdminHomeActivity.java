@@ -17,6 +17,7 @@ public class AdminHomeActivity extends AppCompatActivity {
     private Button btnAddUser;
     private Button btnAddRecycleStation;
     private Button btnAddRecycleRecord;
+    private Button btnAddNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class AdminHomeActivity extends AppCompatActivity {
         btnAddUser = findViewById(R.id.btn_admin_add_station);
         btnAddRecycleStation = findViewById(R.id.btn_admin_add_station);
         btnAddRecycleRecord = findViewById(R.id.btn_admin_add_recycle_records);
+        btnAddNotification = findViewById(R.id.btn_admin_add_notification);
 
         btnAddUser.setOnClickListener(v -> {
             Intent intent = new Intent(AdminHomeActivity.this, AddUserActivity.class);
@@ -47,6 +49,12 @@ public class AdminHomeActivity extends AppCompatActivity {
 
         btnAddRecycleRecord.setOnClickListener(v -> {
             Intent intent = new Intent(AdminHomeActivity.this, AddRecycleRecordsActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        btnAddNotification.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminHomeActivity.this, AddNotificationActivity.class);
             startActivity(intent);
             finish();
         });

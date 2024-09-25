@@ -27,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_REMITTANCE_RECORD = "Remittance_Record";
     private static final String TABLE_STATION_FIX_RECORD = "Station_Fix_Record";
     private static final String TABLE_USER_RECYCLE_RECORD = "User_recycle_Record";
-
+    private static final String TABLE_USER_NOTIFICATION = "User_Notification";
 
     public DBHelper(@NonNull Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -46,6 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
         createTableRemittanceRecord(db);
         createTableStationFixRecord(db);
         createTableUserRecycleRecord(db);
+        createUserNotification(db);
     }
 
 
@@ -89,8 +90,11 @@ public class DBHelper extends SQLiteOpenHelper {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + " ("
                 + "Notification_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "User_ID INTEGER, "
+                + "Notification_Title TEXT, "
                 + "Notification_Content TEXT, "
                 + "Notification_Date TEXT, "
+                + "Notification_Time TEXT, "
+                + "Notification_Type TEXT, "
                 + "FOREIGN KEY(User_ID) REFERENCES User(User_ID))";
         db.execSQL(sql);
     }
@@ -146,6 +150,17 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+    private void createUserNotification(@NonNull SQLiteDatabase db) {
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_NOTIFICATION + " ("
+                + "User_ID INTEGER, "
+                + "Notification_ID INTEGER, "
+                + "PRIMARY KEY (User_ID, Notification_ID), "
+                + "FOREIGN KEY(User_ID) REFERENCES User(User_ID), "
+                + "FOREIGN KEY(Notification_ID) REFERENCES Notifications(Notification_ID))";
+        db.execSQL(sql);
+    }
+
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // onUpgrade 則是如果資料庫結構有改變了就會觸發 onUpgrade
@@ -156,7 +171,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param user 用戶
      * @return 是否新增成功
      */
-    public boolean addUser(User user) {
+    public boolean addUser(@NonNull User user) {
         try (SQLiteDatabase db = getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put("User_Name", user.getUserName());
@@ -306,6 +321,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return 0;
     }
 
+    /**
+     * 新增回收站
+     *
+     * @param recycleStation 回收站
+     * @return 是否新增成功
+     */
     public boolean addRecycleStation(@NonNull RecycleStation recycleStation) {
         try (SQLiteDatabase db = getWritableDatabase()) {
             ContentValues values = new ContentValues();
@@ -365,6 +386,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    /**
+     * 新增回收記錄
+     *
+     * @param record 回收記錄
+     * @return 是否新增成功
+     */
     public boolean addRecycleRecord(@NonNull RecycleRecord record) {
         try (SQLiteDatabase db = getWritableDatabase()) {
             ContentValues values = new ContentValues();
@@ -375,4 +402,88 @@ public class DBHelper extends SQLiteOpenHelper {
             return db.insert(TABLE_USER_RECYCLE_RECORD, null, values) != -1;
         }
     }
+
+    /**
+     * 獲取該user所有通知
+     *
+     * @param userId 用戶 ID
+     * @return 通知列表
+     */
+    public ArrayList<Notification> getUserNotifications(int userId) {
+        ArrayList<Notification> notifications = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT n.Notification_ID, n.Notification_Title, n.Notification_Content, " +
+                "n.Notification_Date, n.Notification_Time, n.Notification_Type " +
+                "FROM Notifications n " +
+                "LEFT JOIN User_Notification un ON n.Notification_ID = un.Notification_ID " +
+                "WHERE un.User_ID = ? OR n.Notification_Type = ?";
+
+        try (Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId), Type.ALL_USERS.name()})) {
+            if (cursor.moveToFirst()) {
+                do {
+                    int notificationId = cursor.getInt(cursor.getColumnIndexOrThrow("Notification_ID"));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow("Notification_Title"));
+                    String content = cursor.getString(cursor.getColumnIndexOrThrow("Notification_Content"));
+                    String date = cursor.getString(cursor.getColumnIndexOrThrow("Notification_Date"));
+                    String time = cursor.getString(cursor.getColumnIndexOrThrow("Notification_Time"));
+                    String typeStr = cursor.getString(cursor.getColumnIndexOrThrow("Notification_Type"));
+                    Type type = Type.valueOf(typeStr);
+
+                    Notification notification = new Notification(notificationId, userId, title, content, date, time, type);
+                    notifications.add(notification);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            db.close();
+        }
+        return notifications;
+    }
+
+
+    /**
+     * 新增通知
+     *
+     * @param notification 通知
+     * @return 是否新增成功
+     */
+    public boolean addNotification(@NonNull Notification notification) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long notificationId;
+        try {
+            // 新增通知到 Notifications 表
+            ContentValues values = new ContentValues();
+            values.put("Notification_Title", notification.getTitle());
+            values.put("Notification_Content", notification.getContent());
+            values.put("Notification_Date", notification.getDate());
+            values.put("Notification_Time", notification.getTime());
+            values.put("Notification_Type", notification.getType().toString());
+
+            notificationId = db.insert(TABLE_NOTIFICATIONS, null, values);
+
+            // 檢查通知是否成功插入
+            if (notificationId == -1) {
+                return false; // 插入失敗
+            }
+
+            // 如果是 SPECIFIC_USER，則在 User_Notification 表中插入關聯
+            if (notification.getType() == Type.SPECIFIC_USER && notification.getUserId() != 0) {
+                ContentValues userNotificationValues = new ContentValues();
+                userNotificationValues.put("User_ID", notification.getUserId());
+                userNotificationValues.put("Notification_ID", notificationId);
+                long userNotificationId = db.insert(TABLE_USER_NOTIFICATION, null, userNotificationValues);
+
+                // 檢查用戶-通知關聯是否成功插入
+                if (userNotificationId == -1) {
+                    return false; // 插入失敗
+                }
+            }
+            return true; // 成功新增通知
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            db.close(); // 確保關閉資料庫
+        }
+    }
+
 }
