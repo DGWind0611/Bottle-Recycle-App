@@ -4,16 +4,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fcu.android.bottlerecycleapp.Gender;
-import com.fcu.android.bottlerecycleapp.R;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -30,10 +29,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_USER_RECYCLE_RECORD = "User_recycle_Record";
 
 
-    public DBHelper(@NonNull Context context, @NonNull String name, @NonNull CursorFactory factory,
-                    int version) {
+    public DBHelper(@NonNull Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-
     }
 
     @Override
@@ -49,8 +46,6 @@ public class DBHelper extends SQLiteOpenHelper {
         createTableRemittanceRecord(db);
         createTableStationFixRecord(db);
         createTableUserRecycleRecord(db);
-        testUser(db);
-
     }
 
 
@@ -65,6 +60,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "QR_Code String, "
                 + "Donate_Money REAL, "
                 + "Gender TEXT, "
+                + "Role TEXT, "
                 + "UserImage TEXT ) ";
         db.execSQL(sql);
     }
@@ -150,17 +146,18 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // onUpgrade 則是如果資料庫結構有改變了就會觸發 onUpgrade
+    }
 
     /**
-     * 新增使用者
-     *
-     * @param user 使用者資料
+     * 新增用戶
+     * @param user 用戶
      * @return 是否新增成功
      */
     public boolean addUser(User user) {
-        SQLiteDatabase db = null;
-        try {
-            db = getWritableDatabase();
+        try (SQLiteDatabase db = getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put("User_Name", user.getUserName());
             values.put("E_mail", user.getEmail());
@@ -170,18 +167,59 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put("QR_Code", user.getQrCode());
             values.put("Donate_Money", user.getDonateMoney());
             values.put("Gender", user.getGender().toString());
+            values.put("Role", user.getRole().toString());
             values.put("UserImage", user.getUserImage());
-            long result = db.insert(TABLE_USER, null, values);
-            return result != -1;
-        } finally {
-            if (db != null) {
-                db.close();
-            }
+            return db.insert(TABLE_USER, null, values) != -1;
         }
     }
 
-    // 建立user物件
-    private User buildUserObject(Cursor cursor) {
+    /**
+     * 根據用戶 ID 查找用戶
+     *
+     * @param userId 用戶 ID
+     * @return 用戶
+     */
+    public User findUserById(int userId) {
+        return findUser("User_ID", String.valueOf(userId));
+    }
+
+    /**
+     * 根據郵箱查找用戶
+     *
+     * @param email 郵箱
+     * @return 用戶
+     */
+    public User findUserByEmail(String email) {
+        return findUser("E_mail", email);
+    }
+
+    /**
+     * 根據欄位名和值查找用戶
+     *
+     * @param column 欄位名
+     * @param value  欄位值
+     * @return
+     */
+    @Nullable
+    private User findUser(String column, String value) {
+        String query = "SELECT * FROM " + TABLE_USER + " WHERE " + column + " = ?";
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, new String[]{value})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                return buildUserObject(cursor);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 獲取所有用戶
+     *
+     * @param cursor 游標
+     * @return 用戶列表
+     */
+    @NonNull
+    private User buildUserObject(@NonNull Cursor cursor) {
         User user = new User();
         user.setId(cursor.getInt(cursor.getColumnIndexOrThrow("User_ID")));
         user.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("User_Name")));
@@ -192,132 +230,149 @@ public class DBHelper extends SQLiteOpenHelper {
         user.setQrCode(cursor.getString(cursor.getColumnIndexOrThrow("QR_Code")));
         user.setDonateMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Donate_Money")));
         user.setGender(Gender.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("Gender"))));
+        user.setRole(Role.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("Role"))));
         user.setUserImage(cursor.getString(cursor.getColumnIndexOrThrow("UserImage")));
-        cursor.close();
         return user;
     }
 
     /**
-     * 根據使用者 ID 取得使用者資料
+     * 更新用戶資料
      *
-     * @param userId 使用者 ID
-     * @return 使用者資料
-     */
-    public User findUserById(int userId) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("User", null, "id = ?", new String[]{String.valueOf(userId)}, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            User user = new User();
-            user = buildUserObject(cursor);
-            return user;
-        }
-        return null;
-    }
-
-    /**
-     * 透過電子郵件尋找使用者
-     *
-     * @param email 電子郵件
-     * @return 使用者資料
-     */
-    public User findUserByEmail(String email) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USER, null, "E_mail = ?", new String[]{email}, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            User user = new User();
-            user = buildUserObject(cursor);
-            return user;
-        }
-        return null;
-    }
-
-    /**
-     * 更新使用者資料
-     *
-     * @param user 使用者資料
+     * @param user 用戶
      * @return 是否更新成功
      */
-    public boolean updateUser(User user) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("User_Name", user.getUserName());
-        values.put("E_mail", user.getEmail());
-        values.put("Password", user.getPassword());
-        values.put("Phone_Number", user.getPhoneNumber());
-        values.put("Earn_Money", user.getEarnMoney());
-        values.put("QR_Code", user.getQrCode());
-        values.put("Donate_Money", user.getDonateMoney());
-        values.put("Gender", user.getGender().toString());
-        values.put("UserImage", user.getUserImage());
-        int result = db.update(TABLE_USER, values, "User_ID = ?", new String[]{String.valueOf(user.getId())});
-        return result > 0;
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // onUpgrade 則是如果資料庫結構有改變了就會觸發 onUpgrade
+    public boolean updateUser(@NonNull User user) {
+        try (SQLiteDatabase db = getWritableDatabase()) {
+            ContentValues values = new ContentValues();
+            values.put("User_Name", user.getUserName());
+            values.put("E_mail", user.getEmail());
+            values.put("Password", user.getPassword());
+            values.put("Phone_Number", user.getPhoneNumber());
+            values.put("Earn_Money", user.getEarnMoney());
+            values.put("QR_Code", user.getQrCode());
+            values.put("Donate_Money", user.getDonateMoney());
+            values.put("Gender", user.getGender().toString());
+            values.put("Role", user.getRole().toString());
+            values.put("UserImage", user.getUserImage());
+            return db.update(TABLE_USER, values, "User_ID = ?", new String[]{String.valueOf(user.getId())}) > 0;
+        }
     }
 
     /**
-     * 檢查電子郵件是否已經註冊過
+     * 檢查用戶是否唯一
      *
-     * @param email 電子郵件
-     * @return 是否已經註冊過
+     * @param column 欄位名
+     * @param value  欄位值
+     * @return
+     */
+    public boolean isUnique(String column, String value) {
+        String query = "SELECT COUNT(1) FROM " + TABLE_USER + " WHERE " + column + " = ?";
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, new String[]{value})) {
+            return cursor != null && cursor.moveToFirst() && cursor.getInt(0) == 0;
+        }
+    }
+
+    /**
+     * 檢查郵箱是否唯一
+     * @param email 郵箱
+     * @return 是否唯一
      */
     public boolean checkEmail(String email) {
-        SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT * FROM User WHERE E_mail = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{email});
-        boolean result = cursor.getCount() == 0;
-        cursor.close();
-        db.close();
-        return result;
+        return isUnique("E_mail", email);
     }
 
     /**
-     * 檢查手機號碼是否已經註冊過
-     *
+     * 檢查手機號碼是否唯一
      * @param phoneNumber 手機號碼
-     * @return 是否已經註冊過
+     * @return
      */
     public boolean checkPhoneNumber(String phoneNumber) {
-        SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT * FROM User WHERE Phone_Number = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{phoneNumber});
-        boolean result = cursor.getCount() == 0;
-        cursor.close();
-        db.close();
-        return result;
+        return isUnique("Phone_Number", phoneNumber);
     }
 
     /**
-     * 取得當前使用者數量
-     *
-     * @return 使用者數量
+     * 獲取用戶數量
+     * @return 當前用戶數量
      */
-    public int getUserLength() {
-        SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT * FROM User";
-        Cursor cursor = db.rawQuery(query, null);
-        int result = cursor.getCount();
-        cursor.close();
-        db.close();
-        return result;
+    public int getUserCount() {
+        String query = "SELECT COUNT(*) FROM " + TABLE_USER;
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        }
+        return 0;
     }
 
-    // 測試資料
-    private void testUser(@NonNull SQLiteDatabase db) {
-        ContentValues values = new ContentValues();
-        Date date = new Date();
-        values.put("User_Name", "test");
-        values.put("E_mail", "test@test.com");
-        values.put("Password", "Test123456");
-        values.put("Phone_Number", "0912345678");
-        values.put("Earn_Money", 0);
-        values.put("QR_Code", date.getTime() + getUserLength());
-        values.put("Donate_Money", 0);
-        values.put("Gender", Gender.UNDEFINED.toString());
-        values.put("UserImage", R.drawable.avatar);
-        db.insert(TABLE_USER, null, values);
+    public boolean addRecycleStation(@NonNull RecycleStation recycleStation) {
+        try (SQLiteDatabase db = getWritableDatabase()) {
+            ContentValues values = new ContentValues();
+            values.put("RecycleStation_Name", recycleStation.getName());
+            values.put("RecycleStation_Address", recycleStation.getAddress());
+            values.put("RecycleStation_Latitude", recycleStation.getLatitude());
+            values.put("RecycleStation_Longitude", recycleStation.getLongitude());
+            return db.insert(TABLE_RECYCLE_STATION, null, values) != -1;
+        }
+    }
+
+    /**
+     * 根據用戶 ID 獲取剛用戶的所有回收記錄
+     * @param userId 用戶 ID
+     * @return 回收記錄列表
+     */
+    public List<RecycleRecord> getAllRecycleRecordsByUserId(int userId) {
+        String query = "SELECT * FROM " + TABLE_USER_RECYCLE_RECORD + " WHERE User_ID = ?";
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                List<RecycleRecord> records = new ArrayList<>();
+                do {
+                    RecycleRecord record = new RecycleRecord();
+                    record.setRecycleRecordId(cursor.getInt(cursor.getColumnIndexOrThrow("User_Recycle_Record_ID")));
+                    record.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("User_ID")));
+                    record.setRecycleStationId(cursor.getInt(cursor.getColumnIndexOrThrow("RecycleStation_ID")));
+                    record.setRecycleTime(cursor.getString(cursor.getColumnIndexOrThrow("Recycle_Date")));
+                    record.setRecycleWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Recycle_Weight")));
+                    records.add(record);
+                } while (cursor.moveToNext());
+                return records;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根據回收站 ID 查找回收站
+     * @param recycleStationId 回收站 ID
+     * @return 回收站
+     */
+    public RecycleStation findStationById(int recycleStationId) {
+        String query = "SELECT * FROM " + TABLE_RECYCLE_STATION + " WHERE RecycleStation_ID = ?";
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(recycleStationId)})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                RecycleStation station = new RecycleStation();
+                station.setId(cursor.getInt(cursor.getColumnIndexOrThrow("RecycleStation_ID")));
+                station.setName(cursor.getString(cursor.getColumnIndexOrThrow("RecycleStation_Name")));
+                station.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("RecycleStation_Address")));
+                station.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Latitude")));
+                station.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Longitude")));
+                return station;
+            }
+        }
+        return null;
+    }
+
+    public boolean addRecycleRecord(@NonNull RecycleRecord record) {
+        try (SQLiteDatabase db = getWritableDatabase()) {
+            ContentValues values = new ContentValues();
+            values.put("User_ID", record.getUserId());
+            values.put("RecycleStation_ID", record.getRecycleStationId());
+            values.put("Recycle_Date", record.getRecycleTime());
+            values.put("Recycle_Weight", record.getRecycleWeight());
+            return db.insert(TABLE_USER_RECYCLE_RECORD, null, values) != -1;
+        }
     }
 }

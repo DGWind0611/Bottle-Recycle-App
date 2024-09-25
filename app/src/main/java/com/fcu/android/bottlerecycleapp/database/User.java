@@ -14,11 +14,12 @@ public class User implements Serializable {
     private String qrCode;
     private Double donateMoney;
     private Gender gender;
+    private Role role;
     private String userImage;
 
 
     public User(int id, String userName, String email, String password, String phoneNumber,
-                Double earnMoney, String qrCode, Double donateMoney,Gender gender, String userImage) {
+                Double earnMoney, String qrCode, Double donateMoney, Gender gender, Role role, String userImage) {
         this.id = id;
         this.userName = userName;
         this.email = email;
@@ -28,6 +29,7 @@ public class User implements Serializable {
         this.qrCode = qrCode;
         this.donateMoney = donateMoney;
         this.gender = gender;
+        this.role = role;
         this.userImage = userImage;
     }
 
@@ -114,5 +116,13 @@ public class User implements Serializable {
 
     public void setUserImage(String userImage) {
         this.userImage = userImage;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

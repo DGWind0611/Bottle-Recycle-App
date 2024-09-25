@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.ui.notifications;
+package com.fcu.android.bottlerecycleapp.ui.personal_data;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -52,7 +52,7 @@ public class PersonalDataSettingActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.et_password_setting);
         spGender = findViewById(R.id.sp_gender_setting);
 
-        dbHelper = new DBHelper(this, "bottle_recycle.db", null, 1);
+        dbHelper = new DBHelper(this);
 
         User user = (User) getIntent().getSerializableExtra("userData");
         assert user != null;

@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.ui.notifications;
+package com.fcu.android.bottlerecycleapp.ui.personal_data;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

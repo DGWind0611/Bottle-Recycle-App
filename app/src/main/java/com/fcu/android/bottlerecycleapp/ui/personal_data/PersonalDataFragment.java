@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.ui.notifications;
+package com.fcu.android.bottlerecycleapp.ui.personal_data;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -23,6 +22,7 @@ import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.SharedViewModel;
 import com.fcu.android.bottlerecycleapp.database.User;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentPersonalDataBinding;
+import com.fcu.android.bottlerecycleapp.recycle_record.RecycleRecordActivity;
 
 public class PersonalDataFragment extends Fragment {
 
@@ -65,6 +65,7 @@ public class PersonalDataFragment extends Fragment {
         final TextView tvUserName = binding.tvUserName;
         final TextView tvPriceValue = binding.tvPriceValue;
         final ImageView ivAvatar = binding.ivAvatar;
+        final Button btnRecycleRecord = binding.btnRecycleRecord;
 
         sharedViewModel.getData().observe(getViewLifecycleOwner(), data -> {
             if (data != null) {
@@ -88,6 +89,11 @@ public class PersonalDataFragment extends Fragment {
             settingActivityLauncher.launch(intent);
         });
 
+        btnRecycleRecord.setOnClickListener(v -> {
+            // 跳轉到回收記錄頁面
+            Intent intent = new Intent(requireActivity(), RecycleRecordActivity.class);
+            startActivity(intent);
+        });
         final TextView textView = binding.tvUserName;
         personalDataViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;

@@ -49,7 +49,7 @@ public class SignUp2Activity extends AppCompatActivity {
         user = (User) getIntent().getSerializableExtra("user");
 
         // 初始化資料庫輔助類
-        dbHelper = new DBHelper(this, null, null, 1);
+        dbHelper = new DBHelper(this);
 
         // 初始化 UI 元件
         etPassword = findViewById(R.id.et_singup_password);
@@ -80,7 +80,7 @@ public class SignUp2Activity extends AppCompatActivity {
                 // 密碼有效，對密碼進行加密
                 String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
                 // 建立個人 QR Code
-                int userLength = dbHelper.getUserLength();
+                int userLength = dbHelper.getUserCount();
                 String qrcode = createQRCode(userLength);
                 user.setQrCode(qrcode);
                 // 將加密的密碼設置到 User 物件
