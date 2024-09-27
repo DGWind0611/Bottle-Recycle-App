@@ -12,7 +12,9 @@ import androidx.annotation.Nullable;
 import com.fcu.android.bottlerecycleapp.Gender;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -28,6 +30,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_STATION_FIX_RECORD = "Station_Fix_Record";
     private static final String TABLE_USER_RECYCLE_RECORD = "User_recycle_Record";
     private static final String TABLE_USER_NOTIFICATION = "User_Notification";
+    private static final String TABLE_ACTIVITY = "Activity";
+    private static final String TABLE_USER_ACTIVITY = "User_Activity";
 
     public DBHelper(@NonNull Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -47,6 +51,8 @@ public class DBHelper extends SQLiteOpenHelper {
         createTableStationFixRecord(db);
         createTableUserRecycleRecord(db);
         createUserNotification(db);
+        createActivityTable(db);
+        createUserActivityRelationTable(db);
     }
 
 
@@ -157,6 +163,29 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "PRIMARY KEY (User_ID, Notification_ID), "
                 + "FOREIGN KEY(User_ID) REFERENCES User(User_ID), "
                 + "FOREIGN KEY(Notification_ID) REFERENCES Notifications(Notification_ID))";
+        db.execSQL(sql);
+    }
+
+    private void createActivityTable(@NonNull SQLiteDatabase db) {
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_ACTIVITY + " ("
+                + "Activity_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "Activity_Name TEXT, "
+                + "Activity_Start_Time TEXT, "
+                + "Activity_END_Time TEXT, "
+                + "Activity_Goal INTEGER, "
+                + "Activity_Description TEXT )";
+        db.execSQL(sql);
+    }
+
+    private void createUserActivityRelationTable(@NonNull SQLiteDatabase db) {
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_ACTIVITY + " ("
+                + "User_ID INTEGER, "
+                + "Activity_ID INTEGER, "
+                + "Current_Achievement INTEGER, "
+                + "Goal_Achievement INTEGER, "
+                + "PRIMARY KEY (User_ID, Activity_ID), "
+                + "FOREIGN KEY(User_ID) REFERENCES User(User_ID), "
+                + "FOREIGN KEY(Activity_ID) REFERENCES Activity(Activity_ID))";
         db.execSQL(sql);
     }
 
@@ -484,6 +513,134 @@ public class DBHelper extends SQLiteOpenHelper {
         } finally {
             db.close(); // 確保關閉資料庫
         }
+    }
+
+    /**
+     * 檢查活動是否過期
+     *
+     * @param StartTime 開始時間
+     * @param EndTime   結束時間
+     * @return 是否過期
+     */
+    private boolean isActivityExpired(String StartTime, String EndTime) {
+        long currentTime = System.currentTimeMillis();
+        long startTime = Long.parseLong(StartTime);
+        long endTime = Long.parseLong(EndTime);
+        return currentTime < startTime || currentTime > endTime;
+    }
+
+    /**
+     * 新增活動，並同時將所有用戶加入活動
+     *
+     * @param activity 活動
+     * @return 是否新增成功
+     */
+    public boolean addActivity(@NonNull MyActivity activity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long activityId;
+        try {
+            ContentValues values = new ContentValues();
+            values.put("Activity_Name", activity.getActivityName());
+            values.put("Activity_Description", activity.getActivityDescription());
+            values.put("Activity_Start_Time", activity.getActivityStartTime());
+            values.put("Activity_END_Time", activity.getActivityEndTime());
+            values.put("Activity_Goal", activity.getActivityGoal());
+            activityId = db.insert(TABLE_ACTIVITY, null, values);
+
+            if (activityId == -1) {
+                return false;
+            } else {
+                boolean isExpired = isActivityExpired(activity.getActivityStartTime(), activity.getActivityEndTime());
+                addUsersToActivity(db, activityId, activity.getActivityGoal());
+                return true;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            db.close();
+        }
+    }
+
+    /**
+     * 將所有用戶加入活動
+     *
+     * @param db         資料庫
+     * @param activityId 活動 ID
+     * @param goal       目標
+     */
+    private void addUsersToActivity(SQLiteDatabase db, long activityId, int goal) {
+        String query = "SELECT User_ID FROM User";
+        try (Cursor cursor = db.rawQuery(query, null)) {
+            if (cursor.moveToFirst()) {
+                do {
+                    int userId = cursor.getInt(cursor.getColumnIndexOrThrow("User_ID"));
+                    ContentValues userActivityValues = new ContentValues();
+                    userActivityValues.put("User_ID", userId);
+                    userActivityValues.put("Activity_ID", activityId);
+                    userActivityValues.put("Current_Achievement", 0);
+                    userActivityValues.put("Goal_Achievement", goal);
+                    db.insert(TABLE_USER_ACTIVITY, null, userActivityValues);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 尋找所有尚未過期的活動ID及其目標
+     *
+     * @return 活動ID及其目標
+     */
+    public Map<Integer, Integer> findAllUnExpiredActivities() {
+        Map<Integer, Integer> activities = new HashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT Activity_ID, Activity_Goal, Activity_Start_Time, Activity_END_Time FROM Activity";
+
+        try (Cursor cursor = db.rawQuery(query, null)) {
+            if (cursor.moveToFirst()) {
+                do {
+                    int activityId = cursor.getInt(cursor.getColumnIndexOrThrow("Activity_ID"));
+                    String startTime = cursor.getString(cursor.getColumnIndexOrThrow("Activity_Start_Time"));
+                    String endTime = cursor.getString(cursor.getColumnIndexOrThrow("Activity_END_Time"));
+                    int goal = cursor.getInt(cursor.getColumnIndexOrThrow("Activity_Goal"));
+
+                    if (!isActivityExpired(startTime, endTime)) {
+                        activities.put(activityId, goal);
+                    }
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            db.close();
+        }
+        return activities;
+    }
+
+    /**
+     * 將指定的用戶加入所有未過期的活動
+     *
+     * @param userId 用戶ID
+     * @return 是否加入成功
+     */
+    public boolean addUserToAllUnExpiredActivities( int userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Map<Integer, Integer> unExpiredActivities = findAllUnExpiredActivities();
+        for (Map.Entry<Integer, Integer> entry : unExpiredActivities.entrySet()) {
+            int activityId = entry.getKey();
+            int goal = entry.getValue();
+
+            try {
+                ContentValues values = new ContentValues();
+                values.put("User_ID", userId);
+                values.put("Activity_ID", activityId);
+                values.put("Current_Achievement", 0);
+                values.put("Goal_Achievement", goal);
+                db.insert(TABLE_USER_ACTIVITY, null, values);  // 記得執行插入操作
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return true;
     }
 
 }

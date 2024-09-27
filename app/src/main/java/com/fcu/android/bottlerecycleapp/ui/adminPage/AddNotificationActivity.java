@@ -6,6 +6,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fcu.android.bottlerecycleapp.DatePicker;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.Notification;
@@ -25,6 +27,7 @@ public class AddNotificationActivity extends AppCompatActivity {
     private TextView tvSpecificUser;
     private Spinner spNotificationType;
     private Button btnAddNotification;
+    private ImageButton btnCalender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,30 +40,25 @@ public class AddNotificationActivity extends AppCompatActivity {
         etSpecificUser = findViewById(R.id.et_specific_user);
 
         tvSpecificUser = findViewById(R.id.tv_specific_user);
-
         spNotificationType = findViewById(R.id.sp_notification_type);
-
         btnAddNotification = findViewById(R.id.btn_add_notification);
-        spNotificationType = findViewById(R.id.sp_notification_type);
+        btnCalender = findViewById(R.id.btn_calender_annoncement_notification);
 
-        btnAddNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNotification();
-            }
-        });
+        btnAddNotification.setOnClickListener(v -> addNotification());
         setUpNotificationType(spNotificationType, new Notification());
 
+        btnCalender.setOnClickListener(v -> DatePicker.showDateTimePickerDialog(AddNotificationActivity.this,
+                etNotificationDate,
+                etNotificationTime));
     }
 
     private void addNotification() {
         String content = etNotificationContent.getText().toString();
         String date = etNotificationDate.getText().toString();
         String time = etNotificationTime.getText().toString();
-        String type = spNotificationType.getSelectedItem().toString(); // 根據你的 Spinner 資料
 
         // 確認資料是否完整
-        if (content.isEmpty() || date.isEmpty() || time.isEmpty()) {
+        if (content.isEmpty() || date.isEmpty()) {
             Toast.makeText(this, "請填寫所有欄位", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -68,8 +66,8 @@ public class AddNotificationActivity extends AppCompatActivity {
         Notification notification = new Notification();
         notification.setContent(content);
         notification.setDate(date);
-        notification.setTime(time);
-        notification.setType(Type.valueOf(type));
+        notification.setTime(time); // 考慮合併日期和時間
+        notification.setType(Type.valueOf(spNotificationType.getSelectedItem().toString()));
 
         DBHelper dbHelper = new DBHelper(this);
         boolean isAdded = dbHelper.addNotification(notification); // 添加到資料庫的方法

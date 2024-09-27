@@ -1,10 +1,6 @@
 package com.fcu.android.bottlerecycleapp.sign_up;
 
-import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -22,12 +18,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import org.mindrot.jbcrypt.BCrypt;
-
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.User;
 import com.fcu.android.bottlerecycleapp.login.LoginActivity;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Date;
 
@@ -89,8 +85,12 @@ public class SignUp2Activity extends AppCompatActivity {
                 try {
                     boolean isCreate = dbHelper.addUser(user);
                     if (isCreate) {
+                        user.setId(dbHelper.findUserByEmail(user.getEmail()).getId());
                         user.setQrCode(qrcode);
                         Toast.makeText(this, "註冊成功", Toast.LENGTH_SHORT).show();
+
+                        //將可加入的活動加入到資料庫
+                        dbHelper.addUserToAllUnExpiredActivities(user.getId());
 
                         // 註冊成功後，導向登入頁面
                         Intent intent = new Intent(SignUp2Activity.this, LoginActivity.class);
