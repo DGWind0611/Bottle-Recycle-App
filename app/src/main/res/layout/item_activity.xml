@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- 標題文本 -->
+
+    <!-- 進度條 -->
+    <ProgressBar
+        android:id="@+id/pb_achive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:indeterminate="false"
+        android:max="100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 完成百分比文本 -->
+    <TextView
+        android:id="@+id/tv_achive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0%"
+        android:textSize="14sp"
+        app:layout_constraintTop_toTopOf="@id/pb_achive"
+        app:layout_constraintBottom_toBottomOf="@id/pb_achive"
+        app:layout_constraintEnd_toEndOf="@id/pb_achive"
+        app:layout_constraintStart_toStartOf="@id/pb_achive"/>
+
+    <TextView
+        android:id="@+id/tv_activity_title_show"
+        android:layout_width="325dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center_vertical"
+        android:text="活動標題"
+        app:layout_constraintBottom_toBottomOf="@+id/pb_achive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pb_achive"
+        app:layout_constraintTop_toTopOf="@+id/pb_achive" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

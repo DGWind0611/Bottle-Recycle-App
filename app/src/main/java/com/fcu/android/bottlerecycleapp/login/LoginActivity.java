@@ -19,6 +19,7 @@ import com.fcu.android.bottlerecycleapp.MainActivity;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.Role;
+import com.fcu.android.bottlerecycleapp.database.TestData;
 import com.fcu.android.bottlerecycleapp.database.User;
 import com.fcu.android.bottlerecycleapp.sign_up.SignUpActivity;
 import com.fcu.android.bottlerecycleapp.ui.adminPage.AdminHomeActivity;
@@ -26,6 +27,7 @@ import com.fcu.android.bottlerecycleapp.ui.adminPage.AdminHomeActivity;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Date;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,13 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvGoToSignUp;
     private Button btnLogin;
     private DBHelper dbHelper;
-    private final String USER_NAME = "test";
-    private final String ADMIN_NAME = "admin";
     private final String USER_EMAIL = "test@test.com";
     private final String TEST_PASSWORD = "Test123456";
-    private final String ADMIN_EMAIL = "admin@test.com";
-    private final String USER_PHONE = "0911222333";
-    private final String ADMIN_PHONE = "0987878787";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +45,13 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        dbHelper = new DBHelper(this); // 確保 dbHelper 在任何使用之前已初始化
-
+        // 初始化 DBHelper
+        dbHelper = new DBHelper(this);
+        if (dbHelper == null) {
+            Log.e("LoginActivity", "DBHelper 初始化失敗！");
+            Toast.makeText(this, "資料庫初始化失敗，請重新啟動應用程式", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         // 設置視窗邊距
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.loginPage), (v, insets) -> {
@@ -58,27 +60,24 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        // 檢查USER_EMAIL, 如果不存在則新增
-        if (dbHelper.findUserByEmail(USER_EMAIL) == null) {
-            Log.d("LoginActivity", "testUser");
-            testUser();
-        }
-        // 檢查ADMIN_EMAIL, 如果不存在則新增
-        if (dbHelper.findUserByEmail(ADMIN_EMAIL) == null) {
-            Log.d("LoginActivity", "testAdmin");
-            testAdmin();
-        }
+        // 插入測試資料，先檢查是否已存在
+        insertTestData();
 
+        // 取得視圖
         etUserName = findViewById(R.id.et_user_name);
         etPassword = findViewById(R.id.et_login_password);
         btnLogin = findViewById(R.id.btn_login);
         tvGoToSignUp = findViewById(R.id.tv_go_to_sign_up);
+
+        // 測試自動填寫登入資訊
         testLogin();
+
         // 點擊登入按鈕
         btnLogin.setOnClickListener(v -> {
             String userEmail = etUserName.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
+            // 檢查是否為空
             if (userEmail.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "請輸入帳號與密碼", Toast.LENGTH_SHORT).show();
                 return;
@@ -88,19 +87,12 @@ public class LoginActivity extends AppCompatActivity {
             User user = dbHelper.findUserByEmail(userEmail);
             if (user != null) {
                 String storedPassword = user.getPassword();
-                // 使用 BCrypt 進行密碼驗證
+                // 檢查密碼
                 if (BCrypt.checkpw(password, storedPassword)) {
                     if (user.getRole() == Role.ADMIN) {
-                        Intent intent = new Intent(LoginActivity.this, AdminHomeActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else if(user.getRole() == Role.USER){
-                    // 密碼正確，進入主頁面
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    //傳送user至 其他Activity
-                    intent.putExtra("user", user);
-                    startActivity(intent);
-                    finish();
+                        navigateToAdminPage();
+                    } else if (user.getRole() == Role.USER) {
+                        navigateToMainPage(user);
                     }
                 } else {
                     Toast.makeText(this, "密碼錯誤", Toast.LENGTH_SHORT).show();
@@ -110,7 +102,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
         // 點擊前往註冊頁面
         tvGoToSignUp.setOnClickListener(v1 -> {
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
@@ -119,44 +110,46 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 測試自動填寫登入資訊
+     */
     private void testLogin() {
         etUserName.setText(USER_EMAIL);
         etPassword.setText(TEST_PASSWORD);
     }
 
     /**
-     * 測試用戶
+     * 插入測試數據
      */
-    private void testUser() {
-        User user = new User();
-        user.setUserName(USER_NAME);
-        user.setEmail(USER_EMAIL);
-        user.setPassword(BCrypt.hashpw(TEST_PASSWORD, BCrypt.gensalt()));
-        user.setPhoneNumber(USER_PHONE);
-        user.setEarnMoney(0.0);
-        user.setQrCode(String.valueOf(new Date().getTime() + dbHelper.getUserCount()));
-        user.setDonateMoney(0.0);
-        user.setGender(Gender.UNDEFINED);
-        user.setRole(Role.USER);
-        user.setUserImage(null);
-        dbHelper.addUser(user);
+    private void insertTestData() {
+        TestData testData = new TestData();
+        List<User> users = testData.testUser();
+        for (User user : users) {
+            if (dbHelper.findUserByEmail(user.getEmail()) == null) {
+                dbHelper.addUser(user);
+            }
+        }
+        // 你也可以在這裡插入其他測試數據，例如活動和站點：
+        // List<RecycleStation> stations = testData.testStation();
+        // List<MyActivity> activities = testData.testActivity();
     }
 
     /**
-     * 測試管理員
+     * 導向管理員頁面
      */
-    private void testAdmin() {
-        User user = new User();
-        user.setUserName(ADMIN_NAME);
-        user.setEmail(ADMIN_EMAIL);
-        user.setPassword(BCrypt.hashpw(TEST_PASSWORD, BCrypt.gensalt()));
-        user.setPhoneNumber(ADMIN_PHONE);
-        user.setEarnMoney(0.0);
-        user.setQrCode(String.valueOf(new Date().getTime() + dbHelper.getUserCount()));
-        user.setDonateMoney(0.0);
-        user.setGender(Gender.UNDEFINED);
-        user.setRole(Role.ADMIN);
-        user.setUserImage(null);
-        dbHelper.addUser(user);
+    private void navigateToAdminPage() {
+        Intent intent = new Intent(LoginActivity.this, AdminHomeActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    /**
+     * 導向主頁面
+     */
+    private void navigateToMainPage(User user) {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("user", user);
+        startActivity(intent);
+        finish();
     }
 }
