@@ -19,7 +19,8 @@ public class User implements Serializable {
 
 
     public User(int id, String userName, String email, String password, String phoneNumber,
-                Double earnMoney, String qrCode, Double donateMoney, Gender gender, Role role, String userImage) {
+                Double earnMoney, String qrCode, Double donateMoney, Gender gender, Role role,
+                String userImage) {
         this.id = id;
         this.userName = userName;
         this.email = email;

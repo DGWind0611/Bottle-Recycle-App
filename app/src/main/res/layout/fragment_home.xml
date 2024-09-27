@@ -209,6 +209,7 @@
         app:layout_constraintTop_toBottomOf="@+id/frameLayout3" />
 
     <ListView
+        android:id="@+id/lv_activities"
         android:layout_width="409dp"
         android:layout_height="423dp"
         android:layout_marginTop="16dp"
@@ -217,6 +218,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_activity_title2"
-        app:layout_constraintTop_toBottomOf="@+id/tv_activity_title2" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_activity_title2"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
