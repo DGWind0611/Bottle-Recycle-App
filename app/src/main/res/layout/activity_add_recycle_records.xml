@@ -87,13 +87,25 @@
                 android:text="時間"
                 android:textSize="20sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/et_recycle_time"
                 android:layout_width="228dp"
                 android:layout_height="wrap_content"
                 android:gravity="end"
                 android:text="2024/09/25 14:00:00"
                 android:textSize="20sp" />
+
+            <ImageButton
+                android:id="@+id/btn_calender_annoncement_record"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:paddingStart="5dp"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/calendar" />
 
         </LinearLayout>
 

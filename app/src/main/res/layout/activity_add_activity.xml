@@ -65,11 +65,24 @@
 
             <EditText
                 android:id="@+id/et_activity_start_time"
-                android:layout_width="0dp"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start"
                 android:inputType="datetime" />
+
+            <ImageButton
+                android:id="@+id/btn_calender_annoncement_record"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:paddingStart="20dp"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/calendar" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -86,11 +99,23 @@
 
             <EditText
                 android:id="@+id/et_activity_end_time"
-                android:layout_width="0dp"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start"
                 android:inputType="datetime" />
+
+            <ImageButton
+                android:id="@+id/btn_calender_end"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:scaleType="centerInside"
+                android:paddingStart="20dp"
+                app:srcCompat="@drawable/calendar" />
         </LinearLayout>
 
         <LinearLayout
@@ -136,6 +161,16 @@
                 android:minLines="3" />
         </LinearLayout>
     </LinearLayout>
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="100dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_add_activity"

@@ -1,8 +1,11 @@
 package com.fcu.android.bottlerecycleapp.ui.adminPage;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,17 +15,21 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fcu.android.bottlerecycleapp.DatePicker;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.RecycleRecord;
 
+import java.util.Calendar;
+
 public class AddRecycleRecordsActivity extends AppCompatActivity {
 
     private EditText etMachineName;
-    private TextView etRecycleTime;
+    private EditText etRecycleTime;
     private EditText etRecycleWeight;
     private EditText etUserId;
     private Button btnAddRecord;
+    private ImageButton btnCalender;
     private DBHelper dbHelper;
 
     @Override
@@ -42,6 +49,7 @@ public class AddRecycleRecordsActivity extends AppCompatActivity {
         etRecycleWeight = findViewById(R.id.et_recycle_weight);
         etUserId = findViewById(R.id.et_recycle_user_id);
         btnAddRecord = findViewById(R.id.btn_add_recycle_record);
+        btnCalender = findViewById(R.id.btn_calender_annoncement_record);
 
         btnAddRecord.setOnClickListener(v -> {
             String machineName = etMachineName.getText().toString();
@@ -65,5 +73,8 @@ public class AddRecycleRecordsActivity extends AppCompatActivity {
             }
         });
 
+        btnCalender.setOnClickListener(v -> DatePicker.showDatePickerDialog(AddRecycleRecordsActivity.this,etRecycleTime));
+
     }
+
 }
