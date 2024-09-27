@@ -18,14 +18,15 @@
         tools:layout="@layout/fragment_recycle_map" />
 
     <fragment
+        android:id="@+id/navigation_qrcode"
+        android:name="com.fcu.android.bottlerecycleapp.ui.qrcode.QrCodeFragment"
+        android:label="@string/title_QrCode"
+        tools:layout="@layout/fragment_qr_code" />
+
+    <fragment
         android:id="@+id/navigation_PersonalData"
         android:name="com.fcu.android.bottlerecycleapp.ui.personal_data.PersonalDataFragment"
         android:label="@string/title_personal_data"
         tools:layout="@layout/fragment_personal_data" />
 
-    <fragment
-        android:id="@+id/navigation_qrcode"
-        android:name="com.fcu.android.bottlerecycleapp.ui.qrcode.QrCodeFragment"
-        android:label="@string/title_QrCode"
-        tools:layout="@layout/fragment_qr_code" />
 </navigation>

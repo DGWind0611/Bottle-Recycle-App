@@ -16,6 +16,9 @@
         android:theme="@style/Theme.BottleRecycleApp"
         tools:targetApi="31">
         <activity
+            android:name=".ui.adminPage.AddActivityActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.adminPage.AddNotificationActivity"
             android:exported="false" />
         <activity
