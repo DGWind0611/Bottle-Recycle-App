@@ -1,6 +1,7 @@
 package com.fcu.android.bottlerecycleapp.recycle_record;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,13 +53,19 @@ public class RecycleRecordActivity extends AppCompatActivity {
     @NonNull
     private Map<String, List<RecycleRecord>> groupRecordsByMonth(@NonNull List<RecycleRecord> records) {
         Map<String, List<RecycleRecord>> groupedRecords = new HashMap<>();
-        for (RecycleRecord record : records) {
-            // 提取紀錄中的月份，假設紀錄的日期格式為 "yyyy/MM/dd HH:mm"
-            String month = record.getRecycleTime().substring(0, 7); // 取得 "yyyy/MM"
-            if (!groupedRecords.containsKey(month)) {
-                groupedRecords.put(month, new ArrayList<>());
+        if (!records.isEmpty()) {
+            for (RecycleRecord record : records) {
+                // 提取紀錄中的月份，假設紀錄的日期格式為 "yyyy/MM/dd HH:mm"
+                String month = record.getRecycleTime().substring(0, 7); // 取得 "yyyy/MM"
+                if (!groupedRecords.containsKey(month)) {
+                    groupedRecords.put(month, new ArrayList<>());
+                }
+                groupedRecords.get(month).add(record);
             }
-            groupedRecords.get(month).add(record);
+        } else {
+            // 若紀錄列表為空，則回傳空的分組
+            groupedRecords = new HashMap<>();
+            Log.e("RecycleRecordActivity", "No recycle records available");
         }
         return groupedRecords;
     }

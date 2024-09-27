@@ -1,9 +1,11 @@
 package com.fcu.android.bottlerecycleapp.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,7 +26,30 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        final LinearLayout llTransferMoney = binding.llTransferMoney;
         final TextView textView = binding.tvTitle;
+        final LinearLayout llDonate = binding.llDonate;
+        final LinearLayout llPlantTree = binding.llPlantTree;
+        final LinearLayout llRewards = binding.llRewards;
+
+//        llTransferMoney.setOnClickListener(v -> {
+//            Intent intent = new Intent(getActivity(), TransferMoneyActivity.class);
+//            startActivity(intent);
+//        });
+//
+//        llDonate.setOnClickListener(v -> {
+//            Intent intent = new Intent(getActivity(), DonateActivity.class);
+//            startActivity(intent);
+//        });
+//        llPlantTree.setOnClickListener(v -> {
+//            Intent intent = new Intent(getActivity(), PlantTreeActivity.class);
+//            startActivity(intent);
+//        });
+//        llRewards.setOnClickListener(v -> {
+//            Intent intent = new Intent(getActivity(), RewardsActivity.class);
+//            startActivity(intent);
+//        });
+
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }

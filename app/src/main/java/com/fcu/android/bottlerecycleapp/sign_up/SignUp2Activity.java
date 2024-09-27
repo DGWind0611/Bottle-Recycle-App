@@ -57,7 +57,7 @@ public class SignUp2Activity extends AppCompatActivity {
         etConfirmPassword = findViewById(R.id.et_confirm_password);
         cbAgree = findViewById(R.id.cb_agree);
         btnSignUp = findViewById(R.id.btn_sing_up);
-        ibBack = findViewById(R.id.btn_back_to_singup);
+        ibBack = findViewById(R.id.btn_back_to_signup);
         tvPolicy = findViewById(R.id.tv_policy);
 
         // 設定使用者政策和條款

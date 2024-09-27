@@ -9,7 +9,7 @@
 
 
     <ImageButton
-        android:id="@+id/btn_back_to_singup"
+        android:id="@+id/btn_back_to_signup"
         style="@style/CustomImageButtonStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,8 +22,8 @@
         android:layout_marginTop="24dp"
         android:text="建立你的使用者"
         android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="@+id/btn_back_to_singup"
-        app:layout_constraintTop_toBottomOf="@+id/btn_back_to_singup" />
+        app:layout_constraintStart_toStartOf="@+id/btn_back_to_signup"
+        app:layout_constraintTop_toBottomOf="@+id/btn_back_to_signup" />
 
     <TextView
         android:id="@+id/tv_user_name_title"
@@ -40,7 +40,7 @@
         style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
         android:layout_height="36dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:hint="ex: jon.smith"
         android:inputType="text"
@@ -63,7 +63,7 @@
         style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
         android:layout_height="36dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:hint="ex: jon.smith@email.com"
         android:inputType="text"
@@ -76,7 +76,7 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="或者用以下帳號註冊"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.464"
@@ -88,7 +88,7 @@
         style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
         android:layout_height="36dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:hint="09xxxxxxxx"
         android:inputType="number"
@@ -99,7 +99,7 @@
     <Button
         android:id="@+id/btn_sing_up_next_page"
         style="@style/CustomButtonStyle"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="同意"
         app:layout_constraintEnd_toEndOf="@+id/et_phone_number"
         app:layout_constraintHorizontal_bias="0.0"
@@ -111,7 +111,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
