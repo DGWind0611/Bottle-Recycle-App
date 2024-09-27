@@ -92,11 +92,11 @@ public class QrCodeFragment extends Fragment {
             if (isExpanded1) {
                 ivUserCode.setVisibility(View.GONE);  // 隱藏圖片
                 line1.setVisibility(View.GONE);
-                btnExpand1.setImageResource(android.R.drawable.arrow_up_float);  // 更改按鈕圖片為向上箭頭
+                btnExpand1.setImageResource(R.drawable.arrow_up);  // 更改按鈕圖片為向上箭頭
             } else {
                 ivUserCode.setVisibility(View.VISIBLE);  // 顯示圖片
                 line1.setVisibility(View.VISIBLE);
-                btnExpand1.setImageResource(android.R.drawable.arrow_down_float);  // 更改按鈕圖片為向下箭頭
+                btnExpand1.setImageResource(R.drawable.arrow_down);  // 更改按鈕圖片為向下箭頭
             }
             isExpanded1 = !isExpanded1;
         });
@@ -108,13 +108,13 @@ public class QrCodeFragment extends Fragment {
                 btnLeft.setVisibility(View.GONE);
                 btnRight.setVisibility(View.GONE);
                 tvCustomizedName.setVisibility(View.GONE);
-                btnExpand2.setImageResource(android.R.drawable.arrow_up_float);
+                btnExpand2.setImageResource(R.drawable.arrow_up);
             } else {
                 viewPager2.setVisibility(View.VISIBLE);
                 btnLeft.setVisibility(View.VISIBLE);
                 btnRight.setVisibility(View.VISIBLE);
                 tvCustomizedName.setVisibility(View.VISIBLE);
-                btnExpand2.setImageResource(android.R.drawable.arrow_down_float);
+                btnExpand2.setImageResource(R.drawable.arrow_down);
             }
         });
 

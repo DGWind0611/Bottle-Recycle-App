@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -66,7 +67,8 @@ public class PersonalDataFragment extends Fragment {
         final TextView tvUserName = binding.tvUserName;
         final TextView tvPriceValue = binding.tvPriceValue;
         final ImageView ivAvatar = binding.ivAvatar;
-        final Button btnRecycleRecord = binding.btnRecycleRecord;
+        final LinearLayout btnRecycleRecord = binding.btnRecycleRecord;
+        final LinearLayout btnTransferRecord = binding.btnTransferRecord;
         final ImageButton btnNotification = binding.btnNotification;
 
         sharedViewModel.getData().observe(getViewLifecycleOwner(), data -> {
@@ -97,6 +99,14 @@ public class PersonalDataFragment extends Fragment {
             Intent intent = new Intent(requireActivity(), RecycleRecordActivity.class);
             startActivity(intent);
         });
+
+        //TODO: 轉帳記錄功能尚未實作
+//        btnTransferRecord.setOnClickListener(v -> {
+//            // 跳轉到轉帳記錄頁面
+//            Intent intent = new Intent(requireActivity(), TransferRecordActivity.class);
+//            intent.putExtra("userId", userId);
+//            startActivity(intent);
+//        });
 
         btnNotification.setOnClickListener(v -> {
             // 跳轉到通知頁面

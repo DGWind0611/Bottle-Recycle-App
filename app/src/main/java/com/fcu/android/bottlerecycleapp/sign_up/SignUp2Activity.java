@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,8 +35,11 @@ public class SignUp2Activity extends AppCompatActivity {
     private EditText etPassword;
     private EditText etConfirmPassword;
     private CheckBox cbAgree;
+    private TextView tvPolicy; // 使用 TextView 顯示政策和條款
     private Button btnSignUp;
+    private ImageButton ibBack;
     private DBHelper dbHelper;
+    private static final int REQUEST_POLICY = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +57,16 @@ public class SignUp2Activity extends AppCompatActivity {
         etConfirmPassword = findViewById(R.id.et_confirm_password);
         cbAgree = findViewById(R.id.cb_agree);
         btnSignUp = findViewById(R.id.btn_sing_up);
+        ibBack = findViewById(R.id.btn_back_to_signup);
+        tvPolicy = findViewById(R.id.tv_policy);
 
         // 設定使用者政策和條款
         setupPolicyAndTerms();
+
+        ibBack.setOnClickListener(v -> {
+            Intent intent = new Intent(SignUp2Activity.this, SignUpActivity.class);
+            startActivity(intent);
+        });
 
         // 註冊按鈕點擊事件
         btnSignUp.setOnClickListener(v -> {
@@ -107,6 +119,15 @@ public class SignUp2Activity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_POLICY && resultCode == RESULT_OK) {
+            boolean agreed = data.getBooleanExtra("agree", false);
+            cbAgree.setChecked(agreed); // 自動勾選 CheckBox
+        }
+    }
+
     /**
      * 新增 QR CODE
      */
@@ -123,9 +144,8 @@ public class SignUp2Activity extends AppCompatActivity {
         ClickableSpan policyClick = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                // 跳轉到政策頁面
                 Intent intent = new Intent(SignUp2Activity.this, PolicyActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_POLICY); // 使用 startActivityForResult 方法
             }
         };
 
@@ -138,10 +158,9 @@ public class SignUp2Activity extends AppCompatActivity {
         spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.green)),
                 policyStart, policyEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        // 將文字設置到 CheckBox 並啟用可點擊功能
-        cbAgree.setText(spannableString);
-        cbAgree.setMovementMethod(LinkMovementMethod.getInstance());
-        cbAgree.setHighlightColor(ContextCompat.getColor(this, android.R.color.transparent));
+        // 將文字設置到 TextView 並啟用可點擊功能
+        tvPolicy.setText(spannableString);
+        tvPolicy.setMovementMethod(LinkMovementMethod.getInstance());
+        tvPolicy.setHighlightColor(ContextCompat.getColor(this, android.R.color.transparent));
     }
-
 }

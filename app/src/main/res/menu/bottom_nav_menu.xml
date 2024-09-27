@@ -8,17 +8,15 @@
 
     <item
         android:id="@+id/navigation_recycle_map"
-        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:icon="@drawable/map"
         android:title="@string/title_recycle_map" />
-
-    <item
-        android:id="@+id/navigation_PersonalData"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_personal_data" />
-
     <item
         android:id="@+id/navigation_qrcode"
-        android:icon="@drawable/ic_notifications_black_24dp"
+        android:icon="@drawable/qr_code"
         android:title="@string/title_QrCode" />
+    <item
+        android:id="@+id/navigation_PersonalData"
+        android:icon="@drawable/user"
+        android:title="@string/title_personal_data" />
 
 </menu>

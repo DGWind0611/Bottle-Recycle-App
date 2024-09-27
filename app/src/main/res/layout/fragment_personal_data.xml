@@ -65,22 +65,23 @@
 
         <ImageButton
             android:id="@+id/btn_notification"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginEnd="8dp"
             android:background="#00FFFFFF"
             android:src="@drawable/ic_notifications_black_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_setting"
             app:layout_constraintEnd_toStartOf="@+id/btn_setting"
             app:layout_constraintTop_toTopOf="@+id/btn_setting" />
 
         <ImageButton
             android:id="@+id/btn_setting"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="#00FFFFFF"
-            android:src="@android:drawable/ic_menu_preferences"
+            android:background="@drawable/settings"
+            android:scaleType="fitCenter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -125,45 +126,71 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ConstraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@drawable/rounder_corner2"
             android:elevation="4dp"
             android:orientation="horizontal">
 
-            <Button
+            <LinearLayout
                 android:id="@+id/btn_recycle_record"
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="8dp"
-                android:background="#00FFFFFF"
-                android:drawableLeft="@drawable/ic_dashboard_black_24dp"
-                android:drawablePadding="8dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
                 android:gravity="center"
-                android:text="回收紀錄"
-                android:textColor="@color/black"
-                android:textSize="10dp"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_transfer_record"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <Button
+                <ImageView
+                    android:id="@+id/iv_icon2"
+                    android:layout_width="20dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/recycle_sign" />
+
+                <TextView
+                    android:id="@+id/tv_button_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="回收紀錄"
+                    android:textColor="@color/black"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+
+            <LinearLayout
                 android:id="@+id/btn_transfer_record"
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:background="#00FFFFFF"
-                android:drawableLeft="@drawable/ic_dashboard_black_24dp"
                 android:gravity="center"
-                android:text="轉款紀錄"
-                android:textColor="@color/black"
-                android:textSize="10dp"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="@+id/btn_recycle_record"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.619"
                 app:layout_constraintStart_toEndOf="@+id/btn_recycle_record"
                 app:layout_constraintTop_toTopOf="@+id/btn_recycle_record"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0">
+
+                <ImageView
+                    android:id="@+id/iv_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/cash_transfer" />
+
+                <TextView
+                    android:id="@+id/tv_button_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="轉款紀錄"
+                    android:textColor="@color/black"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>

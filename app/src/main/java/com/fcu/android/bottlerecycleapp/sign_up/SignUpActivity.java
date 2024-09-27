@@ -37,7 +37,7 @@ public class SignUpActivity extends AppCompatActivity {
         etPhoneNumber = findViewById(R.id.et_phone_number);
         btnSignUpNext = findViewById(R.id.btn_sing_up_next_page);
         tvBackToLogin = findViewById(R.id.tv_back_to_login2);
-        btnBackToLog = findViewById(R.id.btn_back_to_log);
+        btnBackToLog = findViewById(R.id.btn_back_to_signup);
 
         btnSignUpNext.setOnClickListener(v -> {
             String userName = etUserName.getText().toString().trim();

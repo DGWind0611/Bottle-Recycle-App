@@ -25,7 +25,7 @@ public class PolicyActivity extends AppCompatActivity {
     private PdfRenderer.Page currentPage;
     private ParcelFileDescriptor parcelFileDescriptor;
     private ImageView imageViewPdf;
-    private Button btnAgree;
+    private Button btnAgree,btnDisagree;
     private CheckBox cbConfirmRead;
 
     @Override
@@ -35,6 +35,7 @@ public class PolicyActivity extends AppCompatActivity {
 
         imageViewPdf = findViewById(R.id.imageView_pdf);
         btnAgree = findViewById(R.id.btn_agree);
+        btnDisagree = findViewById(R.id.btn_disagree);
         cbConfirmRead = findViewById(R.id.cb_confirm_read);
 
         btnAgree.setEnabled(false); // 初始禁用「同意」按鈕
@@ -51,10 +52,17 @@ public class PolicyActivity extends AppCompatActivity {
         cbConfirmRead.setOnCheckedChangeListener((buttonView, isChecked) -> btnAgree.setEnabled(isChecked));
         // 典籍同意後回到前一頁
         btnAgree.setOnClickListener(v -> {
-            Intent intent = new Intent(PolicyActivity.this, SignUp2Activity.class);
-            startActivity(intent);
+            Intent intent = new Intent();
+            intent.putExtra("agree", true); // 傳遞勾選狀態
+            setResult(RESULT_OK, intent);
+            finish();
         });
-
+        btnDisagree.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.putExtra("agree", false); // 傳遞勾選狀態
+            setResult(RESULT_OK, intent);
+            finish();
+        });
     }
 
     // 打開 PDF 文件
