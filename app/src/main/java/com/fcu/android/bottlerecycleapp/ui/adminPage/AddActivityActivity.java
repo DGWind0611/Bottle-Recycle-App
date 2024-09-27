@@ -1,7 +1,5 @@
 package com.fcu.android.bottlerecycleapp.ui.adminPage;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,8 +16,6 @@ import com.fcu.android.bottlerecycleapp.DatePicker;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.MyActivity;
-
-import java.util.Calendar;
 
 public class AddActivityActivity extends AppCompatActivity {
 
@@ -61,8 +57,12 @@ public class AddActivityActivity extends AppCompatActivity {
             Toast.makeText(this, "活動已新增", Toast.LENGTH_SHORT).show();
         });
 
-        btnCalenderStart.setOnClickListener(v -> DatePicker.showDatePickerDialog(AddActivityActivity.this,etActivityStartTime));
-        btnCalenderEnd.setOnClickListener(v -> DatePicker.showDatePickerDialog(AddActivityActivity.this,etActivityEndTime));
+        btnCalenderStart.setOnClickListener(v ->
+                DatePicker.showDatePickerDialog(AddActivityActivity.this,
+                        etActivityStartTime));
+        btnCalenderEnd.setOnClickListener(v ->
+                DatePicker.showDatePickerDialog(AddActivityActivity.this,
+                        etActivityEndTime));
     }
 
 }

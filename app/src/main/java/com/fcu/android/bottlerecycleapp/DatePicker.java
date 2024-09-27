@@ -6,6 +6,7 @@ import android.content.Context;
 import android.widget.EditText;
 
 import java.util.Calendar;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DatePicker {
 
@@ -22,7 +23,7 @@ public class DatePicker {
             Date.setText(date);
 
             TimePickerDialog timePickerDialog = new TimePickerDialog(context, (view1, hourOfDay, minute1) -> {
-                String time = hourOfDay + ":" + String.format("%02d", minute1); // 確保分鐘顯示為兩位數
+                String time = hourOfDay + ":" + String.format("%02d:00", minute1); // 確保分鐘顯示為兩位數
                 Time.setText(time);
             }, hour, minute, true);
             timePickerDialog.show();
@@ -39,14 +40,26 @@ public class DatePicker {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-
+        AtomicReference<String> dateTime = new AtomicReference<>();
+        AtomicReference<String> date = new AtomicReference<>();
+        AtomicReference<String> time = new AtomicReference<>();
         DatePickerDialog datePickerDialog = new DatePickerDialog(context, (view, year1, month1, dayOfMonth) -> {
-            String date = year1 + "/" + (month1 + 1) + "/" + dayOfMonth;
-            DateTime.setText(date);
-            TimePickerDialog timePickerDialog = new TimePickerDialog(context, (view1, hourOfDay, minute1) -> {
-                String time = hourOfDay + ":" + String.format("%02d", minute1); // 確保分鐘顯示為兩位數
-                DateTime.setText(DateTime.getText().toString() + " " + time);
-            }, hour, minute, true);
+            date.set(year1 + "/" + (month1 + 1) + "/" + dayOfMonth);
         }, year, month, day);
+        TimePickerDialog timePickerDialog = new TimePickerDialog(context, (view1, hourOfDay, minute1) -> {
+            time.set(hourOfDay + ":" + String.format("%02d:00", minute1)); // 確保分鐘顯示為兩位數
+        }, hour, minute, true);
+        datePickerDialog.setOnDismissListener(dialog -> {
+            if (date.get() != null) {
+                timePickerDialog.show();
+            }
+        });
+        timePickerDialog.setOnDismissListener(dialog -> {
+            if (date.get() != null && time.get() != null) {
+                dateTime.set(date + " " + time);
+                DateTime.setText(dateTime.toString());
+            }
+        });
+        datePickerDialog.show();
     }
 }
