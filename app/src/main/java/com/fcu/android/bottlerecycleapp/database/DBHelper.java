@@ -641,7 +641,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 do {
                     ActivityItem userActivity = new ActivityItem();
                     userActivity.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("User_ID")));
-                    userActivity.setActivityName(cursor.getString(cursor.getColumnIndexOrThrow("Activity_ID")));
+                    userActivity.setActivityId(cursor.getInt(cursor.getColumnIndexOrThrow("Activity_ID")));
                     userActivity.setActivityAchievement(cursor.getInt(cursor.getColumnIndexOrThrow("Current_Achievement")));
                     userActivity.setActivityGoal(cursor.getInt(cursor.getColumnIndexOrThrow("Goal_Achievement")));
                     userActivities.add(userActivity);
@@ -651,5 +651,23 @@ public class DBHelper extends SQLiteOpenHelper {
             db.close();
         }
         return userActivities;
+    }
+
+    public MyActivity findActivityById(int activityId) {
+        String query = "SELECT * FROM " + TABLE_ACTIVITY + " WHERE Activity_ID = ?";
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(activityId)})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                MyActivity activity = new MyActivity();
+                activity.setId(cursor.getInt(cursor.getColumnIndexOrThrow("Activity_ID")));
+                activity.setActivityName(cursor.getString(cursor.getColumnIndexOrThrow("Activity_Name")));
+                activity.setActivityDescription(cursor.getString(cursor.getColumnIndexOrThrow("Activity_Description")));
+                activity.setActivityStartTime(cursor.getString(cursor.getColumnIndexOrThrow("Activity_Start_Time")));
+                activity.setActivityEndTime(cursor.getString(cursor.getColumnIndexOrThrow("Activity_END_Time")));
+                activity.setActivityGoal(cursor.getInt(cursor.getColumnIndexOrThrow("Activity_Goal")));
+                return activity;
+            }
+        }
+        return null;
     }
 }

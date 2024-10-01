@@ -25,7 +25,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private List<ActivityItem> activityList;
     private DBHelper dbHelper;
-    private int userId;
+    private int userId = 1;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -50,7 +50,11 @@ public class HomeFragment extends Fragment {
                 userId = data.getId();
             }
         });
+        Log.d("HomeFragment", "userId: " + userId);
         activityList = dbHelper.getUserActivities(userId);
+        for(ActivityItem activityItem : activityList) {
+            activityItem.setActivityName(dbHelper.findActivityById(activityItem.getActivityId()).getActivityName());
+        }
 
         ActivityAdapter activityAdapter = new ActivityAdapter(getContext(), activityList);
         lvActivity.setAdapter(activityAdapter);
