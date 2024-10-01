@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background_color">#E0EEEC</color>
     <color name="green">#00B140</color>
+    <color name="activity_gray">#F1F3F6</color>
 </resources>
