@@ -18,6 +18,8 @@ import com.fcu.android.bottlerecycleapp.Gender;
 import com.fcu.android.bottlerecycleapp.MainActivity;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
+import com.fcu.android.bottlerecycleapp.database.MyActivity;
+import com.fcu.android.bottlerecycleapp.database.RecycleStation;
 import com.fcu.android.bottlerecycleapp.database.Role;
 import com.fcu.android.bottlerecycleapp.database.TestData;
 import com.fcu.android.bottlerecycleapp.database.User;
@@ -129,9 +131,18 @@ public class LoginActivity extends AppCompatActivity {
                 dbHelper.addUser(user);
             }
         }
-        // 你也可以在這裡插入其他測試數據，例如活動和站點：
-        // List<RecycleStation> stations = testData.testStation();
-        // List<MyActivity> activities = testData.testActivity();
+        List<RecycleStation> stations = testData.testStation();
+        for (RecycleStation station : stations) {
+            if (dbHelper.findStationById(station.getId()) == null) {
+                dbHelper.addRecycleStation(station);
+            }
+        }
+        List<MyActivity> activities = testData.testActivity();
+        for (MyActivity activity : activities) {
+            if (dbHelper.findActivityById(activity.getId()) == null) {
+                dbHelper.addActivity(activity);
+            }
+        }
     }
 
     /**

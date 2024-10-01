@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.fcu.android.bottlerecycleapp.SharedViewModel;
 import com.fcu.android.bottlerecycleapp.database.ActivityItem;
@@ -25,7 +27,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private List<ActivityItem> activityList;
     private DBHelper dbHelper;
-    private int userId;
+    private int userId = 1;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,7 +43,7 @@ public class HomeFragment extends Fragment {
         final LinearLayout llDonate = binding.llDonate;
         final LinearLayout llPlantTree = binding.llPlantTree;
         final LinearLayout llRewards = binding.llRewards;
-        final ListView lvActivity = binding.lvActivities;
+        final RecyclerView rvActivity = binding.rvActivities;
 
         // 從 SharedViewModel 取得uid
         SharedViewModel sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
@@ -50,10 +52,15 @@ public class HomeFragment extends Fragment {
                 userId = data.getId();
             }
         });
+        Log.d("HomeFragment", "userId: " + userId);
         activityList = dbHelper.getUserActivities(userId);
+        for(ActivityItem activityItem : activityList) {
+            activityItem.setActivityName(dbHelper.findActivityById(activityItem.getActivityId()).getActivityName());
+        }
 
         ActivityAdapter activityAdapter = new ActivityAdapter(getContext(), activityList);
-        lvActivity.setAdapter(activityAdapter);
+        rvActivity.setAdapter(activityAdapter);
+        rvActivity.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
 

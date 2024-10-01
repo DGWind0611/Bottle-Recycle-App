@@ -4,12 +4,14 @@ import java.io.Serializable;
 
 public class ActivityItem implements Serializable {
     private int userId;
+    private int activityId;
     private String activityName;
     private int activityAchievement;
     private int activityGoal;
 
-    public ActivityItem(int userId, String activityName, int activityAchievement, int activityGoal) {
+    public ActivityItem(int userId,int activityId, String activityName, int activityAchievement, int activityGoal) {
         this.userId = userId;
+        this.activityId = activityId;
         this.activityName = activityName;
         this.activityAchievement = activityAchievement;
         this.activityGoal = activityGoal;
@@ -25,6 +27,14 @@ public class ActivityItem implements Serializable {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public int getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(int activityId) {
+        this.activityId = activityId;
     }
 
     public String getActivityName() {
