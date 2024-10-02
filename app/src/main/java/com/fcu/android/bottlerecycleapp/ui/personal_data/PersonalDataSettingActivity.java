@@ -21,10 +21,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.fcu.android.bottlerecycleapp.Gender;
+import com.fcu.android.bottlerecycleapp.database.entity.Gender;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.User;
+import com.fcu.android.bottlerecycleapp.database.entity.User;
 
 import java.util.Objects;
 

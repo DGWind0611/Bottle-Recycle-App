@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.fcu.android.bottlerecycleapp.database.User;
+import com.fcu.android.bottlerecycleapp.database.entity.User;
 
 public class SharedViewModel extends ViewModel {
     private final MutableLiveData<User> data = new MutableLiveData<>();

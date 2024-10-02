@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.database;
+package com.fcu.android.bottlerecycleapp.database.entity;
 
 import java.io.Serializable;
 

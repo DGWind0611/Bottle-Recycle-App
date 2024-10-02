@@ -12,10 +12,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.fcu.android.bottlerecycleapp.DatePicker;
+import com.fcu.android.bottlerecycleapp.custom_fuction_class.DatePicker;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.MyActivity;
+import com.fcu.android.bottlerecycleapp.database.entity.MyActivity;
 
 public class AddActivityActivity extends AppCompatActivity {
 

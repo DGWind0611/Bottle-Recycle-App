@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.RecycleStation;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
 
 import java.util.regex.Pattern;
 

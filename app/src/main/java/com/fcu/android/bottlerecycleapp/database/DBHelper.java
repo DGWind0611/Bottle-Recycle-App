@@ -9,7 +9,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fcu.android.bottlerecycleapp.Gender;
+import com.fcu.android.bottlerecycleapp.database.entity.Gender;
+import com.fcu.android.bottlerecycleapp.database.entity.ActivityItem;
+import com.fcu.android.bottlerecycleapp.database.entity.MyActivity;
+import com.fcu.android.bottlerecycleapp.database.entity.Notification;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleRecord;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
+import com.fcu.android.bottlerecycleapp.database.entity.Role;
+import com.fcu.android.bottlerecycleapp.database.entity.Type;
+import com.fcu.android.bottlerecycleapp.database.entity.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;

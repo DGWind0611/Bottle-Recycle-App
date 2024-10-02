@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.recycle_record;
+package com.fcu.android.bottlerecycleapp.ui.recycle_record;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.RecycleRecord;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleRecord;
 
 import java.util.ArrayList;
 import java.util.HashMap;

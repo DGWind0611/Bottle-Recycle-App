@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.sign_up;
+package com.fcu.android.bottlerecycleapp.ui.sign_up;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,8 +22,8 @@ import androidx.core.content.ContextCompat;
 
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.User;
-import com.fcu.android.bottlerecycleapp.login.LoginActivity;
+import com.fcu.android.bottlerecycleapp.database.entity.User;
+import com.fcu.android.bottlerecycleapp.ui.login.LoginActivity;
 
 import org.mindrot.jbcrypt.BCrypt;
 

@@ -22,13 +22,13 @@
             android:name=".ui.adminPage.AddNotificationActivity"
             android:exported="false" />
         <activity
-            android:name=".notification.NotificationActivity"
+            android:name=".ui.notification.NotificationActivity"
             android:exported="false" />
         <activity
             android:name=".ui.adminPage.AddRecycleRecordsActivity"
             android:exported="false" />
         <activity
-            android:name=".recycle_record.RecycleRecordActivity"
+            android:name=".ui.recycle_record.RecycleRecordActivity"
             android:exported="false" />
         <activity
             android:name=".ui.adminPage.AddReycleStationActivity"
@@ -43,16 +43,16 @@
             android:name=".ui.personal_data.PersonalDataSettingActivity"
             android:exported="false" />
         <activity
-            android:name=".sign_up.PolicyActivity"
+            android:name=".ui.sign_up.PolicyActivity"
             android:exported="false" />
         <activity
-            android:name=".sign_up.SignUpActivity"
+            android:name=".ui.sign_up.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".sign_up.SignUp2Activity"
+            android:name=".ui.sign_up.SignUp2Activity"
             android:exported="false" />
         <activity
-            android:name=".login.LoginActivity"
+            android:name=".ui.login.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.BottleRecycleApp.NoActionBar">
             <intent-filter>

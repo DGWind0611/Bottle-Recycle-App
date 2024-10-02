@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.database;
+package com.fcu.android.bottlerecycleapp.database.entity;
 
 public class Notification {
     private int notificationId;

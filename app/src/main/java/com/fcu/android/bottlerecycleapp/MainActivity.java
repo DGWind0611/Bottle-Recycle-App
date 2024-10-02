@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.User;
-import com.fcu.android.bottlerecycleapp.login.LoginActivity;
+import com.fcu.android.bottlerecycleapp.database.entity.User;
+import com.fcu.android.bottlerecycleapp.ui.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AlertDialog;

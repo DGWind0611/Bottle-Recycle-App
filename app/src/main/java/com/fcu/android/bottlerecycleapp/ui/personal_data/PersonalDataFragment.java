@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,10 +20,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.SharedViewModel;
-import com.fcu.android.bottlerecycleapp.database.User;
+import com.fcu.android.bottlerecycleapp.database.entity.User;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentPersonalDataBinding;
-import com.fcu.android.bottlerecycleapp.notification.NotificationActivity;
-import com.fcu.android.bottlerecycleapp.recycle_record.RecycleRecordActivity;
+import com.fcu.android.bottlerecycleapp.ui.notification.NotificationActivity;
+import com.fcu.android.bottlerecycleapp.ui.recycle_record.RecycleRecordActivity;
 
 public class PersonalDataFragment extends Fragment {
 

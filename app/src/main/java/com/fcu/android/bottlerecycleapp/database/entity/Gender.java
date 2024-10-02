@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp;
+package com.fcu.android.bottlerecycleapp.database.entity;
 
 import androidx.annotation.Nullable;
 

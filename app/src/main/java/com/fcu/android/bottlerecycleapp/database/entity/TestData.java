@@ -1,6 +1,4 @@
-package com.fcu.android.bottlerecycleapp.database;
-
-import com.fcu.android.bottlerecycleapp.Gender;
+package com.fcu.android.bottlerecycleapp.database.entity;
 
 import org.mindrot.jbcrypt.BCrypt;
 
