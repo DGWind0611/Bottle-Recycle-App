@@ -20,7 +20,7 @@ import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.entity.MyActivity;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
 import com.fcu.android.bottlerecycleapp.database.entity.Role;
-import com.fcu.android.bottlerecycleapp.database.entity.TestData;
+import com.fcu.android.bottlerecycleapp.database.test_data.TestData;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
 import com.fcu.android.bottlerecycleapp.ui.sign_up.SignUpActivity;
 import com.fcu.android.bottlerecycleapp.ui.adminPage.AdminHomeActivity;

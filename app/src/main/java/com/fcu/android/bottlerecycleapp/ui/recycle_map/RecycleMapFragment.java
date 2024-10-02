@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.fcu.android.bottlerecycleapp.database.DBHelper;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
+import com.fcu.android.bottlerecycleapp.database.entity.StationStatus;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentRecycleMapBinding;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -23,13 +29,12 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RecycleMapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -37,6 +42,7 @@ public class RecycleMapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private MapView mapView;
     private FusedLocationProviderClient fusedLocationClient;
+    private DBHelper dbHelper;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,7 +54,7 @@ public class RecycleMapFragment extends Fragment implements OnMapReadyCallback {
 
         final TextView textView = binding.tvRecycleMapTitle;
         recycleMapViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-
+        dbHelper = new DBHelper(requireContext());
         mapView = binding.mapView;
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
@@ -88,31 +94,38 @@ public class RecycleMapFragment extends Fragment implements OnMapReadyCallback {
 
     private void addRecycleMarkers() {
 
-        //自訂義三種顏色 紅 橙 綠 代表回收站的當前收容量
-        List<BitmapDescriptor> colors = new ArrayList<>();
-        BitmapDescriptor red = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-        BitmapDescriptor orange = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
-        BitmapDescriptor green = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-
-        colors.add(red);
-        colors.add(orange);
-        colors.add(green);
+        // 自訂義五種顏色代表回收站的當前收容量
+        Map<StationStatus, BitmapDescriptor> statusColorMap = new HashMap<>();
+        statusColorMap.put(StationStatus.FULL, BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)); // 滿
+        statusColorMap.put(StationStatus.ALMOST_FULL, BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)); // 快滿
+        statusColorMap.put(StationStatus.HALF_FULL, BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)); // 半滿
+        statusColorMap.put(StationStatus.ALMOST_EMPTY, BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)); // 三成滿
+        statusColorMap.put(StationStatus.EMPTY, BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)); // 空
 
         // 回收站
-        //TODO: 這裡要改成從資料庫讀取回收站的位置
-        List<LatLng> locations = new ArrayList<>();
-        locations.add(new LatLng(25.0330, 121.5654)); // Taipei 101
-        locations.add(new LatLng(25.0375, 121.5637)); // Sun Yat-sen Memorial Hall
+        List<RecycleStation> stations = dbHelper.findAllStations();
 
-        //在地圖上標記回收站
-        for (LatLng location : locations) {
-            mMap.addMarker(new MarkerOptions()
-                    .position(location)
-                    .title("Recycle Station")
-                    .icon(colors.get((int) (Math.random() * 3))));
+        // 在地圖上標記回收站
+        for (RecycleStation station : stations) {
+            LatLng stationLocation = new LatLng(station.getLatitude(), station.getLongitude());
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(stationLocation)
+                    .title(station.getName())
+                    .snippet(station.getAddress());
+
+            // 根據回收站的狀態來設定 icon 顏色
+            BitmapDescriptor color = statusColorMap.get(station.getStatus());
+            if (color != null) {
+                Log.d("RecycleMapFragment", "Station: " + station.getName() + " Status: " + station.getStatus());
+                markerOptions.icon(color);
+            }
+
+            mMap.addMarker(markerOptions);
         }
-        LatLng sydney = new LatLng(25.0330, 121.5654);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        //TODO: 預設為顯示當前位置 目前先以虎尾科大當作中心
+        LatLng defaultLocation = new LatLng(23.70265710296463, 120.42952217510486);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(defaultLocation));
     }
 
     @Override

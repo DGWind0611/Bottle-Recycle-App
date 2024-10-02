@@ -9,13 +9,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fcu.android.bottlerecycleapp.database.entity.Gender;
 import com.fcu.android.bottlerecycleapp.database.entity.ActivityItem;
+import com.fcu.android.bottlerecycleapp.database.entity.Gender;
 import com.fcu.android.bottlerecycleapp.database.entity.MyActivity;
 import com.fcu.android.bottlerecycleapp.database.entity.Notification;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleRecord;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
 import com.fcu.android.bottlerecycleapp.database.entity.Role;
+import com.fcu.android.bottlerecycleapp.database.entity.StationStatus;
 import com.fcu.android.bottlerecycleapp.database.entity.Type;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
 
@@ -29,7 +30,6 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "bottle_recycle.db";
     private static final int DB_VERSION = 1;
     private static final String TABLE_USER = "User";
-    private static final String TABLE_STAFF = "Staff";
     private static final String TABLE_DONATION_RECORD = "Donation_Record";
     private static final String TABLE_NOTIFICATIONS = "Notifications";
     private static final String TABLE_QR_CORD_AGENCY = "QR_Cord_Agency";
@@ -40,6 +40,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_USER_NOTIFICATION = "User_Notification";
     private static final String TABLE_ACTIVITY = "Activity";
     private static final String TABLE_USER_ACTIVITY = "User_Activity";
+    private static final String TABLE_STATION_STATUS_HISTORY = "Station_Status_History";
 
     public DBHelper(@NonNull Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -60,6 +61,7 @@ public class DBHelper extends SQLiteOpenHelper {
         createUserNotification(db);
         createActivityTable(db);
         createUserActivityRelationTable(db);
+        createStationStatusHistory(db);
     }
 
 
@@ -117,7 +119,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "RecycleStation_Name TEXT NOT NULL, "
                 + "RecycleStation_Address TEXT NOT NULL, "
                 + "RecycleStation_Latitude REAL NOT NULL, "
-                + "RecycleStation_Longitude REAL NOT NULL)";
+                + "RecycleStation_Longitude REAL NOT NULL,"
+                + "Current_Status TEXT NOT NULL)";
         db.execSQL(sql);
     }
 
@@ -140,6 +143,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY(RecycleStation_ID) REFERENCES RecycleStation(RecycleStation_ID))";
         db.execSQL(sql);
     }
+
+    private void createStationStatusHistory(@NonNull SQLiteDatabase db) {
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_STATION_STATUS_HISTORY + "("
+                + "StatusHistory_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "RecycleStation_ID INTEGER NOT NULL,"
+                + "Cleaner_ID INTEGER NOT NULL, "
+                + "Status TEXT NOT NULL, "
+                + "Clean_Date TEXT NOT NULL, "
+                + "FOREIGN KEY (Cleaner_ID) REFERENCES User (User_ID), "
+                + "FOREIGN KEY (RecycleStation_ID) REFERENCES RecycleStation (RecycleStation_ID))";
+        db.execSQL(sql);
+    }
+
 
     private void createTableUserRecycleRecord(@NonNull SQLiteDatabase db) {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_RECYCLE_RECORD + " ("
@@ -360,6 +376,7 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put("RecycleStation_Address", recycleStation.getAddress());
             values.put("RecycleStation_Latitude", recycleStation.getLatitude());
             values.put("RecycleStation_Longitude", recycleStation.getLongitude());
+            values.put("Current_Status", recycleStation.getStatus().toString());
             return db.insert(TABLE_RECYCLE_STATION, null, values) != -1;
         }
     }
@@ -391,6 +408,32 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * 獲取所有回收站
+     * @return 回收站列表
+     */
+    public List<RecycleStation> findAllStations() {
+        String query = "SELECT * FROM " + TABLE_RECYCLE_STATION;
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                List<RecycleStation> stations = new ArrayList<>();
+                do {
+                    RecycleStation station = new RecycleStation();
+                    station.setId(cursor.getInt(cursor.getColumnIndexOrThrow("RecycleStation_ID")));
+                    station.setName(cursor.getString(cursor.getColumnIndexOrThrow("RecycleStation_Name")));
+                    station.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("RecycleStation_Address")));
+                    station.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Latitude")));
+                    station.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Longitude")));
+                    station.setStatus(StationStatus.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("Current_Status"))));
+                    stations.add(station);
+                } while (cursor.moveToNext());
+                return stations;
+            }
+        }
+        return null;
+    }
+
+    /**
      * 根據回收站 ID 查找回收站
      * @param recycleStationId 回收站 ID
      * @return 回收站
@@ -406,6 +449,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 station.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("RecycleStation_Address")));
                 station.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Latitude")));
                 station.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Longitude")));
+                station.setStatus(StationStatus.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("Current_Status"))));
                 return station;
             }
         }
