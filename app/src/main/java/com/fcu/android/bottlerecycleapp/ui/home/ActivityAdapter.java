@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.customview.CircularProgressView;
-import com.fcu.android.bottlerecycleapp.database.ActivityItem;
+import com.fcu.android.bottlerecycleapp.database.entity.ActivityItem;
 
 import java.util.List;
 

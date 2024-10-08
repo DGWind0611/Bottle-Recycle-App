@@ -16,9 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.Role;
-import com.fcu.android.bottlerecycleapp.database.User;
-import com.fcu.android.bottlerecycleapp.login.LoginActivity;
+import com.fcu.android.bottlerecycleapp.database.entity.Role;
+import com.fcu.android.bottlerecycleapp.database.entity.User;
+import com.fcu.android.bottlerecycleapp.ui.login.LoginActivity;
 
 import org.mindrot.jbcrypt.BCrypt;
 

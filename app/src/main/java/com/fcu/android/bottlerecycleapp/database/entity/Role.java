@@ -1,8 +1,6 @@
-package com.fcu.android.bottlerecycleapp.database;
+package com.fcu.android.bottlerecycleapp.database.entity;
 
 import androidx.annotation.Nullable;
-
-import com.fcu.android.bottlerecycleapp.Gender;
 
 public enum Role {
     USER("一般用戶"),

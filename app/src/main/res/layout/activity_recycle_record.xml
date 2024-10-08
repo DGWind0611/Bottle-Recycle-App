@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".recycle_record.RecycleRecordActivity">
+    tools:context=".ui.recycle_record.RecycleRecordActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_recycle_record"

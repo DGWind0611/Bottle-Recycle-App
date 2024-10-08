@@ -14,12 +14,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fcu.android.bottlerecycleapp.DatePicker;
+import com.fcu.android.bottlerecycleapp.custom_fuction_class.DatePicker;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.Notification;
-import com.fcu.android.bottlerecycleapp.database.Role;
-import com.fcu.android.bottlerecycleapp.database.Type;
+import com.fcu.android.bottlerecycleapp.database.entity.Notification;
+import com.fcu.android.bottlerecycleapp.database.entity.Role;
+import com.fcu.android.bottlerecycleapp.database.entity.Type;
 
 public class AddNotificationActivity extends AppCompatActivity {
 

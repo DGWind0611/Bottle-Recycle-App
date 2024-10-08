@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.sign_up;
+package com.fcu.android.bottlerecycleapp.ui.sign_up;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

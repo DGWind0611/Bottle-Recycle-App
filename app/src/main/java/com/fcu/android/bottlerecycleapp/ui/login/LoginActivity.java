@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.login;
+package com.fcu.android.bottlerecycleapp.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,21 +14,19 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.fcu.android.bottlerecycleapp.Gender;
 import com.fcu.android.bottlerecycleapp.MainActivity;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.MyActivity;
-import com.fcu.android.bottlerecycleapp.database.RecycleStation;
-import com.fcu.android.bottlerecycleapp.database.Role;
-import com.fcu.android.bottlerecycleapp.database.TestData;
-import com.fcu.android.bottlerecycleapp.database.User;
-import com.fcu.android.bottlerecycleapp.sign_up.SignUpActivity;
+import com.fcu.android.bottlerecycleapp.database.entity.MyActivity;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
+import com.fcu.android.bottlerecycleapp.database.entity.Role;
+import com.fcu.android.bottlerecycleapp.database.test_data.TestData;
+import com.fcu.android.bottlerecycleapp.database.entity.User;
+import com.fcu.android.bottlerecycleapp.ui.sign_up.SignUpActivity;
 import com.fcu.android.bottlerecycleapp.ui.adminPage.AdminHomeActivity;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.Date;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {

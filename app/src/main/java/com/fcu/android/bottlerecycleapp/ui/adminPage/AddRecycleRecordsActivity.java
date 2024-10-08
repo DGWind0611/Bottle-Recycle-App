@@ -1,12 +1,9 @@
 package com.fcu.android.bottlerecycleapp.ui.adminPage;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -15,12 +12,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.fcu.android.bottlerecycleapp.DatePicker;
+import com.fcu.android.bottlerecycleapp.custom_fuction_class.DatePicker;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.RecycleRecord;
-
-import java.util.Calendar;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleRecord;
 
 public class AddRecycleRecordsActivity extends AppCompatActivity {
 

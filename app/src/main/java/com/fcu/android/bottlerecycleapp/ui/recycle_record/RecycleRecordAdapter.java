@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.recycle_record;
+package com.fcu.android.bottlerecycleapp.ui.recycle_record;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
-import com.fcu.android.bottlerecycleapp.database.RecycleRecord;
-import com.fcu.android.bottlerecycleapp.database.RecycleStation;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleRecord;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -1,4 +1,4 @@
-package com.fcu.android.bottlerecycleapp.notification;
+package com.fcu.android.bottlerecycleapp.ui.notification;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fcu.android.bottlerecycleapp.R;
-import com.fcu.android.bottlerecycleapp.database.Notification;
+import com.fcu.android.bottlerecycleapp.database.entity.Notification;
 
 import java.util.List;
 

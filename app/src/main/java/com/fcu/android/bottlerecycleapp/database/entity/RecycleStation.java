@@ -1,28 +1,23 @@
-package com.fcu.android.bottlerecycleapp.database;
+package com.fcu.android.bottlerecycleapp.database.entity;
 
 public class RecycleStation {
     private int id;
     private String name;
     private String address;
-    private double longitude;
     private double latitude;
+    private double longitude;
+    private StationStatus status;
 
     public RecycleStation() {
     }
 
-    public RecycleStation(int id, String name, String address, double longitude, double latitude) {
+    public RecycleStation(int id, String name, String address, double latitude, double longitude, StationStatus status) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.longitude = longitude;
         this.latitude = latitude;
-    }
-
-    public RecycleStation(String name, String address, double longitude, double latitude) {
-        this.name = name;
-        this.address = address;
         this.longitude = longitude;
-        this.latitude = latitude;
+        this.status = status;
     }
 
     public int getId() {
@@ -63,5 +58,13 @@ public class RecycleStation {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public StationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(StationStatus status) {
+        this.status = status;
     }
 }

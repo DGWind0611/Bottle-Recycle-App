@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fcu.android.bottlerecycleapp.SharedViewModel;
-import com.fcu.android.bottlerecycleapp.database.ActivityItem;
+import com.fcu.android.bottlerecycleapp.database.entity.ActivityItem;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentHomeBinding;
 
