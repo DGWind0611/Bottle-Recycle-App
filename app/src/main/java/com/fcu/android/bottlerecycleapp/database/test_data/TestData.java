@@ -4,7 +4,6 @@ import com.fcu.android.bottlerecycleapp.database.entity.Gender;
 import com.fcu.android.bottlerecycleapp.database.entity.MyActivity;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
 import com.fcu.android.bottlerecycleapp.database.entity.Role;
-import com.fcu.android.bottlerecycleapp.database.entity.StationStatus;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -35,11 +34,11 @@ public class TestData {
 
     public List<RecycleStation> testStation() {
         List<RecycleStation> stations = new ArrayList<>();
-        stations.add(new RecycleStation(1, "測試站點1", "地址1", 23.701327108535494, 120.43032060792059, StationStatus.EMPTY));
-        stations.add(new RecycleStation(2, "測試站點2", "地址2", 23.70265710296463, 120.42952217510486, StationStatus.FULL));
-        stations.add(new RecycleStation(3, "測試站點3", "地址3", 23.702789275583562, 120.4281283008651, StationStatus.ALMOST_EMPTY));
-        stations.add(new RecycleStation(4, "測試站點4", "地址4", 23.70063319300604, 120.42862450205226, StationStatus.ALMOST_FULL));
-        stations.add(new RecycleStation(5, "測試站點5", "地址5", 23.699848403143218, 120.43112355166447, StationStatus.EMPTY));
+        stations.add(new RecycleStation(1, "測試站點1", "地址1", 23.701327108535494, 120.43032060792059, 100.50, 50.20));
+        stations.add(new RecycleStation(2, "測試站點2", "地址2", 23.70265710296463, 120.42952217510486, 80, 78));
+        stations.add(new RecycleStation(3, "測試站點3", "地址3", 23.702789275583562, 120.4281283008651, 125.25, 5.60));
+        stations.add(new RecycleStation(4, "測試站點4", "地址4", 23.70063319300604, 120.42862450205226, 12, 11.2));
+        stations.add(new RecycleStation(5, "測試站點5", "地址5", 23.699848403143218, 120.43112355166447, 100, 35));
         return stations;
     }
 

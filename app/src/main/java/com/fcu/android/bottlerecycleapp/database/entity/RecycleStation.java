@@ -6,18 +6,20 @@ public class RecycleStation {
     private String address;
     private double latitude;
     private double longitude;
-    private StationStatus status;
+    private double maxWeight;
+    private double currentWeight;
 
     public RecycleStation() {
     }
 
-    public RecycleStation(int id, String name, String address, double latitude, double longitude, StationStatus status) {
+    public RecycleStation(int id, String name, String address, double latitude, double longitude, double maxWeight, double currentWeight) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.status = status;
+        this.maxWeight = maxWeight;
+        this.currentWeight = currentWeight;
     }
 
     public int getId() {
@@ -44,14 +46,6 @@ public class RecycleStation {
         this.address = address;
     }
 
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
     public double getLatitude() {
         return latitude;
     }
@@ -60,11 +54,27 @@ public class RecycleStation {
         this.latitude = latitude;
     }
 
-    public StationStatus getStatus() {
-        return status;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setStatus(StationStatus status) {
-        this.status = status;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getMaxWeight() {
+        return maxWeight;
+    }
+
+    public void setMaxWeight(double maxWeight) {
+        this.maxWeight = maxWeight;
+    }
+
+    public double getCurrentWeight() {
+        return currentWeight;
+    }
+
+    public void setCurrentWeight(double currentWeight) {
+        this.currentWeight = currentWeight;
     }
 }
