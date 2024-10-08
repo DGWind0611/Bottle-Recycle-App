@@ -2,9 +2,11 @@ package com.fcu.android.bottlerecycleapp.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,10 +22,10 @@ import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.entity.MyActivity;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
 import com.fcu.android.bottlerecycleapp.database.entity.Role;
-import com.fcu.android.bottlerecycleapp.database.test_data.TestData;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
-import com.fcu.android.bottlerecycleapp.ui.sign_up.SignUpActivity;
+import com.fcu.android.bottlerecycleapp.database.test_data.TestData;
 import com.fcu.android.bottlerecycleapp.ui.adminPage.AdminHomeActivity;
+import com.fcu.android.bottlerecycleapp.ui.sign_up.SignUpActivity;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -35,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etPassword;
     private TextView tvGoToSignUp;
     private Button btnLogin;
+    private ImageButton btnLoginTogglePassword;
     private DBHelper dbHelper;
     private final String USER_EMAIL = "test@test.com";
     private final String TEST_PASSWORD = "Test123456";
@@ -68,6 +71,21 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.et_login_password);
         btnLogin = findViewById(R.id.btn_login);
         tvGoToSignUp = findViewById(R.id.tv_go_to_sign_up);
+        btnLoginTogglePassword = findViewById(R.id.btn_login_togglePassword);
+
+        btnLoginTogglePassword.setOnClickListener(v -> {
+            if (etPassword.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                // 顯示密碼
+                etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                btnLoginTogglePassword.setImageResource(R.drawable.visibility_off); // 顯示密碼圖示
+            } else {
+                // 隱藏密碼
+                etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                btnLoginTogglePassword.setImageResource(R.drawable.visibility); // 隱藏密碼圖示
+            }
+            // 移動光標至最後
+            etPassword.setSelection(etPassword.getText().length());
+        });
 
         // 測試自動填寫登入資訊
         testLogin();

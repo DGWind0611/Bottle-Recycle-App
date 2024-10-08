@@ -62,28 +62,50 @@
         app:layout_constraintStart_toStartOf="@+id/tv_email"
         app:layout_constraintTop_toBottomOf="@+id/tv_email" />
 
-    <EditText
-        android:id="@+id/et_login_password"
-        style="@style/CustomEditTextStyle"
+    <RelativeLayout
+        android:id="@+id/rl_login_password"
         android:layout_width="0dp"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="********"
-        android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_email"
-        app:layout_constraintTop_toBottomOf="@+id/tv_password" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_password">
+
+        <EditText
+            android:id="@+id/et_login_password"
+            style="@style/CustomEditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:hint="********"
+            android:inputType="textPassword"
+            android:paddingEnd="40dp" /> <!-- 給予右邊空間給按鈕 -->
+
+        <ImageButton
+            android:id="@+id/btn_login_togglePassword"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Toggle password visibility"
+            android:scaleType="centerInside"
+            android:src="@drawable/visibility" />
+
+    </RelativeLayout>
+
 
     <Button
         android:id="@+id/btn_login"
         style="@style/CustomButtonStyle"
         android:layout_marginTop="24dp"
         android:text="登入"
-        app:layout_constraintEnd_toEndOf="@+id/et_login_password"
+        app:layout_constraintEnd_toEndOf="@+id/rl_login_password"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/et_login_password"
-        app:layout_constraintTop_toBottomOf="@+id/et_login_password" />
+        app:layout_constraintStart_toStartOf="@+id/rl_login_password"
+        app:layout_constraintTop_toBottomOf="@+id/rl_login_password" />
 
     <TextView
         android:id="@+id/textView5"

@@ -2,6 +2,7 @@ package com.fcu.android.bottlerecycleapp.ui.sign_up;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -38,6 +39,8 @@ public class SignUp2Activity extends AppCompatActivity {
     private TextView tvPolicy; // 使用 TextView 顯示政策和條款
     private Button btnSignUp;
     private ImageButton ibBack;
+    private ImageButton btnSignUpTogglePassword;
+    private ImageButton btnSignUpToggleConfirmPassword;
     private DBHelper dbHelper;
     private static final int REQUEST_POLICY = 1;
 
@@ -53,12 +56,38 @@ public class SignUp2Activity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
 
         // 初始化 UI 元件
-        etPassword = findViewById(R.id.et_singup_password);
-        etConfirmPassword = findViewById(R.id.et_confirm_password);
-        cbAgree = findViewById(R.id.cb_agree);
+        etPassword = findViewById(R.id.et_signup_password);
+//        etConfirmPassword = findViewById(R.id.et_signup_confirm_password);
+//        cbAgree = findViewById(R.id.cb_agree);
         btnSignUp = findViewById(R.id.btn_sing_up);
         ibBack = findViewById(R.id.btn_back_to_signup);
         tvPolicy = findViewById(R.id.tv_policy);
+
+        btnSignUpTogglePassword = findViewById(R.id.btn_sing_up_togglePassword);
+        btnSignUpToggleConfirmPassword = findViewById(R.id.signup_confirm_togglePassword);
+
+        View.OnClickListener toggleListener = v -> {
+            if (v.getId() == R.id.btn_sing_up_togglePassword) {
+                if (etPassword.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
+                    etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    btnSignUpTogglePassword.setImageResource(R.drawable.visibility);
+                } else {
+                    etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    btnSignUpTogglePassword.setImageResource(R.drawable.visibility_off);
+                }
+            } else {
+                if (etConfirmPassword.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
+                    etConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    btnSignUpToggleConfirmPassword.setImageResource(R.drawable.visibility);
+                } else {
+                    etConfirmPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    btnSignUpToggleConfirmPassword.setImageResource(R.drawable.visibility_off);
+                }
+            }
+        };
+
+        btnSignUpTogglePassword.setOnClickListener(toggleListener);
+        btnSignUpToggleConfirmPassword.setOnClickListener(toggleListener);
 
         // 設定使用者政策和條款
         setupPolicyAndTerms();
