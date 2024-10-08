@@ -118,19 +118,8 @@ public class RecycleMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void addRecycleMarkers() {
-
-        // 自訂義五種顏色代表回收站的當前收容量
-        Map<StationStatus, Integer> statusColorMap = new HashMap<>();
-        statusColorMap.put(StationStatus.FULL, getResources().getColor(R.color.map_full_red)); // 滿
-        statusColorMap.put(StationStatus.ALMOST_FULL, getResources().getColor(R.color.map_almost_full_orange)); // 快滿
-        statusColorMap.put(StationStatus.HALF_FULL, getResources().getColor(R.color.map_half_full_yellow)); // 半滿
-        statusColorMap.put(StationStatus.ALMOST_EMPTY, getResources().getColor(R.color.map_almost_empty_blue)); // 三成滿
-        statusColorMap.put(StationStatus.EMPTY, getResources().getColor(R.color.map_empty_green)); // 空
-
-        // 回收站
         List<RecycleStation> stations = dbHelper.findAllStations();
 
-        // 在地圖上標記回收站
         for (RecycleStation station : stations) {
             LatLng stationLocation = new LatLng(station.getLatitude(), station.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions()
@@ -138,21 +127,36 @@ public class RecycleMapFragment extends Fragment implements OnMapReadyCallback {
                     .title(station.getName())
                     .snippet(station.getAddress());
 
-            // 根據回收站的狀態來設定 icon 顏色
-            Integer color = statusColorMap.get(station.getStatus());
-            if (color != null) {
-                float hue = getHueFromColor(color); // 將顏色轉換為色相值
-                Log.d("RecycleMapFragment", "Station: " + station.getName() + " Status: " + station.getStatus());
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(hue));
+            // 計算當前重量和最大重量的比例
+            double currentWeight = station.getCurrentWeight();
+            double maxWeight = station.getMaxWeight();
+            double weightRatio = currentWeight / maxWeight;
+
+            // 根據比例設置顏色區間
+            int color;
+            if (weightRatio > 0.95) {
+                color = getResources().getColor(R.color.map_full_red); // 滿
+            } else if (weightRatio >= 0.7 && weightRatio < 0.95) {
+                color = getResources().getColor(R.color.map_almost_full_orange); // 快滿
+            } else if (weightRatio >= 0.45 && weightRatio < 0.7) {
+                color = getResources().getColor(R.color.map_half_full_yellow); // 半滿
+            } else if (weightRatio >= 0.25 && weightRatio < 0.45) {
+                color = getResources().getColor(R.color.map_almost_empty_blue); // 三成滿
+            } else {
+                color = getResources().getColor(R.color.map_empty_green); // 空
             }
+
+            float hue = getHueFromColor(color); // 將顏色轉換為色相值
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(hue));
 
             mMap.addMarker(markerOptions);
         }
 
-        // TODO: 預設為顯示當前位置 目前先以虎尾科大當作中心
+        // 預設顯示位置
         LatLng defaultLocation = new LatLng(23.70265710296463, 120.42952217510486);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(defaultLocation));
     }
+
 
 
     @NonNull

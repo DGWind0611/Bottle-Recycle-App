@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +17,6 @@ import com.fcu.android.bottlerecycleapp.database.entity.Notification;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleRecord;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
 import com.fcu.android.bottlerecycleapp.database.entity.Role;
-import com.fcu.android.bottlerecycleapp.database.entity.StationStatus;
 import com.fcu.android.bottlerecycleapp.database.entity.Type;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
 
@@ -120,7 +120,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "RecycleStation_Address TEXT NOT NULL, "
                 + "RecycleStation_Latitude REAL NOT NULL, "
                 + "RecycleStation_Longitude REAL NOT NULL,"
-                + "Current_Status TEXT NOT NULL)";
+                + "Max_Weight REAL NOT NULL,"
+                + "Current_Weight REAL NOT NULL)";
         db.execSQL(sql);
     }
 
@@ -376,7 +377,8 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put("RecycleStation_Address", recycleStation.getAddress());
             values.put("RecycleStation_Latitude", recycleStation.getLatitude());
             values.put("RecycleStation_Longitude", recycleStation.getLongitude());
-            values.put("Current_Status", recycleStation.getStatus().toString());
+            values.put("Max_Weight", recycleStation.getMaxWeight());
+            values.put("Current_Weight", recycleStation.getCurrentWeight());
             return db.insert(TABLE_RECYCLE_STATION, null, values) != -1;
         }
     }
@@ -424,7 +426,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     station.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("RecycleStation_Address")));
                     station.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Latitude")));
                     station.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Longitude")));
-                    station.setStatus(StationStatus.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("Current_Status"))));
+                    station.setMaxWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Max_Weight")));
+                    station.setCurrentWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Current_Weight")));
                     stations.add(station);
                 } while (cursor.moveToNext());
                 return stations;
@@ -449,7 +452,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 station.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("RecycleStation_Address")));
                 station.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Latitude")));
                 station.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow("RecycleStation_Longitude")));
-                station.setStatus(StationStatus.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("Current_Status"))));
+                station.setMaxWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Max_Weight")));
+                station.setCurrentWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Current_Weight")));
                 return station;
             }
         }
@@ -457,21 +461,70 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 新增回收記錄
+     * 新增回收記錄, 並同時更新回收站當前重量
      *
      * @param record 回收記錄
      * @return 是否新增成功
      */
     public boolean addRecycleRecord(@NonNull RecycleRecord record) {
-        try (SQLiteDatabase db = getWritableDatabase()) {
-            ContentValues values = new ContentValues();
-            values.put("User_ID", record.getUserId());
-            values.put("RecycleStation_ID", record.getRecycleStationId());
-            values.put("Recycle_Date", record.getRecycleTime());
-            values.put("Recycle_Weight", record.getRecycleWeight());
-            return db.insert(TABLE_USER_RECYCLE_RECORD, null, values) != -1;
+        SQLiteDatabase db = getWritableDatabase();
+        boolean isSuccess = false;
+
+        // 開啟一個資料庫事務以保證原子性操作
+        db.beginTransaction();
+        try {
+            // 新增回收記錄
+            ContentValues recordValues = new ContentValues();
+            recordValues.put("User_ID", record.getUserId());
+            recordValues.put("RecycleStation_ID", record.getRecycleStationId());
+            recordValues.put("Recycle_Date", record.getRecycleTime());
+            recordValues.put("Recycle_Weight", record.getRecycleWeight());
+
+            long recordResult = db.insert(TABLE_USER_RECYCLE_RECORD, null, recordValues);
+            if (recordResult == -1) {
+                throw new Exception("新增回收記錄失敗");
+            }
+
+            // 同時更新回收站的當前重量
+            RecycleStation station = findStationById(record.getRecycleStationId());
+            if (station != null) {
+                station.setCurrentWeight(station.getCurrentWeight() + record.getRecycleWeight());
+
+                ContentValues stationValues = buildStationContentValues(station);
+                int updateResult = db.update(TABLE_RECYCLE_STATION, stationValues,
+                        "RecycleStation_ID = ?", new String[]{String.valueOf(record.getRecycleStationId())});
+                if (updateResult <= 0) {
+                    throw new Exception("更新回收站重量失敗");
+                }
+            } else {
+                throw new Exception("找不到對應的回收站");
+            }
+
+            // 若一切操作成功，提交事務
+            db.setTransactionSuccessful();
+            isSuccess = true;
+        } catch (Exception e) {
+            Log.e("DBHelper", "Error adding recycle record: " + e.getMessage());
+        } finally {
+            db.endTransaction();
+            db.close();
         }
+
+        return isSuccess;
     }
+
+    @NonNull
+    private ContentValues buildStationContentValues(@NonNull RecycleStation station) {
+        ContentValues values = new ContentValues();
+        values.put("RecycleStation_Name", station.getName());
+        values.put("RecycleStation_Address", station.getAddress());
+        values.put("RecycleStation_Latitude", station.getLatitude());
+        values.put("RecycleStation_Longitude", station.getLongitude());
+        values.put("Max_Weight", station.getMaxWeight());
+        values.put("Current_Weight", station.getCurrentWeight());
+        return values;
+    }
+
 
     /**
      * 獲取該user所有通知
