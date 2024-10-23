@@ -7,21 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.adminPage.AddNotificationActivity">
 
-    <ImageButton
-        android:id="@+id/btn_back_to_admin_home"
-        style="@style/CustomImageButtonStyle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:text="新增通知"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_back_to_admin_home" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/ll_add_notification"
@@ -30,153 +25,162 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewTitle">
 
+        <!-- 左邊標籤 -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="4dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_notification_title"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
                 android:text="標題"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/et_notification_titel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:inputType="textMultiLine" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
             <TextView
                 android:id="@+id/tv_notification_content"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="68dp"
+                android:layout_marginBottom="8dp"
                 android:text="通知內容"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/et_notification_content"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:inputType="textMultiLine"
-                android:minLines="3" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
             <TextView
                 android:id="@+id/tv_notification_date"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
                 android:text="通知日期"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/et_notification_date"
-                android:layout_width="180dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:inputType="date"
-                android:text="2024/09/25" />
-
-            <ImageButton
-                android:id="@+id/btn_calender_annoncement_notification"
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="1"
-                android:background="#00FFFFFF"
-                android:paddingStart="20dp"
-                android:scaleType="centerInside"
-                app:srcCompat="@drawable/calendar" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
             <TextView
                 android:id="@+id/tv_notification_time"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
                 android:text="通知時間"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/et_notification_time"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:inputType="time"
-                android:text="12:00:00" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
             <TextView
                 android:id="@+id/tv_notification_type"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
                 android:text="通知類型"
                 android:textSize="20sp" />
 
-            <Spinner
-                android:id="@+id/sp_notification_type"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+            <TextView
+                android:id="@+id/tv_specific_user"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
+                android:text="發送目標"
+                android:textSize="20sp"
+                android:visibility="gone" />
         </LinearLayout>
 
+        <!-- 右邊輸入框 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_specific_user"
-                android:layout_width="120dp"
+            <EditText
+                android:id="@+id/et_notification_title"
+                style="@style/CustomEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="start"
+                android:inputType="text"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/et_notification_content"
+                style="@style/CustomEditTextStyle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="指定userId"
-                android:visibility="gone"
-                android:textSize="20sp" />
+                android:layout_marginBottom="8dp"
+                android:gravity="start"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/et_notification_date"
+                style="@style/CustomEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="start"
+                android:inputType="date" />
+
+            <EditText
+                android:id="@+id/et_notification_time"
+                style="@style/CustomEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="start"
+                android:inputType="time" />
+
+            <Spinner
+                android:id="@+id/sp_notification_type"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp" />
 
             <EditText
                 android:id="@+id/et_specific_user"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:visibility="gone"
+                style="@style/CustomEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
                 android:gravity="start"
-                android:inputType="date" />
+                android:inputType="text"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="31dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_calender_annoncement_notification"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="116dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Toggle password visibility"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/calendar" />
+
         </LinearLayout>
     </LinearLayout>
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="100dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_add_notification"
@@ -187,15 +191,5 @@
         app:layout_constraintEnd_toEndOf="@+id/ll_add_notification"
         app:layout_constraintStart_toStartOf="@+id/ll_add_notification"
         app:layout_constraintTop_toBottomOf="@+id/ll_add_notification" />
-    <DatePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elevation="100dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
