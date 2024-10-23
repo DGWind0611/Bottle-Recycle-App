@@ -33,7 +33,7 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText etUserName;
+    private EditText etUserEmail;
     private EditText etPassword;
     private TextView tvGoToSignUp;
     private Button btnLogin;
@@ -67,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
         insertTestData();
 
         // 取得視圖
-        etUserName = findViewById(R.id.et_user_name);
+        etUserEmail = findViewById(R.id.et_user_email_login);
         etPassword = findViewById(R.id.et_login_password);
         btnLogin = findViewById(R.id.btn_login);
         tvGoToSignUp = findViewById(R.id.tv_go_to_sign_up);
@@ -92,17 +92,18 @@ public class LoginActivity extends AppCompatActivity {
 
         // 點擊登入按鈕
         btnLogin.setOnClickListener(v -> {
-            String userEmail = etUserName.getText().toString().trim();
+            String userEmail = etUserEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
             // 檢查是否為空
             if (userEmail.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "請輸入帳號與密碼", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "請輸入電子郵件與密碼", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             // 檢查帳號是否存在
             User user = dbHelper.findUserByEmail(userEmail);
+            Log.d("LoginActivity", "userName: " + user.getUserName() + "#" + user.getUserTag());
             if (user != null) {
                 String storedPassword = user.getPassword();
                 // 檢查密碼
@@ -132,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
      * 測試自動填寫登入資訊
      */
     private void testLogin() {
-        etUserName.setText(USER_EMAIL);
+        etUserEmail.setText(USER_EMAIL);
         etPassword.setText(TEST_PASSWORD);
     }
 

@@ -3,8 +3,8 @@ package com.fcu.android.bottlerecycleapp.database.entity;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private int id;
     private String userName;
+    private String userTag;
     private String email;
     private String password;
     private String phoneNumber;
@@ -16,11 +16,11 @@ public class User implements Serializable {
     private String userImage;
 
 
-    public User(int id, String userName, String email, String password, String phoneNumber,
+    public User(String userName, String userTag, String email, String password, String phoneNumber,
                 Double earnMoney, String qrCode, Double donateMoney, Gender gender, Role role,
                 String userImage) {
-        this.id = id;
         this.userName = userName;
+        this.userTag = userTag;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
@@ -32,17 +32,8 @@ public class User implements Serializable {
         this.userImage = userImage;
     }
 
-    public User(){
+    public User() {
 
-    }
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUserName() {
@@ -51,6 +42,14 @@ public class User implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUserTag() {
+        return userTag;
+    }
+
+    public void setUserTag(String userTag) {
+        this.userTag = userTag;
     }
 
     public String getEmail() {

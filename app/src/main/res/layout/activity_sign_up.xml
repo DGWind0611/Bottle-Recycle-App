@@ -36,7 +36,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
     <EditText
-        android:id="@+id/et_user_name"
+        android:id="@+id/et_user_email"
         style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
         android:layout_height="36dp"
@@ -55,8 +55,8 @@
         android:layout_marginTop="16dp"
         android:text="電子郵件"
         android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@+id/et_user_name"
-        app:layout_constraintTop_toBottomOf="@+id/et_user_name" />
+        app:layout_constraintStart_toStartOf="@+id/et_user_email"
+        app:layout_constraintTop_toBottomOf="@+id/et_user_email" />
 
     <EditText
         android:id="@+id/et_email"

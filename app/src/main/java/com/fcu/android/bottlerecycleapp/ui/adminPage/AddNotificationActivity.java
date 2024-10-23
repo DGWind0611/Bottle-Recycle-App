@@ -81,11 +81,25 @@ public class AddNotificationActivity extends AppCompatActivity {
         notification.setType(Type.valueOf(spNotificationType.getSelectedItem().toString()));
 
         if (notification.getType() == Type.SPECIFIC_USER) {
-            notification.setUserId(etSpecificUser.getId());
+            // 讀取用戶名和標籤
+            String userInput = etSpecificUser.getText().toString();
+
+            // 確保用戶輸入包含 '#' 符號
+            if (userInput.contains("#")) {
+                String userName = userInput.substring(0, userInput.indexOf('#')); // 讀取 '#' 左邊的字元
+                String userTag = userInput.substring(userInput.indexOf('#') + 1); // 讀取 '#' 右邊的字元
+
+                notification.setUserName(userName); // 設置用戶名
+                notification.setUserTag(userTag); // 設置用戶標籤
+            } else {
+                Toast.makeText(this, "用戶名稱和標籤必須使用 '#' 分隔", Toast.LENGTH_SHORT).show();
+            }
         }
+
 
         return notification;
     }
+
 
     // 將通知保存到資料庫
     private int saveNotificationToDatabase(Notification notification) {

@@ -3,16 +3,18 @@ package com.fcu.android.bottlerecycleapp.database.entity;
 public class QrCode {
     private int qrCodeId;
     private String qrCodeText;
-    private int userId;
+    private String userName;
+    private String userTag;
     private String qrCodeDate;
 
     public QrCode() {
     }
 
-    public QrCode(int qrCodeId, String qrCodeText, int userId, String qrCodeDate) {
+    public QrCode(int qrCodeId, String qrCodeText, String userName, String userTag, String qrCodeDate) {
         this.qrCodeId = qrCodeId;
         this.qrCodeText = qrCodeText;
-        this.userId = userId;
+        this.userName = userName;
+        this.userTag = userTag;
         this.qrCodeDate = qrCodeDate;
     }
 
@@ -32,12 +34,21 @@ public class QrCode {
         this.qrCodeText = qrCodeText;
     }
 
-    public int getUserId() {
-        return userId;
+
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserTag() {
+        return userTag;
+    }
+
+    public void setUserTag(String userTag) {
+        this.userTag = userTag;
     }
 
     public String getQrCodeDate() {

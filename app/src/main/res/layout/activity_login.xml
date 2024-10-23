@@ -47,10 +47,10 @@
         android:text="Password"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/tv_email"
-        app:layout_constraintTop_toBottomOf="@+id/et_user_name" />
+        app:layout_constraintTop_toBottomOf="@+id/et_user_email_login" />
 
     <EditText
-        android:id="@+id/et_user_name"
+        android:id="@+id/et_user_email_login"
         style="@style/CustomEditTextStyle"
         android:layout_width="0dp"
         android:layout_height="36dp"

@@ -19,7 +19,8 @@ public class NotificationActivity extends AppCompatActivity {
     private NotificationAdapter adapter;
     private ArrayList<Notification> notificationItems;
     private DBHelper dbHelper;
-    private int userId;
+    private String userName;
+    private String userTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +41,9 @@ public class NotificationActivity extends AppCompatActivity {
 
         notificationItems = new ArrayList<>();
         dbHelper = new DBHelper(this);
-        userId = getIntent().getIntExtra("userId", 0);
-        notificationItems = dbHelper.getUserNotifications(userId);
+        //TODO: 完成通知功能
+//        userName = getIntent().getIntExtra("userId", 0);
+//        notificationItems = dbHelper.getUserNotifications(userId);
 
         adapter = new NotificationAdapter(notificationItems);
         rvNotification.setAdapter(adapter);

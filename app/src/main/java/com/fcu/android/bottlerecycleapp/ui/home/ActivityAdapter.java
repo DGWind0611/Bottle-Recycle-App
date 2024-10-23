@@ -60,8 +60,9 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return activityList.size();
+        return activityList != null ? activityList.size() : 0; // 確保不會因為為 null 而引發錯誤
     }
+
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
