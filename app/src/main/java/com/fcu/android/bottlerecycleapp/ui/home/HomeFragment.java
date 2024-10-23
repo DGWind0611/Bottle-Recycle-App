@@ -26,7 +26,8 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private List<ActivityItem> activityList;
     private DBHelper dbHelper;
-    private int userId = 1;
+    private String userName;
+    private String userTag;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -44,23 +45,27 @@ public class HomeFragment extends Fragment {
         final LinearLayout llRewards = binding.llRewards;
         final RecyclerView rvActivity = binding.rvActivities;
 
-        // 從 SharedViewModel 取得uid
+        // 從 SharedViewModel 取得userName和userTag
         SharedViewModel sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         sharedViewModel.getData().observe(getViewLifecycleOwner(), data -> {
             if (data != null) {
-                userId = data.getId();
+                userName = data.getUserName();
+                userTag = data.getUserTag();
+                Log.d("HomeFragment", "userName: " + userName + ", userTag: " + userTag);
+
+                // 獲取用戶活動
+                activityList = dbHelper.getUserActivities(userName, userTag);
+                for (ActivityItem activityItem : activityList) {
+                    activityItem.setActivityName(dbHelper.findActivityById(activityItem.getActivityId()).getActivityName());
+                }
+
+                ActivityAdapter activityAdapter = new ActivityAdapter(getContext(), activityList);
+                rvActivity.setAdapter(activityAdapter);
+                rvActivity.setLayoutManager(new LinearLayoutManager(getContext()));
+            } else {
+                Log.d("HomeFragment", "User data is null");
             }
         });
-        Log.d("HomeFragment", "userId: " + userId);
-        activityList = dbHelper.getUserActivities(userId);
-        for(ActivityItem activityItem : activityList) {
-            activityItem.setActivityName(dbHelper.findActivityById(activityItem.getActivityId()).getActivityName());
-        }
-
-        ActivityAdapter activityAdapter = new ActivityAdapter(getContext(), activityList);
-        rvActivity.setAdapter(activityAdapter);
-        rvActivity.setLayoutManager(new LinearLayoutManager(getContext()));
-
 
 
 //        llTransferMoney.setOnClickListener(v -> {

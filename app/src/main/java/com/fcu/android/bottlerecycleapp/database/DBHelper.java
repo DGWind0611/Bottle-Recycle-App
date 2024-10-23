@@ -67,8 +67,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private void createTableUser(@NonNull SQLiteDatabase db) {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER + " ("
-                + "User_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "User_Name TEXT, "
+                + "User_Name TEXT NOT NULL, "
+                + "User_Tag TEXT NOT NULL, "
                 + "E_mail TEXT NOT NULL UNIQUE, "
                 + "Password TEXT NOT NULL, "
                 + "Phone_Number TEXT NOT NULL UNIQUE, "
@@ -77,129 +77,136 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "Donate_Money REAL, "
                 + "Gender TEXT, "
                 + "Role TEXT, "
-                + "UserImage TEXT ) ";
+                + "UserImage TEXT, "
+                + "PRIMARY KEY (User_Name, User_Tag) )";
         db.execSQL(sql);
     }
 
     private void createTableDonationRecord(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_DONATION_RECORD + " ("
-                + "Donation_Record_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "User_ID INTEGER NOT NULL, "
-                + "Donate_Money REAL NOT NULL, "
-                + "Donate_Date TEXT NOT NULL, "
-                + "FOREIGN KEY(User_ID) REFERENCES User(User_ID))";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_DONATION_RECORD + " (" +
+                "Donation_Record_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "User_Name TEXT NOT NULL, " +
+                "User_Tag TEXT NOT NULL, " +
+                "Donate_Money REAL NOT NULL, " +
+                "Donate_Date TEXT NOT NULL, " +
+                "FOREIGN KEY(User_Name, User_Tag) REFERENCES User(User_Name, User_Tag))";
         db.execSQL(sql);
     }
 
     private void createTableNotifications(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + " ("
-                + "Notification_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "User_ID INTEGER, "
-                + "Notification_Title TEXT NOT NULL, "
-                + "Notification_Content TEXT NOT NULL, "
-                + "Notification_Date TEXT NOT NULL, "
-                + "Notification_Time TEXT NOT NULL, "
-                + "Notification_Type TEXT NOT NULL, "
-                + "FOREIGN KEY(User_ID) REFERENCES User(User_ID))";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + " (" +
+                "Notification_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "User_Name TEXT, " +
+                "User_Tag TEXT, " +
+                "Notification_Title TEXT NOT NULL, " +
+                "Notification_Content TEXT NOT NULL, " +
+                "Notification_Date TEXT NOT NULL, " +
+                "Notification_Time TEXT NOT NULL, " +
+                "Notification_Type TEXT NOT NULL, " +
+                "FOREIGN KEY(User_Name, User_Tag) REFERENCES User(User_Name, User_Tag))";
         db.execSQL(sql);
     }
 
     private void createTableQrCordAgency(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_QR_CORD_AGENCY + " ("
-                + "QR_Cord_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "Agency_Name TEXT NOT NULL, "
-                + "QR_CODE_ORIGIN_Name INTEGER NOT NULL, "
-                + "User_Custom_Name TEXT )";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_QR_CORD_AGENCY + " (" +
+                "QR_Cord_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "Agency_Name TEXT NOT NULL, " +
+                "QR_CODE_ORIGIN_Name INTEGER NOT NULL, " +
+                "User_Custom_Name TEXT )";
         db.execSQL(sql);
     }
 
     private void createTableRecycleStation(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_RECYCLE_STATION + " ("
-                + "RecycleStation_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "RecycleStation_Name TEXT NOT NULL, "
-                + "RecycleStation_Address TEXT NOT NULL, "
-                + "RecycleStation_Latitude REAL NOT NULL, "
-                + "RecycleStation_Longitude REAL NOT NULL,"
-                + "Max_Weight REAL NOT NULL,"
-                + "Current_Weight REAL NOT NULL)";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_RECYCLE_STATION + " (" +
+                "RecycleStation_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "RecycleStation_Name TEXT NOT NULL, " +
+                "RecycleStation_Address TEXT NOT NULL, " +
+                "RecycleStation_Latitude REAL NOT NULL, " +
+                "RecycleStation_Longitude REAL NOT NULL," +
+                "Max_Weight REAL NOT NULL," +
+                "Current_Weight REAL NOT NULL)";
         db.execSQL(sql);
     }
 
     private void createTableRemittanceRecord(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_REMITTANCE_RECORD + " ("
-                + "Remittance_Record_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "User_ID INTEGER NOT NULL, "
-                + "Remittance_Money REAL NOT NULL, "
-                + "Remittance_Date TEXT NOT NULL, "
-                + "FOREIGN KEY(User_ID) REFERENCES User(User_ID))";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_REMITTANCE_RECORD + " (" +
+                "Remittance_Record_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "User_Name TEXT NOT NULL, " +
+                "User_Tag TEXT NOT NULL, " +
+                "Remittance_Money REAL NOT NULL, " +
+                "Remittance_Date TEXT NOT NULL, " +
+                "FOREIGN KEY(User_Name, User_Tag) REFERENCES User(User_Name, User_Tag))";
         db.execSQL(sql);
     }
 
     private void createTableStationFixRecord(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_STATION_FIX_RECORD + " ("
-                + "Station_Fix_Record_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "RecycleStation_ID INTEGER NOT NULL, "
-                + "Fix_Date TEXT  NOT NULL, "
-                + "Fix_Content TEXT NOT NULL, "
-                + "FOREIGN KEY(RecycleStation_ID) REFERENCES RecycleStation(RecycleStation_ID))";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_STATION_FIX_RECORD + " (" +
+                "Station_Fix_Record_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "RecycleStation_ID INTEGER NOT NULL, " +
+                "Fix_Date TEXT  NOT NULL, " +
+                "Fix_Content TEXT NOT NULL, " +
+                "FOREIGN KEY(RecycleStation_ID) REFERENCES RecycleStation(RecycleStation_ID))";
         db.execSQL(sql);
     }
 
     private void createStationStatusHistory(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_STATION_STATUS_HISTORY + "("
-                + "StatusHistory_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "RecycleStation_ID INTEGER NOT NULL,"
-                + "Cleaner_ID INTEGER NOT NULL, "
-                + "Status TEXT NOT NULL, "
-                + "Clean_Date TEXT NOT NULL, "
-                + "FOREIGN KEY (Cleaner_ID) REFERENCES User (User_ID), "
-                + "FOREIGN KEY (RecycleStation_ID) REFERENCES RecycleStation (RecycleStation_ID))";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_STATION_STATUS_HISTORY + "(" +
+                "StatusHistory_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "RecycleStation_ID INTEGER NOT NULL," +
+                "Cleaner_Name TEXT NOT NULL, " +
+                "Cleaner_Tag TEXT NOT NULL, " +
+                "Status TEXT NOT NULL, " +
+                "Clean_Date TEXT NOT NULL, " +
+                "FOREIGN KEY (Cleaner_Name, Cleaner_Tag) REFERENCES User (User_Name, User_Tag), " +
+                "FOREIGN KEY (RecycleStation_ID) REFERENCES RecycleStation (RecycleStation_ID))";
         db.execSQL(sql);
     }
 
-
     private void createTableUserRecycleRecord(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_RECYCLE_RECORD + " ("
-                + "User_Recycle_Record_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "User_ID INTEGER NOT NULL, "
-                + "RecycleStation_ID INTEGER NOT NULL, "
-                + "Recycle_Date TEXT NOT NULL, "
-                + "Recycle_Weight REAL NOT NULL, "
-                + "FOREIGN KEY(User_ID) REFERENCES User(User_ID), "
-                + "FOREIGN KEY(RecycleStation_ID) REFERENCES RecycleStation(RecycleStation_ID))";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_RECYCLE_RECORD + " (" +
+                "User_Recycle_Record_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "User_Name TEXT NOT NULL, " +
+                "User_Tag TEXT NOT NULL, " +
+                "RecycleStation_ID INTEGER NOT NULL, " +
+                "Recycle_Date TEXT NOT NULL, " +
+                "Recycle_Weight REAL NOT NULL, " +
+                "FOREIGN KEY(User_Name, User_Tag) REFERENCES User(User_Name, User_Tag), " +
+                "FOREIGN KEY(RecycleStation_ID) REFERENCES RecycleStation(RecycleStation_ID))";
         db.execSQL(sql);
     }
 
     private void createUserNotification(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_NOTIFICATION + " ("
-                + "User_ID INTEGER, "
-                + "Notification_ID INTEGER, "
-                + "PRIMARY KEY (User_ID, Notification_ID), "
-                + "FOREIGN KEY(User_ID) REFERENCES User(User_ID), "
-                + "FOREIGN KEY(Notification_ID) REFERENCES Notifications(Notification_ID))";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_NOTIFICATION + " (" +
+                "User_Name TEXT, " +
+                "User_Tag TEXT, " +
+                "Notification_ID INTEGER, " +
+                "PRIMARY KEY (User_Name, User_Tag, Notification_ID), " +
+                "FOREIGN KEY(User_Name, User_Tag) REFERENCES User(User_Name, User_Tag), " +
+                "FOREIGN KEY(Notification_ID) REFERENCES Notifications(Notification_ID))";
         db.execSQL(sql);
     }
 
     private void createActivityTable(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_ACTIVITY + " ("
-                + "Activity_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "Activity_Name TEXT NOT NULL, "
-                + "Activity_Start_Time TEXT NOT NULL, "
-                + "Activity_END_Time TEXT NOT NULL, "
-                + "Activity_Goal INTEGER NOT NULL, "
-                + "Activity_Description TEXT )";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_ACTIVITY + " (" +
+                "Activity_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "Activity_Name TEXT NOT NULL, " +
+                "Activity_Start_Time TEXT NOT NULL, " +
+                "Activity_END_Time TEXT NOT NULL, " +
+                "Activity_Goal INTEGER NOT NULL, " +
+                "Activity_Description TEXT )";
         db.execSQL(sql);
     }
 
     private void createUserActivityRelationTable(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_ACTIVITY + " ("
-                + "User_ID INTEGER, "
-                + "Activity_ID INTEGER, "
-                + "Current_Achievement INTEGER NOT NULL, "
-                + "Goal_Achievement INTEGER NOT NULL, "
-                + "PRIMARY KEY (User_ID, Activity_ID), "
-                + "FOREIGN KEY(User_ID) REFERENCES User(User_ID), "
-                + "FOREIGN KEY(Activity_ID) REFERENCES Activity(Activity_ID))";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_ACTIVITY + " (" +
+                "User_Name TEXT NOT NULL, " +
+                "User_Tag TEXT NOT NULL, " +
+                "Activity_ID INTEGER, " +
+                "Current_Achievement INTEGER NOT NULL, " +
+                "Goal_Achievement INTEGER NOT NULL, " +
+                "PRIMARY KEY (User_Name, User_Tag, Activity_ID), " +
+                "FOREIGN KEY(User_Name, User_Tag) REFERENCES User(User_Name, User_Tag), " +
+                "FOREIGN KEY(Activity_ID) REFERENCES Activity(Activity_ID))";
         db.execSQL(sql);
     }
 
@@ -211,6 +218,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 新增用戶
+     *
      * @param user 用戶
      * @return 是否新增成功
      */
@@ -218,6 +226,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try (SQLiteDatabase db = getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put("User_Name", user.getUserName());
+            values.put("User_Tag", user.getUserTag()); // 新增 User_Tag
             values.put("E_mail", user.getEmail());
             values.put("Password", user.getPassword());
             values.put("Phone_Number", user.getPhoneNumber());
@@ -231,14 +240,23 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+
     /**
      * 根據用戶 ID 查找用戶
      *
-     * @param userId 用戶 ID
+     * @param userName 用戶名
+     * @param userTag  識別標籤
      * @return 用戶
      */
-    public User findUserById(int userId) {
-        return findUser("User_ID", String.valueOf(userId));
+    public User findUserByNameAndTag(String userName, String userTag) {
+        String query = "SELECT * FROM " + TABLE_USER + " WHERE User_Name = ? AND User_Tag = ?";
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, new String[]{userName, userTag})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                return buildUserObject(cursor);
+            }
+        }
+        return null;
     }
 
     /**
@@ -279,8 +297,8 @@ public class DBHelper extends SQLiteOpenHelper {
     @NonNull
     private User buildUserObject(@NonNull Cursor cursor) {
         User user = new User();
-        user.setId(cursor.getInt(cursor.getColumnIndexOrThrow("User_ID")));
         user.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("User_Name")));
+        user.setUserTag(cursor.getString(cursor.getColumnIndexOrThrow("User_Tag")));
         user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("E_mail")));
         user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow("Password")));
         user.setPhoneNumber(cursor.getString(cursor.getColumnIndexOrThrow("Phone_Number")));
@@ -303,6 +321,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try (SQLiteDatabase db = getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put("User_Name", user.getUserName());
+            values.put("User_Tag", user.getUserTag()); // 新增 User_Tag
             values.put("E_mail", user.getEmail());
             values.put("Password", user.getPassword());
             values.put("Phone_Number", user.getPhoneNumber());
@@ -312,27 +331,31 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put("Gender", user.getGender().toString());
             values.put("Role", user.getRole().toString());
             values.put("UserImage", user.getUserImage());
-            return db.update(TABLE_USER, values, "User_ID = ?", new String[]{String.valueOf(user.getId())}) > 0;
+            return db.update(TABLE_USER, values, "User_Name = ? AND User_Tag = ?",
+                    new String[]{user.getUserName(), user.getUserTag()}) > 0;
         }
     }
+
 
     /**
      * 檢查用戶是否唯一
      *
-     * @param column 欄位名
-     * @param value  欄位值
+     * @param userName 用戶名
+     * @param userTag  識別標籤
      * @return
      */
-    public boolean isUnique(String column, String value) {
-        String query = "SELECT COUNT(1) FROM " + TABLE_USER + " WHERE " + column + " = ?";
+    public boolean isUnique(String userName, String userTag) {
+        String query = "SELECT COUNT(1) FROM " + TABLE_USER + " WHERE User_Name = ? AND User_Tag = ?";
         try (SQLiteDatabase db = getReadableDatabase();
-             Cursor cursor = db.rawQuery(query, new String[]{value})) {
+             Cursor cursor = db.rawQuery(query, new String[]{userName, userTag})) {
             return cursor != null && cursor.moveToFirst() && cursor.getInt(0) == 0;
         }
     }
 
+
     /**
      * 檢查郵箱是否唯一
+     *
      * @param email 郵箱
      * @return 是否唯一
      */
@@ -342,6 +365,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 檢查手機號碼是否唯一
+     *
      * @param phoneNumber 手機號碼
      * @return
      */
@@ -351,6 +375,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 獲取用戶數量
+     *
      * @return 當前用戶數量
      */
     public int getUserCount() {
@@ -384,20 +409,26 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 根據用戶 ID 獲取剛用戶的所有回收記錄
-     * @param userId 用戶 ID
+     * 根據用戶名和識別標籤獲取用戶的所有回收記錄
+     *
+     * @param userName 用戶名
+     * @param userTag  識別標籤
      * @return 回收記錄列表
      */
-    public List<RecycleRecord> getAllRecycleRecordsByUserId(int userId) {
-        String query = "SELECT * FROM " + TABLE_USER_RECYCLE_RECORD + " WHERE User_ID = ?";
+    public List<RecycleRecord> getAllRecycleRecordsByUserId(String userName, String userTag) {
+        // Update the query to filter by User_Name and User_Tag
+        String query = "SELECT * FROM " + TABLE_USER_RECYCLE_RECORD +
+                " WHERE User_Name = ? AND User_Tag = ?";
+
         try (SQLiteDatabase db = getReadableDatabase();
-             Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)})) {
+             Cursor cursor = db.rawQuery(query, new String[]{userName, userTag})) {
             if (cursor != null && cursor.moveToFirst()) {
                 List<RecycleRecord> records = new ArrayList<>();
                 do {
                     RecycleRecord record = new RecycleRecord();
                     record.setRecycleRecordId(cursor.getInt(cursor.getColumnIndexOrThrow("User_Recycle_Record_ID")));
-                    record.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("User_ID")));
+                    record.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("User_Name")));
+                    record.setUserTag(cursor.getString(cursor.getColumnIndexOrThrow("User_Tag")));
                     record.setRecycleStationId(cursor.getInt(cursor.getColumnIndexOrThrow("RecycleStation_ID")));
                     record.setRecycleTime(cursor.getString(cursor.getColumnIndexOrThrow("Recycle_Date")));
                     record.setRecycleWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Recycle_Weight")));
@@ -405,12 +436,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
                 return records;
             }
+        } catch (Exception e) {
+            // Log or handle the exception as necessary
+            e.printStackTrace();
         }
         return null;
     }
 
+
     /**
      * 獲取所有回收站
+     *
      * @return 回收站列表
      */
     public List<RecycleStation> findAllStations() {
@@ -438,6 +474,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 根據回收站 ID 查找回收站
+     *
      * @param recycleStationId 回收站 ID
      * @return 回收站
      */
@@ -475,7 +512,8 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             // 新增回收記錄
             ContentValues recordValues = new ContentValues();
-            recordValues.put("User_ID", record.getUserId());
+            recordValues.put("User_Name", record.getUserName());
+            recordValues.put("User_Tag", record.getUserTag());
             recordValues.put("RecycleStation_ID", record.getRecycleStationId());
             recordValues.put("Recycle_Date", record.getRecycleTime());
             recordValues.put("Recycle_Weight", record.getRecycleWeight());
@@ -529,10 +567,11 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * 獲取該user所有通知
      *
-     * @param userId 用戶 ID
+     * @param userName 用戶名
+     * @param userTag  用戶標籤
      * @return 通知列表
      */
-    public ArrayList<Notification> getUserNotifications(int userId) {
+    public ArrayList<Notification> getUserNotifications(String userName, String userTag) {
         ArrayList<Notification> notifications = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -540,9 +579,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 "n.Notification_Date, n.Notification_Time, n.Notification_Type " +
                 "FROM Notifications n " +
                 "LEFT JOIN User_Notification un ON n.Notification_ID = un.Notification_ID " +
-                "WHERE un.User_ID = ? OR n.Notification_Type = ?";
+                "WHERE un.User_Name = ? AND un.User_Tag = ? OR n.Notification_Type = ?";
 
-        try (Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId), Type.ALL_USERS.name()})) {
+        try (Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userName), String.valueOf(userTag), Type.ALL_USERS.name()})) {
             if (cursor.moveToFirst()) {
                 do {
                     int notificationId = cursor.getInt(cursor.getColumnIndexOrThrow("Notification_ID"));
@@ -553,7 +592,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     String typeStr = cursor.getString(cursor.getColumnIndexOrThrow("Notification_Type"));
                     Type type = Type.valueOf(typeStr);
 
-                    Notification notification = new Notification(notificationId, userId, title, content, date, time, type);
+                    Notification notification = new Notification(notificationId, userName, userTag, title, content, date, time, type);
                     notifications.add(notification);
                 } while (cursor.moveToNext());
             }
@@ -590,9 +629,11 @@ public class DBHelper extends SQLiteOpenHelper {
             }
 
             // 如果是 SPECIFIC_USER，則在 User_Notification 表中插入關聯
-            if (notification.getType() == Type.SPECIFIC_USER && notification.getUserId() != 0) {
+            if (notification.getType() == Type.SPECIFIC_USER &&
+                    (notification.getUserName() != null && notification.getUserTag() != null)) {
                 ContentValues userNotificationValues = new ContentValues();
-                userNotificationValues.put("User_ID", notification.getUserId());
+                userNotificationValues.put("User_Name", notification.getUserName());
+                userNotificationValues.put("User_Tag", notification.getUserTag());
                 userNotificationValues.put("Notification_ID", notificationId);
                 long userNotificationId = db.insert(TABLE_USER_NOTIFICATION, null, userNotificationValues);
 
@@ -663,23 +704,32 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param goal       目標
      */
     private void addUsersToActivity(SQLiteDatabase db, long activityId, int goal) {
-        String query = "SELECT User_ID FROM User WHERE Role = 'USER' ";
+        // 查詢獲取所有 USER 角色的用戶
+        String query = "SELECT User_Name, User_Tag FROM " + TABLE_USER + " WHERE Role = 'USER'";
+
         try (Cursor cursor = db.rawQuery(query, null)) {
             if (cursor.moveToFirst()) {
                 do {
-                    int userId = cursor.getInt(cursor.getColumnIndexOrThrow("User_ID"));
+                    String userName = cursor.getString(cursor.getColumnIndexOrThrow("User_Name"));
+                    String userTag = cursor.getString(cursor.getColumnIndexOrThrow("User_Tag"));
+
+                    // 將用戶添加到活動中
                     ContentValues userActivityValues = new ContentValues();
-                    userActivityValues.put("User_ID", userId);
+                    userActivityValues.put("User_Name", userName);
+                    userActivityValues.put("User_Tag", userTag);
                     userActivityValues.put("Activity_ID", activityId);
                     userActivityValues.put("Current_Achievement", 0);
                     userActivityValues.put("Goal_Achievement", goal);
+
                     db.insert(TABLE_USER_ACTIVITY, null, userActivityValues);
+
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
 
     /**
      * 尋找所有尚未過期的活動ID及其目標
@@ -713,11 +763,14 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * 將指定的用戶加入所有未過期的活動
      *
-     * @param userId 用戶ID
+     * @param userName 用戶名稱
+     * @param userTag  用戶標籤
      * @return 是否加入成功
      */
-    public boolean addUserToAllUnExpiredActivities( int userId) {
+    public boolean addUserToAllUnExpiredActivities(String userName, String userTag) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        // 獲取所有未過期的活動
         Map<Integer, Integer> unExpiredActivities = findAllUnExpiredActivities();
         for (Map.Entry<Integer, Integer> entry : unExpiredActivities.entrySet()) {
             int activityId = entry.getKey();
@@ -725,38 +778,48 @@ public class DBHelper extends SQLiteOpenHelper {
 
             try {
                 ContentValues values = new ContentValues();
-                values.put("User_ID", userId);
+                values.put("User_Name", userName); // 將 User_Name 插入
+                values.put("User_Tag", userTag);   // 將 User_Tag 插入
                 values.put("Activity_ID", activityId);
                 values.put("Current_Achievement", 0);
                 values.put("Goal_Achievement", goal);
-                db.insert(TABLE_USER_ACTIVITY, null, values);  // 記得執行插入操作
+                db.insert(TABLE_USER_ACTIVITY, null, values); // 執行插入操作
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
         return true;
     }
-    //從TABLE_USER_ACTIVITY中取得指定用戶的所有活動
-    public List<ActivityItem> getUserActivities(int userId) {
+
+
+
+    // 從 TABLE_USER_ACTIVITY 中取得指定用戶的所有活動
+    public List<ActivityItem> getUserActivities(String userName, String userTag) {
         List<ActivityItem> userActivities = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT * FROM User_Activity WHERE User_ID = ?";
-        try (Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)})) {
+
+        // 查詢用戶的活動，根據 User_Name 和 User_Tag
+        String activityQuery = "SELECT * FROM " + TABLE_USER_ACTIVITY +
+                " WHERE User_Name = ? AND User_Tag = ?";
+        try (Cursor cursor = db.rawQuery(activityQuery, new String[]{userName, userTag})) {
             if (cursor.moveToFirst()) {
                 do {
                     ActivityItem userActivity = new ActivityItem();
-                    userActivity.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("User_ID")));
+                    userActivity.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("User_Name")));
+                    userActivity.setUserTag(cursor.getString(cursor.getColumnIndexOrThrow("User_Tag")));
                     userActivity.setActivityId(cursor.getInt(cursor.getColumnIndexOrThrow("Activity_ID")));
                     userActivity.setActivityAchievement(cursor.getInt(cursor.getColumnIndexOrThrow("Current_Achievement")));
                     userActivity.setActivityGoal(cursor.getInt(cursor.getColumnIndexOrThrow("Goal_Achievement")));
                     userActivities.add(userActivity);
                 } while (cursor.moveToNext());
             }
-        } finally {
-            db.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
         return userActivities;
     }
+
 
     public MyActivity findActivityById(int activityId) {
         String query = "SELECT * FROM " + TABLE_ACTIVITY + " WHERE Activity_ID = ?";

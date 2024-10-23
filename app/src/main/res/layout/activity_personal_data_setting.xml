@@ -103,6 +103,7 @@
             android:layout_width="229dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_weight="1"
             android:padding="5dp">
 
             <EditText
@@ -112,7 +113,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_marginBottom="4dp"
-                android:layout_weight="1"
                 android:clickable="false"
                 android:enabled="false"
                 android:gravity="end"
@@ -125,7 +125,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_marginBottom="4dp"
-                android:layout_weight="1"
                 android:enabled="false"
                 android:gravity="end"
                 android:inputType="text"
@@ -133,10 +132,9 @@
 
             <Spinner
                 android:id="@+id/sp_gender_setting"
-                android:layout_width="263dp"
+                android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_marginBottom="4dp"
-                android:layout_weight="1"
                 android:gravity="end" />
 
             <EditText
@@ -145,7 +143,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_marginBottom="4dp"
-                android:layout_weight="1"
                 android:enabled="false"
                 android:gravity="end"
                 android:inputType="text"
@@ -157,7 +154,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_marginBottom="4dp"
-                android:layout_weight="1"
                 android:enabled="false"
                 android:gravity="end"
                 android:inputType="text"
@@ -166,10 +162,9 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="32dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dp">
+            android:orientation="vertical">
 
             <ImageButton
                 android:id="@+id/btn_edit_username"
@@ -177,7 +172,6 @@
                 android:layout_height="32dp"
                 android:layout_gravity="bottom|end"
                 android:layout_marginBottom="5dp"
-                android:layout_weight="1"
                 android:backgroundTint="#00FFFFFF"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/pen" />
@@ -188,7 +182,6 @@
                 android:layout_height="32dp"
                 android:layout_gravity="bottom|end"
                 android:layout_marginBottom="42dp"
-                android:layout_weight="1"
                 android:backgroundTint="#00FFFFFF"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/pen" />
@@ -198,7 +191,6 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="bottom|end"
-                android:layout_weight="1"
                 android:backgroundTint="#00FFFFFF"
                 android:layout_marginBottom="2dp"
                 android:scaleType="centerCrop"
@@ -210,7 +202,6 @@
                 android:layout_height="32dp"
                 android:layout_gravity="bottom|end"
                 android:layout_marginBottom="5dp"
-                android:layout_weight="1"
                 android:backgroundTint="#00FFFFFF"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/pen" />

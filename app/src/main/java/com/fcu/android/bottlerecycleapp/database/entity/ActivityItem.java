@@ -3,30 +3,40 @@ package com.fcu.android.bottlerecycleapp.database.entity;
 import java.io.Serializable;
 
 public class ActivityItem implements Serializable {
-    private int userId;
+    private String userName;
+    private String userTag;
     private int activityId;
     private String activityName;
     private int activityAchievement;
     private int activityGoal;
 
-    public ActivityItem(int userId,int activityId, String activityName, int activityAchievement, int activityGoal) {
-        this.userId = userId;
+    public ActivityItem() {
+
+    }
+
+    public ActivityItem(String userName, String userTag, int activityId, String activityName, int activityAchievement, int activityGoal) {
+        this.userName = userName;
+        this.userTag = userTag;
         this.activityId = activityId;
         this.activityName = activityName;
         this.activityAchievement = activityAchievement;
         this.activityGoal = activityGoal;
     }
 
-    public ActivityItem() {
-
+    public String getUserName() {
+        return userName;
     }
 
-    public int getUserId() {
-        return userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public String getUserTag() {
+        return userTag;
+    }
+
+    public void setUserTag(String userTag) {
+        this.userTag = userTag;
     }
 
     public int getActivityId() {

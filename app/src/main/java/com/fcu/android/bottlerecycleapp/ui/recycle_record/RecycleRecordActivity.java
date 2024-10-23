@@ -35,9 +35,10 @@ public class RecycleRecordActivity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
 
         //TODO: 從資料庫中獲取數據
-        int testUserId = 1; // 假設使用者 ID 為 1
+        String testUserName = "測試使用者";
+        String testUserTag = "0001";
         // 從資料庫中獲取數據
-        records = dbHelper.getAllRecycleRecordsByUserId(testUserId); // 確保DBHelper有此方法來抓取所有紀錄
+        records = dbHelper.getAllRecycleRecordsByUserId(testUserName, testUserTag); // 確保DBHelper有此方法來抓取所有紀錄
         Map<String, List<RecycleRecord>> groupedRecords = groupRecordsByMonth(records);
 
         adapter = new RecycleRecordAdapter(records, dbHelper);

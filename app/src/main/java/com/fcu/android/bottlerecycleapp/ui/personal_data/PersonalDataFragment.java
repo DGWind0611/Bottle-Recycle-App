@@ -30,7 +30,6 @@ public class PersonalDataFragment extends Fragment {
     private FragmentPersonalDataBinding binding;
     private SharedViewModel sharedViewModel;
     private ActivityResultLauncher<Intent> settingActivityLauncher;
-    private int userId;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +71,6 @@ public class PersonalDataFragment extends Fragment {
 
         sharedViewModel.getData().observe(getViewLifecycleOwner(), data -> {
             if (data != null) {
-                userId = data.getId();
                 String userName = data.getUserName();
                 Double userPrice = data.getEarnMoney();
                 String avatarUrl = data.getUserImage();
@@ -106,11 +104,12 @@ public class PersonalDataFragment extends Fragment {
 //            intent.putExtra("userId", userId);
 //            startActivity(intent);
 //        });
-
+        //TODO: 個人化通知實作
         btnNotification.setOnClickListener(v -> {
             // 跳轉到通知頁面
             Intent intent = new Intent(requireActivity(), NotificationActivity.class);
-            intent.putExtra("userId", userId);
+//            intent.putExtra("userName", userName);
+//            intent.putExtra("userTag",userTag)
             startActivity(intent);
         });
         final TextView textView = binding.tvUserName;

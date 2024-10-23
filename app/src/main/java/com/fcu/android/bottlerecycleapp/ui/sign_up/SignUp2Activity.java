@@ -29,6 +29,7 @@ import com.fcu.android.bottlerecycleapp.ui.login.LoginActivity;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Date;
+import java.util.Random;
 
 public class SignUp2Activity extends AppCompatActivity {
 
@@ -122,16 +123,16 @@ public class SignUp2Activity extends AppCompatActivity {
                 user.setQrCode(qrcode);
                 // 將加密的密碼設置到 User 物件
                 user.setPassword(hashedPassword);
+                Log.d("SignUp2Activity", "User Tag: " + user.getUserTag());
                 // 儲存 User 到資料庫
                 try {
                     boolean isCreate = dbHelper.addUser(user);
                     if (isCreate) {
-                        user.setId(dbHelper.findUserByEmail(user.getEmail()).getId());
                         user.setQrCode(qrcode);
                         Toast.makeText(this, "註冊成功", Toast.LENGTH_SHORT).show();
 
                         //將可加入的活動加入到資料庫
-                        dbHelper.addUserToAllUnExpiredActivities(user.getId());
+                        dbHelper.addUserToAllUnExpiredActivities(user.getUserName(), user.getUserTag());
 
                         // 註冊成功後，導向登入頁面
                         Intent intent = new Intent(SignUp2Activity.this, LoginActivity.class);

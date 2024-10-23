@@ -2,16 +2,18 @@ package com.fcu.android.bottlerecycleapp.database.entity;
 
 public class Notification {
     private int notificationId;
-    private int userId;
+    private String UserName;
+    private String UserTag;
     private String title;
     private String content;
     private String date;
     private String time;
     private Type type;
 
-    public Notification(int notificationId, int userId, String title, String content, String date, String time, Type type) {
+    public Notification(int notificationId, String userName, String userTag, String title, String content, String date, String time, Type type) {
         this.notificationId = notificationId;
-        this.userId = userId;
+        UserName = userName;
+        UserTag = userTag;
         this.title = title;
         this.content = content;
         this.date = date;
@@ -19,7 +21,7 @@ public class Notification {
         this.type = type;
     }
 
-    public Notification(){
+    public Notification() {
 
     }
 
@@ -31,12 +33,20 @@ public class Notification {
         this.notificationId = notificationId;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getUserName() {
+        return UserName;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        UserName = userName;
+    }
+
+    public String getUserTag() {
+        return UserTag;
+    }
+
+    public void setUserTag(String userTag) {
+        UserTag = userTag;
     }
 
     public String getTitle() {
