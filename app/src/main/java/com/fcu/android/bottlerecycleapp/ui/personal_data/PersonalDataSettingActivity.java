@@ -122,11 +122,13 @@ public class PersonalDataSettingActivity extends AppCompatActivity {
                 // 進入編輯模式
                 editText.setEnabled(true);
                 editText.requestFocus();
+                editText.setBackground(getDrawable(R.drawable.enable_edit_text));
                 editButton.setImageResource(R.drawable.confirmation);
                 setButtonsEnabled(false);  // 禁用確認和返回按鈕
             } else {
                 // 退出編輯模式
                 editText.setEnabled(false);
+                editText.setBackground(getDrawable(R.drawable.edit_text_background));
                 editButton.setImageResource(R.drawable.pen);
                 setButtonsEnabled(true);  // 啟用確認和返回按鈕
             }
