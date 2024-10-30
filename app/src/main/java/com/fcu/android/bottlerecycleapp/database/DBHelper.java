@@ -792,7 +792,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-
     // 從 TABLE_USER_ACTIVITY 中取得指定用戶的所有活動
     public List<ActivityItem> getUserActivities(String userName, String userTag) {
         List<ActivityItem> userActivities = new ArrayList<>();
@@ -838,4 +837,43 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return null;
     }
+
+    /**
+     * 計算指定用戶的總回收次數和回收重量
+     *
+     * @param userName 用戶名稱
+     * @param userTag  用戶標籤
+     * @return 回傳包含總回收次數和回收重量的 Map
+     */
+    public Map<String, Object> getUserRecycleStats(String userName, String userTag) {
+        Map<String, Object> recycleStats = new HashMap<>();
+        recycleStats.put("recycleCount", 0);    // 初始化為 0
+        recycleStats.put("totalWeight", 0.0);   // 初始化為 0.0
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            String sql = "SELECT COUNT(*) AS recycleCount, SUM(Recycle_Weight) AS totalWeight " +
+                    "FROM " + TABLE_USER_RECYCLE_RECORD + " " +
+                    "WHERE User_Name = ? AND User_Tag = ?";
+            cursor = db.rawQuery(sql, new String[]{userName, userTag});
+
+            if (cursor.moveToFirst()) {
+                recycleStats.put("recycleCount", cursor.getInt(cursor.getColumnIndexOrThrow("recycleCount")));
+                recycleStats.put("totalWeight", cursor.getDouble(cursor.getColumnIndexOrThrow("totalWeight")));
+            }
+        } catch (Exception e) {
+            Log.e("DBHelper", "計算用戶回收統計錯誤", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+
+        return recycleStats;
+    }
+
+
 }

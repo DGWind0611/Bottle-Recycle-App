@@ -3,6 +3,7 @@ package com.fcu.android.bottlerecycleapp.ui.personal_data;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +26,14 @@ import com.fcu.android.bottlerecycleapp.databinding.FragmentPersonalDataBinding;
 import com.fcu.android.bottlerecycleapp.ui.notification.NotificationActivity;
 import com.fcu.android.bottlerecycleapp.ui.recycle_record.RecycleRecordActivity;
 
+import java.io.File;
+
 public class PersonalDataFragment extends Fragment {
 
     private FragmentPersonalDataBinding binding;
     private SharedViewModel sharedViewModel;
     private ActivityResultLauncher<Intent> settingActivityLauncher;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,16 +77,29 @@ public class PersonalDataFragment extends Fragment {
             if (data != null) {
                 String userName = data.getUserName();
                 Double userPrice = data.getEarnMoney();
-                String avatarUrl = data.getUserImage();
+                String avatarUrl = data.getUserImage();  // 這是儲存的圖片路徑
                 tvUserName.setText(userName);
                 tvPriceValue.setText(userPrice.toString());
+
                 if (avatarUrl == null) {
                     ivAvatar.setImageResource(R.drawable.avatar);
                 } else {
-                    Glide.with(this).load(avatarUrl).into(ivAvatar);
+                    File avatarFile = new File(avatarUrl);
+                    Log.d("PersonalDataFragment", "avatarUrl: " + avatarUrl);
+                    if (avatarFile.exists()) {
+                        // 使用 Glide 載入並裁切成圓形圖片
+                        Glide.with(this)
+                                .load(avatarFile)
+                                .circleCrop()  // 將圖片裁切成圓形
+                                .into(ivAvatar);
+                    } else {
+                        // 若圖片不存在，使用預設的頭像
+                        ivAvatar.setImageResource(R.drawable.avatar);
+                    }
                 }
             }
         });
+
 
         btnSetting.setOnClickListener(v -> {
             // 跳轉到個人資料設定頁面

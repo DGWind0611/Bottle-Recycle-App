@@ -1,6 +1,9 @@
 package com.fcu.android.bottlerecycleapp.ui.notification;
 
+import android.media.Image;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +21,7 @@ public class NotificationActivity extends AppCompatActivity {
     private RecyclerView rvNotification;
     private NotificationAdapter adapter;
     private ArrayList<Notification> notificationItems;
+    private ImageButton btnBackToPersonalData;
     private DBHelper dbHelper;
     private String userName;
     private String userTag;
@@ -35,6 +39,11 @@ public class NotificationActivity extends AppCompatActivity {
 //            return insets;
 //        });
 
+        btnBackToPersonalData = findViewById(R.id.btn_back_to_personal_data_from_notification);
+
+        btnBackToPersonalData.setOnClickListener(v -> {
+            finish();
+        });
 
         rvNotification = findViewById(R.id.recyclerView_notifications);
         rvNotification.setLayoutManager(new LinearLayoutManager(this));
