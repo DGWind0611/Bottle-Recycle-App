@@ -2,6 +2,7 @@ package com.fcu.android.bottlerecycleapp.ui.personal_data;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -21,11 +23,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.fcu.android.bottlerecycleapp.database.entity.Gender;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 public class PersonalDataSettingActivity extends AppCompatActivity {
@@ -36,6 +44,8 @@ public class PersonalDataSettingActivity extends AppCompatActivity {
     private EditText etUserName, etUserEmail, etUserPhone, etPassword;
     private DBHelper dbHelper;
     private Spinner spGender;
+    private ImageView ivAvatar;
+    private ImageView ivEditIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +61,23 @@ public class PersonalDataSettingActivity extends AppCompatActivity {
         etUserPhone = findViewById(R.id.et_phone_setting);
         etPassword = findViewById(R.id.et_password_setting);
         spGender = findViewById(R.id.sp_gender_setting);
+        ivAvatar = findViewById(R.id.ivAvatar);
+        ivEditIcon = findViewById(R.id.ivEditIcon);
+
+
+        ivEditIcon.setOnClickListener(view -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("是否開啟相簿選擇大頭貼？")
+                    .setPositiveButton("是", (dialog, which) -> {
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType("image/*");
+                        startActivityForResult(intent, 1);
+                    })
+                    .setNegativeButton("否", (dialog, which) -> dialog.dismiss())
+                    .create()
+                    .show();
+        });
+
 
         dbHelper = new DBHelper(this);
 
@@ -60,6 +87,10 @@ public class PersonalDataSettingActivity extends AppCompatActivity {
         etUserEmail.setText(user.getEmail());
         etUserPhone.setText(user.getPhoneNumber());
         etPassword.setText("********"); // 避免顯示真實密碼
+
+        String avatarUrl = user.getUserImage();
+        setAvatar(avatarUrl);
+
         // 你可以選擇不顯示密碼，或者在按下編輯按鈕時才顯示
         // etPassword.setText(user.getPassword());
         // Log.d("PersonalDataSettingActivity", "userGender: " + user.getGender());
@@ -107,6 +138,87 @@ public class PersonalDataSettingActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    /**
+     * 處理從相簿選擇大頭貼的結果
+     *
+     * @param requestCode 請求代碼
+     * @param resultCode  結果代碼
+     * @param data        更新後User資料
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            // 獲取用戶選擇的圖片的 URI
+            Uri selectedImageUri = data.getData();
+
+            // 儲存圖片到應用程式的 Avatar 資料夾
+            try {
+                assert selectedImageUri != null;
+                InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                if (inputStream != null) {
+                    // 定義保存大頭貼的路徑
+                    File avatarDir = new File(getFilesDir(), "Avatar");
+                    if (!avatarDir.exists()) {
+                        avatarDir.mkdirs();  // 建立 Avatar 資料夾
+                    }
+
+                    // 使用 TimeStamp 生成唯一的檔案名稱
+                    String timeStamp = String.valueOf(System.currentTimeMillis());
+                    File avatarFile = new File(avatarDir, "user_avatar_" + timeStamp + ".png");
+
+                    // 寫入圖片
+                    FileOutputStream outputStream = new FileOutputStream(avatarFile);
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, length);
+                    }
+
+                    // 關閉流
+                    outputStream.close();
+                    inputStream.close();
+
+                    // 更新資料庫中對應的路徑
+                    User user = (User) getIntent().getSerializableExtra("userData");
+                    if (user != null) {
+                        user.setUserImage(avatarFile.getAbsolutePath());
+                        dbHelper.updateUser(user);
+                    }
+                    Toast.makeText(this, "大頭貼已更新", Toast.LENGTH_SHORT).show();
+                    setAvatar(avatarFile.getAbsolutePath());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "儲存大頭貼失敗", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * 設置大頭貼
+     *
+     * @param avatarUrl 大頭貼的路徑
+     */
+    private void setAvatar(String avatarUrl) {
+        if (avatarUrl == null) {
+            ivAvatar.setImageResource(R.drawable.avatar);
+        } else {
+            File avatarFile = new File(avatarUrl);
+            if (avatarFile.exists()) {
+                // 使用 Glide 載入並裁切成圓形圖片
+                Glide.with(this)
+                        .load(avatarFile)
+                        .circleCrop()  // 將圖片裁切成圓形
+                        .into(ivAvatar);
+            } else {
+                // 若圖片不存在，使用預設的頭像
+                ivAvatar.setImageResource(R.drawable.avatar);
+            }
+        }
     }
 
     /**

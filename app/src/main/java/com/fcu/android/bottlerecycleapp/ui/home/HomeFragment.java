@@ -1,5 +1,6 @@
 package com.fcu.android.bottlerecycleapp.ui.home;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentHomeBinding;
 
 import java.util.List;
+import java.util.Map;
 
 public class HomeFragment extends Fragment {
 
@@ -29,6 +31,7 @@ public class HomeFragment extends Fragment {
     private String userName;
     private String userTag;
 
+    @SuppressLint("SetTextI18n")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =
@@ -44,6 +47,10 @@ public class HomeFragment extends Fragment {
         final LinearLayout llPlantTree = binding.llPlantTree;
         final LinearLayout llRewards = binding.llRewards;
         final RecyclerView rvActivity = binding.rvActivities;
+        final TextView tvEarnValue = binding.tvEarnValue;
+        final TextView tvDonateValue = binding.tvDonateValue;
+        final TextView tvRecycleTime = binding.tvRecycleTime;
+        final TextView tvCarbonReductionValue = binding.tvCarbonReductionValue;
 
         // 從 SharedViewModel 取得userName和userTag
         SharedViewModel sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
@@ -58,6 +65,12 @@ public class HomeFragment extends Fragment {
                 for (ActivityItem activityItem : activityList) {
                     activityItem.setActivityName(dbHelper.findActivityById(activityItem.getActivityId()).getActivityName());
                 }
+                //設定用戶資料
+                tvEarnValue.setText(String.valueOf("$ " + data.getEarnMoney()));
+                tvDonateValue.setText(String.valueOf("$ " + data.getDonateMoney()));
+                Map<String, Object> recycleStats = dbHelper.getUserRecycleStats(userName, userTag);
+                tvRecycleTime.setText(recycleStats.get("recycleCount") + " 次");
+                tvCarbonReductionValue.setText(recycleStats.get("totalWeight") + " g");
 
                 ActivityAdapter activityAdapter = new ActivityAdapter(getContext(), activityList);
                 rvActivity.setAdapter(activityAdapter);

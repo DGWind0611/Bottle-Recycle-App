@@ -93,7 +93,7 @@ public class RecycleMapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Check for location permission
+        // 檢查位置權限
         if (ActivityCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(requireContext(),
@@ -103,19 +103,26 @@ public class RecycleMapFragment extends Fragment implements OnMapReadyCallback {
             return;
         }
 
+        // 啟用使用者位置顯示
         mMap.setMyLocationEnabled(true);
 
         fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
                 if (location != null) {
+                    // 當成功取得使用者位置時，將地圖移動至當前位置
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-                    addRecycleMarkers();
+                } else {
+                    // 無法取得位置時顯示預設座標
+                    LatLng defaultLocation = new LatLng(23.70265710296463, 120.42952217510486);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15));
                 }
+                addRecycleMarkers();
             }
         });
     }
+
 
     private void addRecycleMarkers() {
         List<RecycleStation> stations = dbHelper.findAllStations();
