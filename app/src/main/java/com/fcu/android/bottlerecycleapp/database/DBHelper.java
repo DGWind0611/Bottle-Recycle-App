@@ -1,10 +1,13 @@
 package com.fcu.android.bottlerecycleapp.database;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -16,6 +19,7 @@ import com.fcu.android.bottlerecycleapp.database.entity.MyActivity;
 import com.fcu.android.bottlerecycleapp.database.entity.Notification;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleRecord;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleStatus;
 import com.fcu.android.bottlerecycleapp.database.entity.Role;
 import com.fcu.android.bottlerecycleapp.database.entity.Type;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
@@ -37,6 +41,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_REMITTANCE_RECORD = "Remittance_Record";
     private static final String TABLE_STATION_FIX_RECORD = "Station_Fix_Record";
     private static final String TABLE_USER_RECYCLE_RECORD = "User_recycle_Record";
+    private static final String TABLE_USER_RECYCLE_STATUS = "User_Recycle_Status";
     private static final String TABLE_USER_NOTIFICATION = "User_Notification";
     private static final String TABLE_ACTIVITY = "Activity";
     private static final String TABLE_USER_ACTIVITY = "User_Activity";
@@ -58,6 +63,7 @@ public class DBHelper extends SQLiteOpenHelper {
         createTableRemittanceRecord(db);
         createTableStationFixRecord(db);
         createTableUserRecycleRecord(db);
+        createTableUserTotalRecycleStatus(db);
         createUserNotification(db);
         createActivityTable(db);
         createUserActivityRelationTable(db);
@@ -72,7 +78,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "E_mail TEXT NOT NULL UNIQUE, "
                 + "Password TEXT NOT NULL, "
                 + "Phone_Number TEXT NOT NULL UNIQUE, "
-                + "Earn_Money REAL, "
                 + "QR_Code String, "
                 + "Donate_Money REAL, "
                 + "Gender TEXT, "
@@ -167,11 +172,26 @@ public class DBHelper extends SQLiteOpenHelper {
                 "User_Recycle_Record_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "User_Name TEXT NOT NULL, " +
                 "User_Tag TEXT NOT NULL, " +
+                "Earn_Money REAL NOT NULL, " +
                 "RecycleStation_ID INTEGER NOT NULL, " +
                 "Recycle_Date TEXT NOT NULL, " +
                 "Recycle_Weight REAL NOT NULL, " +
                 "FOREIGN KEY(User_Name, User_Tag) REFERENCES User(User_Name, User_Tag), " +
                 "FOREIGN KEY(RecycleStation_ID) REFERENCES RecycleStation(RecycleStation_ID))";
+        db.execSQL(sql);
+    }
+
+    private void createTableUserTotalRecycleStatus(@NonNull SQLiteDatabase db) {
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_RECYCLE_STATUS + " (" +
+                "User_Name TEXT NOT NULL, " +
+                "User_Tag TEXT NOT NULL, " +
+                "Recycle_Times INTEGER NOT NULL, " +
+                "Total_Weight REAL NOT NULL, " +
+                "Total_Money REAL NOT NULL, " +
+                "Total_Donation REAL NOT NULL, " +
+                "Total_Carbon_Reduction REAL NOT NULL, " +
+                "PRIMARY KEY (User_Name, User_Tag), " +
+                "FOREIGN KEY(User_Name, User_Tag) REFERENCES User(User_Name, User_Tag))";
         db.execSQL(sql);
     }
 
@@ -210,7 +230,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // onUpgrade 則是如果資料庫結構有改變了就會觸發 onUpgrade
@@ -223,22 +242,61 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return 是否新增成功
      */
     public boolean addUser(@NonNull User user) {
-        try (SQLiteDatabase db = getWritableDatabase()) {
+        boolean success = false;
+        SQLiteDatabase db = null;
+
+        try {
+            db = getWritableDatabase();
+            db.beginTransaction(); // 開始事務
+
+            // 插入用戶
             ContentValues values = new ContentValues();
             values.put("User_Name", user.getUserName());
             values.put("User_Tag", user.getUserTag()); // 新增 User_Tag
             values.put("E_mail", user.getEmail());
             values.put("Password", user.getPassword());
             values.put("Phone_Number", user.getPhoneNumber());
-            values.put("Earn_Money", user.getEarnMoney());
             values.put("QR_Code", user.getQrCode());
             values.put("Donate_Money", user.getDonateMoney());
             values.put("Gender", user.getGender().toString());
             values.put("Role", user.getRole().toString());
             values.put("UserImage", user.getUserImage());
-            return db.insert(TABLE_USER, null, values) != -1;
+
+            long userId = db.insert(TABLE_USER, null, values);
+            if (userId == -1) {
+                Log.e("DBHelper", "Failed to insert user: " + user.getUserName());
+                return false; // 插入失敗
+            }
+
+            // 插入回收狀態
+            ContentValues values2 = new ContentValues();
+            values2.put("User_Name", user.getUserName());
+            values2.put("User_Tag", user.getUserTag());
+            values2.put("Recycle_Times", 0);
+            values2.put("Total_Weight", 0.0);
+            values2.put("Total_Money", 0.0);
+            values2.put("Total_Donation", 0.0);
+            values2.put("Total_Carbon_Reduction", 0.0);
+
+            long statusId = db.insert(TABLE_USER_RECYCLE_STATUS, null, values2);
+            if (statusId == -1) {
+                Log.e("DBHelper", "Failed to insert recycle status for user: " + user.getUserName());
+                return false; // 插入失敗
+            }
+
+            db.setTransactionSuccessful(); // 設置事務成功
+            success = true; // 成功插入用戶和回收狀態
+        } catch (Exception e) {
+            Log.e("DBHelper", "Error adding user: " + e.getMessage());
+        } finally {
+            if (db != null) {
+                db.endTransaction(); // 確保結束事務
+            }
         }
+
+        return success; // 返回插入是否成功
     }
+
 
 
     /**
@@ -302,7 +360,6 @@ public class DBHelper extends SQLiteOpenHelper {
         user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("E_mail")));
         user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow("Password")));
         user.setPhoneNumber(cursor.getString(cursor.getColumnIndexOrThrow("Phone_Number")));
-        user.setEarnMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Earn_Money")));
         user.setQrCode(cursor.getString(cursor.getColumnIndexOrThrow("QR_Code")));
         user.setDonateMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Donate_Money")));
         user.setGender(Gender.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("Gender"))));
@@ -325,7 +382,6 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put("E_mail", user.getEmail());
             values.put("Password", user.getPassword());
             values.put("Phone_Number", user.getPhoneNumber());
-            values.put("Earn_Money", user.getEarnMoney());
             values.put("QR_Code", user.getQrCode());
             values.put("Donate_Money", user.getDonateMoney());
             values.put("Gender", user.getGender().toString());
@@ -351,7 +407,6 @@ public class DBHelper extends SQLiteOpenHelper {
             return cursor != null && cursor.moveToFirst() && cursor.getInt(0) == 0;
         }
     }
-
 
     /**
      * 檢查郵箱是否唯一
@@ -397,13 +452,7 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public boolean addRecycleStation(@NonNull RecycleStation recycleStation) {
         try (SQLiteDatabase db = getWritableDatabase()) {
-            ContentValues values = new ContentValues();
-            values.put("RecycleStation_Name", recycleStation.getName());
-            values.put("RecycleStation_Address", recycleStation.getAddress());
-            values.put("RecycleStation_Latitude", recycleStation.getLatitude());
-            values.put("RecycleStation_Longitude", recycleStation.getLongitude());
-            values.put("Max_Weight", recycleStation.getMaxWeight());
-            values.put("Current_Weight", recycleStation.getCurrentWeight());
+            ContentValues values = buildStationContentValues(recycleStation);
             return db.insert(TABLE_RECYCLE_STATION, null, values) != -1;
         }
     }
@@ -429,6 +478,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     record.setRecycleRecordId(cursor.getInt(cursor.getColumnIndexOrThrow("User_Recycle_Record_ID")));
                     record.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("User_Name")));
                     record.setUserTag(cursor.getString(cursor.getColumnIndexOrThrow("User_Tag")));
+                    record.setEarnMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Earn_Money")));
                     record.setRecycleStationId(cursor.getInt(cursor.getColumnIndexOrThrow("RecycleStation_ID")));
                     record.setRecycleTime(cursor.getString(cursor.getColumnIndexOrThrow("Recycle_Date")));
                     record.setRecycleWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Recycle_Weight")));
@@ -478,10 +528,19 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param recycleStationId 回收站 ID
      * @return 回收站
      */
+    /**
+     * 根據回收站 ID 查找回收站
+     *
+     * @param recycleStationId 回收站 ID
+     * @return 回收站
+     */
     public RecycleStation findStationById(int recycleStationId) {
         String query = "SELECT * FROM " + TABLE_RECYCLE_STATION + " WHERE RecycleStation_ID = ?";
-        try (SQLiteDatabase db = getReadableDatabase();
-             Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(recycleStationId)})) {
+        SQLiteDatabase db = getReadableDatabase(); // 不再使用 try-with-resources
+        Cursor cursor = null;
+
+        try {
+            cursor = db.rawQuery(query, new String[]{String.valueOf(recycleStationId)});
             if (cursor != null && cursor.moveToFirst()) {
                 RecycleStation station = new RecycleStation();
                 station.setId(cursor.getInt(cursor.getColumnIndexOrThrow("RecycleStation_ID")));
@@ -493,23 +552,78 @@ public class DBHelper extends SQLiteOpenHelper {
                 station.setCurrentWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Current_Weight")));
                 return station;
             }
+        } catch (Exception e) {
+            Log.e("DBHelper", "查找回收站時出錯: ", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close(); // 只關閉 Cursor
+            }
+            // 不關閉 db，因為它可能會在其他方法中被使用
         }
         return null;
     }
 
+
     /**
-     * 新增回收記錄, 並同時更新回收站當前重量
+     * 更新回收站
+     *
+     * @param station 回收站
+     * @return 是否更新成功
+     */
+    /**
+     * 更新回收站
+     *
+     * @param station 回收站
+     * @return 是否更新成功
+     */
+    public boolean updateRecycleStation(@NonNull RecycleStation station, SQLiteDatabase db) {
+        boolean success = false;
+        String sql = "UPDATE " + TABLE_RECYCLE_STATION + " SET " +
+                "RecycleStation_Name = ?, " +
+                "RecycleStation_Address = ?, " +
+                "RecycleStation_Latitude = ?, " +
+                "RecycleStation_Longitude = ?, " +
+                "Max_Weight = ?, " +
+                "Current_Weight = ? " +
+                "WHERE RecycleStation_ID = ?";
+
+        try {
+            SQLiteStatement statement = db.compileStatement(sql);
+            statement.bindString(1, station.getName());
+            statement.bindString(2, station.getAddress());
+            statement.bindDouble(3, station.getLatitude());
+            statement.bindDouble(4, station.getLongitude());
+            statement.bindDouble(5, station.getMaxWeight());
+            statement.bindDouble(6, station.getCurrentWeight());
+            statement.bindLong(7, station.getId());
+
+            // 執行更新
+            statement.executeUpdateDelete();
+            success = true; // 更新成功
+        } catch (SQLiteDatabaseLockedException e) {
+            Log.w("DBHelper", "Database is locked: " + e.getMessage());
+        } catch (Exception e) {
+            Log.e("DBHelper", "更新回收站失敗: " + e.getMessage());
+        }
+
+        return success; // 返回更新是否成功
+    }
+
+
+    /**
+     * 新增回收記錄
      *
      * @param record 回收記錄
      * @return 是否新增成功
      */
     public boolean addRecycleRecord(@NonNull RecycleRecord record) {
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db = null;
         boolean isSuccess = false;
 
-        // 開啟一個資料庫事務以保證原子性操作
-        db.beginTransaction();
         try {
+            db = getWritableDatabase(); // 獲取資料庫
+            Log.d("DBHelper", "Start adding recycling records");
+
             // 新增回收記錄
             ContentValues recordValues = new ContentValues();
             recordValues.put("User_Name", record.getUserName());
@@ -517,38 +631,102 @@ public class DBHelper extends SQLiteOpenHelper {
             recordValues.put("RecycleStation_ID", record.getRecycleStationId());
             recordValues.put("Recycle_Date", record.getRecycleTime());
             recordValues.put("Recycle_Weight", record.getRecycleWeight());
+            recordValues.put("Earn_Money", record.getEarnMoney());
 
             long recordResult = db.insert(TABLE_USER_RECYCLE_RECORD, null, recordValues);
+            Log.d("DBHelper", "Record result: " + recordResult);
             if (recordResult == -1) {
-                throw new Exception("新增回收記錄失敗");
+                throw new Exception("Failed to add recycling record");
             }
 
-            // 同時更新回收站的當前重量
+            // 更新回收站的當前重量
             RecycleStation station = findStationById(record.getRecycleStationId());
             if (station != null) {
-                station.setCurrentWeight(station.getCurrentWeight() + record.getRecycleWeight());
+                Log.d("DBHelper", "Find the recycle station and before updating the weight:" + station.getCurrentWeight());
+                double newWeight = station.getCurrentWeight() + record.getRecycleWeight();
+                station.setCurrentWeight(newWeight);
+                Log.d("DBHelper", "After updating the weight:" + station.getCurrentWeight());
 
                 ContentValues stationValues = buildStationContentValues(station);
-                int updateResult = db.update(TABLE_RECYCLE_STATION, stationValues,
-                        "RecycleStation_ID = ?", new String[]{String.valueOf(record.getRecycleStationId())});
-                if (updateResult <= 0) {
-                    throw new Exception("更新回收站重量失敗");
+                Log.d("DBHelper", "Station values: " + stationValues.toString());
+
+                boolean updateResult = updateRecycleStation(station, db);
+                Log.d("DBHelper", "Update recycle station result: " + updateResult);
+                if (!updateResult) {
+                    throw new Exception("Failed to update recycle bin weight");
                 }
             } else {
-                throw new Exception("找不到對應的回收站");
+                throw new Exception("The corresponding recycle bin cannot be found");
             }
 
-            // 若一切操作成功，提交事務
-            db.setTransactionSuccessful();
+            // 更新用戶的回收狀態
+            RecycleStatus recycleStatus = getUserRecycleStats(db,record.getUserName(), record.getUserTag());
+
+            Log.d("DBHelper", "Recycle status: " + recycleStatus.getUserName() + " # " + recycleStatus.getUserTag());
+
+            recycleStatus.setRecycleTimes(recycleStatus.getRecycleTimes() + 1);
+            Log.d("DBHelper", "Recycle times: " + recycleStatus.getRecycleTimes());
+            recycleStatus.setTotalWeight(recycleStatus.getTotalWeight() + record.getRecycleWeight());
+            recycleStatus.setTotalDonation(recycleStatus.getTotalDonation() + record.getEarnMoney());
+            recycleStatus.setTotalCarbonReduction(recycleStatus.getTotalCarbonReduction() + record.getRecycleWeight() * 0.05);
+
+            boolean isCreateStatus = updateRecycleStatus(recycleStatus, db); // 確保使用同一資料庫
+
+            Log.d("DBHelper", "Update recycle status result: " + isCreateStatus);
+
+            if (!isCreateStatus) {
+                throw new Exception("Failed to update recycle status");
+            }
+
             isSuccess = true;
+            Log.d("DBHelper", "Recycling record added successfully");
+
         } catch (Exception e) {
             Log.e("DBHelper", "Error adding recycle record: " + e.getMessage());
         } finally {
-            db.endTransaction();
-            db.close();
+            if (db != null && db.isOpen()) {
+                db.close(); // 確保在最終關閉資料庫
+                Log.d("DBHelper", "Database closed");
+            }
         }
 
         return isSuccess;
+    }
+
+
+
+
+
+
+    /**
+     * 根據機台ID獲取機台名稱
+     *
+     * @param machineId 機台ID
+     * @return 機台名稱
+     */
+    @SuppressLint("Range")
+    public String getMachineNameById(int machineId) {
+        String machineName = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            db.beginTransaction(); // 開始事務
+            String sql = "SELECT RecycleStation_Name FROM " + TABLE_RECYCLE_STATION + " WHERE RecycleStation_ID = ?";
+            cursor = db.rawQuery(sql, new String[]{String.valueOf(machineId)});
+            if (cursor.moveToFirst()) {
+                machineName = cursor.getString(cursor.getColumnIndex("RecycleStation_Name"));
+            } else {
+                Log.w("DBHelper", "Could not find the machine name for " + machineId);
+            }
+            db.setTransactionSuccessful(); // 設置事務成功
+            Log.d("DBHelper", "Transaction Successful");
+        } catch (Exception e) {
+            Log.e("DBHelper", "獲取機台名稱錯誤", e);
+        } finally {
+            db.endTransaction(); // 結束事務
+            Log.d("DBHelper", "Transaction End");
+        }
+        return machineName;
     }
 
     @NonNull
@@ -792,7 +970,13 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    // 從 TABLE_USER_ACTIVITY 中取得指定用戶的所有活動
+    /**
+     * 獲取用戶活動
+     *
+     * @param userName 用戶名稱
+     * @param userTag  用戶標籤
+     * @return 用戶活動列表
+     */
     public List<ActivityItem> getUserActivities(String userName, String userTag) {
         List<ActivityItem> userActivities = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -819,7 +1003,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return userActivities;
     }
 
-
+    /**
+     * 根據活動ID尋找活動
+     *
+     * @param activityId 活動ID
+     * @return 活動
+     */
     public MyActivity findActivityById(int activityId) {
         String query = "SELECT * FROM " + TABLE_ACTIVITY + " WHERE Activity_ID = ?";
         try (SQLiteDatabase db = getReadableDatabase();
@@ -839,41 +1028,124 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 計算指定用戶的總回收次數和回收重量
+     * 獲取用戶回收狀態
      *
      * @param userName 用戶名稱
      * @param userTag  用戶標籤
-     * @return 回傳包含總回收次數和回收重量的 Map
+     * @return 回收狀態
      */
-    public Map<String, Object> getUserRecycleStats(String userName, String userTag) {
-        Map<String, Object> recycleStats = new HashMap<>();
-        recycleStats.put("recycleCount", 0);    // 初始化為 0
-        recycleStats.put("totalWeight", 0.0);   // 初始化為 0.0
+    public RecycleStatus getUserRecycleStats(String userName, String userTag) {
+        String query = "SELECT * FROM " + TABLE_USER_RECYCLE_STATUS + " WHERE User_Name = ? AND User_Tag = ?";
+        RecycleStatus recycleStatus = new RecycleStatus();
+        try (SQLiteDatabase db = getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, new String[]{userName, userTag})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                recycleStatus.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("User_Name")));
+                recycleStatus.setUserTag(cursor.getString(cursor.getColumnIndexOrThrow("User_Tag")));
+                recycleStatus.setRecycleTimes(cursor.getInt(cursor.getColumnIndexOrThrow("Recycle_Times")));
+                recycleStatus.setTotalWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Total_Weight")));
+                recycleStatus.setTotalMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Total_Money")));
+                recycleStatus.setTotalDonation(cursor.getDouble(cursor.getColumnIndexOrThrow("Total_Donation")));
+                recycleStatus.setTotalCarbonReduction(cursor.getDouble(cursor.getColumnIndexOrThrow("Total_Carbon_Reduction")));
+                return recycleStatus;
+            }
+        }catch (Exception e) {
+            Log.e("DBHelper", "Error getting user recycle stats: " + e.getMessage());
+        }
+        return recycleStatus;
+    }
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = null;
+    /**
+     * 更新用戶回收狀態，不會自動關閉資料庫
+     * @param db 資料庫
+     * @param userName 用戶名稱
+     * @param userTag 用戶標籤
+     * @return 回收狀態
+     */
+    public RecycleStatus getUserRecycleStats(SQLiteDatabase db, String userName, String userTag) {
+        String query = "SELECT * FROM " + TABLE_USER_RECYCLE_STATUS + " WHERE User_Name = ? AND User_Tag = ?";
+        RecycleStatus recycleStatus = new RecycleStatus();
 
-        try {
-            String sql = "SELECT COUNT(*) AS recycleCount, SUM(Recycle_Weight) AS totalWeight " +
-                    "FROM " + TABLE_USER_RECYCLE_RECORD + " " +
-                    "WHERE User_Name = ? AND User_Tag = ?";
-            cursor = db.rawQuery(sql, new String[]{userName, userTag});
-
-            if (cursor.moveToFirst()) {
-                recycleStats.put("recycleCount", cursor.getInt(cursor.getColumnIndexOrThrow("recycleCount")));
-                recycleStats.put("totalWeight", cursor.getDouble(cursor.getColumnIndexOrThrow("totalWeight")));
+        // 不要在這裡開啟或關閉資料庫，僅執行查詢
+        try (Cursor cursor = db.rawQuery(query, new String[]{userName, userTag})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                recycleStatus.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("User_Name")));
+                recycleStatus.setUserTag(cursor.getString(cursor.getColumnIndexOrThrow("User_Tag")));
+                recycleStatus.setRecycleTimes(cursor.getInt(cursor.getColumnIndexOrThrow("Recycle_Times")));
+                recycleStatus.setTotalWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("Total_Weight")));
+                recycleStatus.setTotalMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Total_Money")));
+                recycleStatus.setTotalDonation(cursor.getDouble(cursor.getColumnIndexOrThrow("Total_Donation")));
+                recycleStatus.setTotalCarbonReduction(cursor.getDouble(cursor.getColumnIndexOrThrow("Total_Carbon_Reduction")));
             }
         } catch (Exception e) {
-            Log.e("DBHelper", "計算用戶回收統計錯誤", e);
+            Log.e("DBHelper", "Error getting user recycle stats: " + e.getMessage());
+        }
+
+        return recycleStatus;
+    }
+
+    /**
+     * 更新用戶回收狀態
+     *
+     * @param recycleStatus 回收狀態
+     * @return 是否更新成功
+     */
+    public boolean updateRecycleStatus(@NonNull RecycleStatus recycleStatus, SQLiteDatabase db) {
+        boolean success = false;
+        String sql = "UPDATE " + TABLE_USER_RECYCLE_STATUS + " SET " +
+                "Recycle_Times = ?, " +
+                "Total_Weight = ?, " +
+                "Total_Money = ?, " +
+                "Total_Donation = ?, " +
+                "Total_Carbon_Reduction = ? " +
+                "WHERE User_Name = ? AND User_Tag = ?";
+
+        try {
+            SQLiteStatement statement = db.compileStatement(sql);
+            statement.bindLong(1, recycleStatus.getRecycleTimes());
+            statement.bindDouble(2, recycleStatus.getTotalWeight());
+            statement.bindDouble(3, recycleStatus.getTotalMoney());
+            statement.bindDouble(4, recycleStatus.getTotalDonation());
+            statement.bindDouble(5, recycleStatus.getTotalCarbonReduction());
+            statement.bindString(6, recycleStatus.getUserName());
+            statement.bindString(7, recycleStatus.getUserTag());
+
+            // 執行更新
+            statement.executeUpdateDelete();
+            success = true; // 更新成功
+        } catch (SQLiteDatabaseLockedException e) {
+            Log.w("DBHelper", "Database is locked: " + e.getMessage());
+        } catch (Exception e) {
+            Log.e("DBHelper", "UpdateFailed: " + e.getMessage());
+        }
+
+        return success; // 返回更新是否成功
+    }
+
+
+    /**
+     * 檢查機台是否存在
+     *
+     * @param machineId 機台ID
+     * @return 是否存在
+     */
+    public boolean isStationExits(Integer machineId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        boolean exists = false;
+
+        try {
+            String query = "SELECT * FROM " + TABLE_RECYCLE_STATION + " WHERE RecycleStation_ID = ?";
+            cursor = db.rawQuery(query, new String[]{String.valueOf(machineId)});
+            exists = cursor.moveToFirst();
+        } catch (Exception e) {
+            Log.e("DBHelper", "檢查機台存在性時出錯", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
-            db.close();
         }
-
-        return recycleStats;
+        return exists;
     }
-
 
 }

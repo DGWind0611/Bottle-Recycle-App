@@ -1,5 +1,6 @@
 package com.fcu.android.bottlerecycleapp.ui.personal_data;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.SharedViewModel;
+import com.fcu.android.bottlerecycleapp.database.DBHelper;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleStatus;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentPersonalDataBinding;
 import com.fcu.android.bottlerecycleapp.ui.notification.NotificationActivity;
@@ -33,10 +36,13 @@ public class PersonalDataFragment extends Fragment {
     private FragmentPersonalDataBinding binding;
     private SharedViewModel sharedViewModel;
     private ActivityResultLauncher<Intent> settingActivityLauncher;
+    private DBHelper dbHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        dbHelper = new DBHelper(requireContext());
 
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
@@ -56,6 +62,7 @@ public class PersonalDataFragment extends Fragment {
         );
     }
 
+    @SuppressLint("SetTextI18n")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         PersonalDataViewModel personalDataViewModel =
@@ -76,10 +83,20 @@ public class PersonalDataFragment extends Fragment {
         sharedViewModel.getData().observe(getViewLifecycleOwner(), data -> {
             if (data != null) {
                 String userName = data.getUserName();
-                Double userPrice = data.getEarnMoney();
+                String userTag = data.getUserTag();
+
+                // 嘗試獲取 RecycleStatus 資料
+                RecycleStatus recycleStatus = dbHelper.getUserRecycleStats(userName, userTag);
+                if (recycleStatus != null) {
+                    double userPrice = recycleStatus.getTotalMoney();
+                    tvPriceValue.setText("$ " + userPrice);
+                } else {
+                    Log.d("PersonalDataFragment", "RecycleStatus is null for user: " + userName + ", tag: " + userTag);
+                    tvPriceValue.setText("$ 0");
+                }
+
                 String avatarUrl = data.getUserImage();  // 這是儲存的圖片路徑
                 tvUserName.setText(userName);
-                tvPriceValue.setText(userPrice.toString());
 
                 if (avatarUrl == null) {
                     ivAvatar.setImageResource(R.drawable.avatar);
@@ -126,11 +143,11 @@ public class PersonalDataFragment extends Fragment {
             // 跳轉到通知頁面
             Intent intent = new Intent(requireActivity(), NotificationActivity.class);
 //            intent.putExtra("userName", userName);
-//            intent.putExtra("userTag",userTag)
+//            intent.putExtra("userTag", userTag);
             startActivity(intent);
         });
-        final TextView textView = binding.tvUserName;
-        personalDataViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        personalDataViewModel.getText().observe(getViewLifecycleOwner(), tvUserName::setText);
         return root;
     }
 

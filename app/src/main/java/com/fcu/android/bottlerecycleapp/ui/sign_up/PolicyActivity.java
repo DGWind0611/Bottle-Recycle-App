@@ -50,19 +50,21 @@ public class PolicyActivity extends AppCompatActivity {
 
         // 監聽 CheckBox 狀態，確保使用者勾選才啟用按鈕
         cbConfirmRead.setOnCheckedChangeListener((buttonView, isChecked) -> btnAgree.setEnabled(isChecked));
-        // 典籍同意後回到前一頁
+        // 點集同意後回到前一頁
         btnAgree.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            intent.putExtra("agree", true); // 傳遞勾選狀態
-            setResult(RESULT_OK, intent);
-            finish();
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("agree", true);
+            setResult(RESULT_OK, resultIntent);
+            finish(); // 結束活動
         });
+
         btnDisagree.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            intent.putExtra("agree", false); // 傳遞勾選狀態
-            setResult(RESULT_OK, intent);
-            finish();
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("agree", false);
+            setResult(RESULT_OK, resultIntent);
+            finish(); // 結束活動
         });
+
     }
 
     // 打開 PDF 文件

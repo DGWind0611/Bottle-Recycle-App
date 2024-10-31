@@ -18,17 +18,17 @@ public class TestData {
         List<User> users = new ArrayList<>();
         Date date = new Date();
         users.add(new User("測試使用者1", "0001", "test@test.com", BCrypt.hashpw("Test123456", BCrypt.gensalt())
-                , "0911000001", 0.0, "1" + date.getTime(), 0.0, Gender.UNDEFINED, Role.USER, null));
+                , "0911000001", "1" + date.getTime(), 0.0, Gender.UNDEFINED, Role.USER, null));
         users.add(new User("測試使用者2", "0002", "test2@test.com", BCrypt.hashpw("Test123456", BCrypt.gensalt())
-                , "0911000002", 0.0, "2" + date.getTime(), 0.0, Gender.UNDEFINED, Role.USER, null));
+                , "0911000002", "2" + date.getTime(), 0.0, Gender.UNDEFINED, Role.USER, null));
         users.add(new User("測試使用者3", "4395", "test3@test.com", BCrypt.hashpw("Test123456", BCrypt.gensalt())
-                , "0911000003", 0.0, "3" + date.getTime(), 0.0, Gender.UNDEFINED, Role.USER, null));
+                , "0911000003", "3" + date.getTime(), 0.0, Gender.UNDEFINED, Role.USER, null));
         users.add(new User("測試使用者4", "5622", "test4@test.com", BCrypt.hashpw("Test123456", BCrypt.gensalt())
-                , "0911000004", 0.0, "4" + date.getTime(), 0.0, Gender.UNDEFINED, Role.USER, null));
+                , "0911000004", "4" + date.getTime(), 0.0, Gender.UNDEFINED, Role.USER, null));
         users.add(new User("測試使用者5", "2203", "測試使用5", BCrypt.hashpw("Test123456", BCrypt.gensalt())
-                , "0911000005", 0.0, "5" + date.getTime(), 0.0, Gender.UNDEFINED, Role.USER, null));
+                , "0911000005", "5" + date.getTime(), 0.0, Gender.UNDEFINED, Role.USER, null));
         users.add(new User("測試管理員", "1256", "admin@test.com", BCrypt.hashpw("Test123456", BCrypt.gensalt())
-                , "0911000006", 0.0, "6" + date.getTime(), 0.0, Gender.UNDEFINED, Role.ADMIN, null));
+                , "0911000006", "6" + date.getTime(), 0.0, Gender.UNDEFINED, Role.ADMIN, null));
         return users;
     }
 
