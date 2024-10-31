@@ -44,7 +44,8 @@ public class AddRecycleRecordsActivity extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
 
-        etMachineId = findViewById(R.id.et_machine_name);
+        etMachineId = findViewById(R.id.et_machine_id);
+        tvMachineName = findViewById(R.id.tv_machine_name);
         etRecycleTime = findViewById(R.id.et_recycle_time);
         etRecycleWeight = findViewById(R.id.et_recycle_weight);
         etUserName = findViewById(R.id.et_recycle_user_name);
@@ -53,6 +54,33 @@ public class AddRecycleRecordsActivity extends AppCompatActivity {
 
         btnAddRecord = findViewById(R.id.btn_add_recycle_record);
         btnCalender = findViewById(R.id.btn_calender_annoncement_record);
+
+        etMachineId.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String machineIdStr = s.toString().trim();
+                if (!machineIdStr.isEmpty()) {
+                    try {
+                        int machineId = Integer.parseInt(machineIdStr);
+                        // 使用 AsyncTask 在非主執行緒中查詢資料庫
+                        new GetMachineNameTask().execute(machineId);
+                    } catch (NumberFormatException e) {
+                        tvMachineName.setText("無效機台ID");
+                    }
+                } else {
+                    tvMachineName.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
         btnAddRecord.setOnClickListener(v -> {
             String machineIdStr = etMachineId.getText().toString().trim();
@@ -134,6 +162,23 @@ public class AddRecycleRecordsActivity extends AppCompatActivity {
         });
 
         btnCalender.setOnClickListener(v -> DatePicker.showDatePickerDialog(AddRecycleRecordsActivity.this, etRecycleTime));
+    }
+
+    private class GetMachineNameTask extends AsyncTask<Integer, Void, String> {
+        @Override
+        protected String doInBackground(Integer... params) {
+            int machineId = params[0];
+            return dbHelper.getMachineNameById(machineId); // 假設您有這個方法
+        }
+
+        @Override
+        protected void onPostExecute(String machineName) {
+            if (machineName != null && !machineName.isEmpty()) {
+                tvMachineName.setText("機台名稱: " + machineName);
+            } else {
+                tvMachineName.setText("找不到對應的機台名稱");
+            }
+        }
     }
 
     // 可選擇的清空輸入欄位方法

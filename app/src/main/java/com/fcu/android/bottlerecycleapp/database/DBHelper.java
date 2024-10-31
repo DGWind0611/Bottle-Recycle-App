@@ -721,7 +721,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.setTransactionSuccessful(); // 設置事務成功
             Log.d("DBHelper", "Transaction Successful");
         } catch (Exception e) {
-            Log.e("DBHelper", "獲取機台名稱錯誤", e);
+            Log.e("DBHelper", "Get The Machine Name Error", e);
         } finally {
             db.endTransaction(); // 結束事務
             Log.d("DBHelper", "Transaction End");
