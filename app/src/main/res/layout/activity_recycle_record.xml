@@ -8,14 +8,22 @@
     android:layout_height="match_parent"
     tools:context=".ui.recycle_record.RecycleRecordActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_recycle_record"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+    <ImageButton
+        android:id="@+id/btn_back_to_personal_data_from_recycle_record"
+        style="@style/CustomImageButtonStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_recycle_record"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_back_to_personal_data_from_recycle_record" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

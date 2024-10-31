@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private ImageButton btnLoginTogglePassword;
     private DBHelper dbHelper;
-    private final String USER_EMAIL = "test@test.com";
+    private final String USER_EMAIL = "admin@test.com";
     private final String TEST_PASSWORD = "Test123456";
 
     @Override
@@ -103,10 +103,9 @@ public class LoginActivity extends AppCompatActivity {
 
             // 檢查帳號是否存在
             User user = dbHelper.findUserByEmail(userEmail);
-            Log.d("LoginActivity", "userName: " + user.getUserName() + "#" + user.getUserTag());
             if (user != null) {
+                Log.d("LoginActivity", "userName: " + user.getUserName() + "#" + user.getUserTag());
                 String storedPassword = user.getPassword();
-                // 檢查密碼
                 if (BCrypt.checkpw(password, storedPassword)) {
                     if (user.getRole() == Role.ADMIN) {
                         navigateToAdminPage();
@@ -119,6 +118,7 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "該帳號尚未註冊", Toast.LENGTH_SHORT).show();
             }
+
         });
 
         // 點擊前往註冊頁面

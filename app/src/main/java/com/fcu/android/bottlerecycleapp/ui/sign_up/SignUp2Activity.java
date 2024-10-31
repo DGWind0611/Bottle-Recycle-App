@@ -17,6 +17,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -29,7 +31,6 @@ import com.fcu.android.bottlerecycleapp.ui.login.LoginActivity;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Date;
-import java.util.Random;
 
 public class SignUp2Activity extends AppCompatActivity {
 
@@ -37,13 +38,13 @@ public class SignUp2Activity extends AppCompatActivity {
     private EditText etPassword;
     private EditText etConfirmPassword;
     private CheckBox cbAgree;
-    private TextView tvPolicy; // 使用 TextView 顯示政策和條款
+    private TextView tvPolicy;
     private Button btnSignUp;
     private ImageButton ibBack;
     private ImageButton btnSignUpTogglePassword;
     private ImageButton btnSignUpToggleConfirmPassword;
     private DBHelper dbHelper;
-    private static final int REQUEST_POLICY = 1;
+    private ActivityResultLauncher<Intent> policyActivityLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +59,25 @@ public class SignUp2Activity extends AppCompatActivity {
 
         // 初始化 UI 元件
         etPassword = findViewById(R.id.et_signup_password);
-//        etConfirmPassword = findViewById(R.id.et_signup_confirm_password);
-//        cbAgree = findViewById(R.id.cb_agree);
+        etConfirmPassword = findViewById(R.id.et_signup_confirm_password);
+        cbAgree = findViewById(R.id.cb_agree);
         btnSignUp = findViewById(R.id.btn_sing_up);
-        ibBack = findViewById(R.id.btn_back_to_signup);
+        ibBack = findViewById(R.id.btn_back_to_signup_from_signup2);
         tvPolicy = findViewById(R.id.tv_policy);
 
         btnSignUpTogglePassword = findViewById(R.id.btn_sing_up_togglePassword);
         btnSignUpToggleConfirmPassword = findViewById(R.id.signup_confirm_togglePassword);
+
+        // 初始化 ActivityResultLauncher 以替代 startActivityForResult
+        policyActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        boolean agreed = result.getData().getBooleanExtra("agree", false);
+                        cbAgree.setChecked(agreed); // 自動勾選 CheckBox
+                    }
+                }
+        );
 
         View.OnClickListener toggleListener = v -> {
             if (v.getId() == R.id.btn_sing_up_togglePassword) {
@@ -98,6 +110,7 @@ public class SignUp2Activity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        btnSignUp.setText("註冊");
         // 註冊按鈕點擊事件
         btnSignUp.setOnClickListener(v -> {
             String password = etPassword.getText().toString().trim();
@@ -149,15 +162,6 @@ public class SignUp2Activity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_POLICY && resultCode == RESULT_OK) {
-            boolean agreed = data.getBooleanExtra("agree", false);
-            cbAgree.setChecked(agreed); // 自動勾選 CheckBox
-        }
-    }
-
     /**
      * 新增 QR CODE
      */
@@ -175,7 +179,7 @@ public class SignUp2Activity extends AppCompatActivity {
             @Override
             public void onClick(@NonNull View widget) {
                 Intent intent = new Intent(SignUp2Activity.this, PolicyActivity.class);
-                startActivityForResult(intent, REQUEST_POLICY); // 使用 startActivityForResult 方法
+                policyActivityLauncher.launch(intent); // 使用 ActivityResultLauncher 啟動 PolicyActivity
             }
         };
 

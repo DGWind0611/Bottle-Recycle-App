@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fcu.android.bottlerecycleapp.SharedViewModel;
 import com.fcu.android.bottlerecycleapp.database.entity.ActivityItem;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
+import com.fcu.android.bottlerecycleapp.database.entity.RecycleStatus;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentHomeBinding;
 
 import java.util.List;
@@ -65,12 +66,20 @@ public class HomeFragment extends Fragment {
                 for (ActivityItem activityItem : activityList) {
                     activityItem.setActivityName(dbHelper.findActivityById(activityItem.getActivityId()).getActivityName());
                 }
-                //設定用戶資料
-                tvEarnValue.setText(String.valueOf("$ " + data.getEarnMoney()));
-                tvDonateValue.setText(String.valueOf("$ " + data.getDonateMoney()));
-                Map<String, Object> recycleStats = dbHelper.getUserRecycleStats(userName, userTag);
-                tvRecycleTime.setText(recycleStats.get("recycleCount") + " 次");
-                tvCarbonReductionValue.setText(recycleStats.get("totalWeight") + " g");
+                RecycleStatus recycleStats = dbHelper.getUserRecycleStats(userName, userTag);
+                if (recycleStats != null) {
+                    tvEarnValue.setText(String.valueOf("$ " + recycleStats.getTotalMoney()));
+                    tvDonateValue.setText(String.valueOf("$ " + recycleStats.getTotalDonation()));
+                    tvRecycleTime.setText(recycleStats.getRecycleTimes() + " 次");
+                    tvCarbonReductionValue.setText(recycleStats.getTotalCarbonReduction() + " g");
+                } else {
+                    Log.d("HomeFragment", "RecycleStatus is null for user: " + userName + ", tag: " + userTag);
+                    // 可以設定預設值
+                    tvEarnValue.setText("$ 0");
+                    tvDonateValue.setText("$ 0");
+                    tvRecycleTime.setText("0 次");
+                    tvCarbonReductionValue.setText("0 g");
+                }
 
                 ActivityAdapter activityAdapter = new ActivityAdapter(getContext(), activityList);
                 rvActivity.setAdapter(activityAdapter);

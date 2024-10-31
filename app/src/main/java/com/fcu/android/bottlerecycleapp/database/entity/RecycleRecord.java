@@ -7,20 +7,23 @@ public class RecycleRecord {
     private int recycleStationId;
     private String recycleTime;
     private Double recycleWeight;
-
+    private Double earnMoney;
 
 
     public RecycleRecord() {
 
     }
 
-    public RecycleRecord(int recycleRecordId, String userName, String userTag, int recycleStationId, String recycleTime, Double recycleWeight) {
+    public RecycleRecord(int recycleRecordId, String userName, String userTag, int recycleStationId,
+                         String recycleTime, Double recycleWeight, Double earnMoney) {
         this.recycleRecordId = recycleRecordId;
         this.userName = userName;
         this.userTag = userTag;
         this.recycleStationId = recycleStationId;
         this.recycleTime = recycleTime;
         this.recycleWeight = recycleWeight;
+        this.earnMoney = earnMoney;
+
     }
 
     public int getRecycleRecordId() {
@@ -69,5 +72,13 @@ public class RecycleRecord {
 
     public void setRecycleWeight(Double recycleWeight) {
         this.recycleWeight = recycleWeight;
+    }
+
+    public Double getEarnMoney() {
+        return earnMoney;
+    }
+
+    public void setEarnMoney(Double earnMoney) {
+        this.earnMoney = earnMoney;
     }
 }

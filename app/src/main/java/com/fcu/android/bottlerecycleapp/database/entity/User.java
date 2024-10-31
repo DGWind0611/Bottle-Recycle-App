@@ -17,14 +17,13 @@ public class User implements Serializable {
 
 
     public User(String userName, String userTag, String email, String password, String phoneNumber,
-                Double earnMoney, String qrCode, Double donateMoney, Gender gender, Role role,
+                String qrCode, Double donateMoney, Gender gender, Role role,
                 String userImage) {
         this.userName = userName;
         this.userTag = userTag;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.earnMoney = earnMoney;
         this.qrCode = qrCode;
         this.donateMoney = donateMoney;
         this.gender = gender;
@@ -74,14 +73,6 @@ public class User implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public Double getEarnMoney() {
-        return earnMoney;
-    }
-
-    public void setEarnMoney(Double earnMoney) {
-        this.earnMoney = earnMoney;
     }
 
     public String getQrCode() {

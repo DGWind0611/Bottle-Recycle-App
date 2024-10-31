@@ -61,14 +61,13 @@ public class SignUpActivity extends AppCompatActivity {
                 user.setUserName(userName);
                 user.setEmail(email);
                 user.setPhoneNumber(phoneNumber);
-                user.setEarnMoney(0.0);
                 user.setDonateMoney(0.0);
                 user.setGender(Gender.UNDEFINED);
                 Random random = new Random();
-                String userTag = String.valueOf(10000 + random.nextInt() * 1000);
+                String userTag = String.valueOf(1000 + random.nextInt() * 1000);
                 //檢查同一個userName是否有相同的userTag
                 while (dbHelper.findUserByNameAndTag(user.getUserName(), userTag) != null) {
-                    userTag = String.valueOf(10000 + random.nextInt() * 1000);
+                    userTag = String.valueOf(1000 + random.nextInt() * 1000);
                 }
                 user.setUserTag(userTag);
                 // 將資料傳遞給 SignUp2Activity
