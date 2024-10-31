@@ -79,7 +79,11 @@ public class AddRecycleRecordsActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (s.toString().trim().isEmpty()) {
+                    tvMachineName.setText("機台名稱:"); // 檢查ID欄位是否為空，若空則顯示預設文字
+                }
             }
+
         });
 
         btnAddRecord.setOnClickListener(v -> {
@@ -99,7 +103,7 @@ public class AddRecycleRecordsActivity extends AppCompatActivity {
             etRecycleValue.setError(null);
 
             // 驗證輸入
-            boolean isValid = true; // 用來判斷輸入是否有效
+            boolean isValid = true;
 
             if (machineIdStr.isEmpty()) {
                 etMachineId.setError("請填寫機台ID");
@@ -125,33 +129,31 @@ public class AddRecycleRecordsActivity extends AppCompatActivity {
                 etUserTag.setError("請填寫用戶標籤");
                 isValid = false;
             }
+
             if (recycleValue.isEmpty()) {
                 etRecycleValue.setError("請填寫回收金額");
                 isValid = false;
             }
 
-            if (!isValid) {
-                return; // 若有任何欄位不符合，則不進行後續操作
+            // 若有任何欄位不符合，則不進行後續操作
+            if (!isValid) return;
+
+            // 檢查User是否存在
+            if (dbHelper.findUserByNameAndTag(userName, userTag)==null) {
+                Toast.makeText(this, "用戶不存在，請確認用戶名稱與標籤", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            // 將機台ID轉換為整數
+            // 創建回收紀錄物件並新增到資料庫
             Integer machineId = Integer.parseInt(machineIdStr);
-
-            // 創建回收紀錄物件
             RecycleRecord record = new RecycleRecord();
-//            // 檢查machineID是否存在
-//            boolean isExits = dbHelper.isStationExits(machineId);
-//            if (!isExits) {
-//                Toast.makeText(this, "機台不存在", Toast.LENGTH_SHORT).show();
-//                return;
-//            }
             record.setUserName(userName);
             record.setUserTag(userTag);
             record.setRecycleStationId(machineId);
             record.setRecycleTime(recycleTime);
             record.setRecycleWeight(Double.parseDouble(recycleWeight));
             record.setEarnMoney(Double.parseDouble(recycleValue));
-            // 將紀錄加入資料庫
+
             boolean isAddedRecord = dbHelper.addRecycleRecord(record);
             if (isAddedRecord) {
                 Toast.makeText(this, "紀錄已成功添加", Toast.LENGTH_SHORT).show();
@@ -160,6 +162,7 @@ public class AddRecycleRecordsActivity extends AppCompatActivity {
                 Toast.makeText(this, "添加紀錄失敗", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         btnCalender.setOnClickListener(v -> DatePicker.showDatePickerDialog(AddRecycleRecordsActivity.this, etRecycleTime));
     }
@@ -175,7 +178,8 @@ public class AddRecycleRecordsActivity extends AppCompatActivity {
         protected void onPostExecute(String machineName) {
             if (machineName != null && !machineName.isEmpty()) {
                 tvMachineName.setText("機台名稱: " + machineName);
-            } else {
+            }
+            else {
                 tvMachineName.setText("找不到對應的機台名稱");
             }
         }
