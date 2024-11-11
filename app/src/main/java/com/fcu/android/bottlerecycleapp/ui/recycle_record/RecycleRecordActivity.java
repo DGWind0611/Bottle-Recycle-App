@@ -1,5 +1,6 @@
 package com.fcu.android.bottlerecycleapp.ui.recycle_record;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -36,6 +37,12 @@ public class RecycleRecordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycle_record);
 
+        // 從 Intent 中取得 userName 和 userTag
+        Intent intent = getIntent();
+        userName = intent.getStringExtra("userName");
+        userTag = intent.getStringExtra("userTag");
+        Log.d("RecycleRecordActivity", "Received userName: " + userName + ", userTag: " + userTag);
+
         backButton = findViewById(R.id.btn_back_to_personal_data_from_recycle_record);
         backButton.setOnClickListener(v -> finish());
 
@@ -44,15 +51,14 @@ public class RecycleRecordActivity extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
 
-        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
-        sharedViewModel.getData().observe(this, data -> {
-            if (data != null) {
-                userName = data.getUserName();
-                userTag = data.getUserTag();
-                loadRecycleRecords(); // 確保在獲取用戶資料後再加載記錄
-            }
-        });
+        // 確保在取得 userName 和 userTag 後再加載記錄
+        if (userName != null && userTag != null) {
+            loadRecycleRecords();
+        } else {
+            Log.e("RecycleRecordActivity", "userName or userTag is null");
+        }
     }
+
 
     // 將獲取數據的邏輯移到一個方法中
     private void loadRecycleRecords() {
@@ -80,7 +86,7 @@ public class RecycleRecordActivity extends AppCompatActivity {
         Map<String, List<RecycleRecord>> groupedRecords = new HashMap<>();
         if (records != null && !records.isEmpty()) { // 加入null檢查
             for (RecycleRecord record : records) {
-                // 提取紀錄中的月份，假設紀錄的日期格式為 "yyyy/MM/dd HH:mm"
+                // 提取紀錄中的月份，日期格式為 "yyyy/MM/dd HH:mm:ss"
                 String month = record.getRecycleTime().substring(0, 7); // 取得 "yyyy/MM"
                 if (!groupedRecords.containsKey(month)) {
                     groupedRecords.put(month, new ArrayList<>());

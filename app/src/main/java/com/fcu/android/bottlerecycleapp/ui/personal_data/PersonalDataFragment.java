@@ -128,6 +128,9 @@ public class PersonalDataFragment extends Fragment {
         btnRecycleRecord.setOnClickListener(v -> {
             // 跳轉到回收記錄頁面
             Intent intent = new Intent(requireActivity(), RecycleRecordActivity.class);
+            Log.d("PersonalDataFragment", "userName: " + sharedViewModel.getData().getValue().getUserName() + ", userTag: " + sharedViewModel.getData().getValue().getUserTag());
+            intent.putExtra("userName", sharedViewModel.getData().getValue().getUserName());
+            intent.putExtra("userTag", sharedViewModel.getData().getValue().getUserTag());
             startActivity(intent);
         });
 
