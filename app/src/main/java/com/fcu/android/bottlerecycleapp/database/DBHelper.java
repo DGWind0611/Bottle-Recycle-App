@@ -17,6 +17,7 @@ import com.fcu.android.bottlerecycleapp.database.entity.ActivityItem;
 import com.fcu.android.bottlerecycleapp.database.entity.Gender;
 import com.fcu.android.bottlerecycleapp.database.entity.MyActivity;
 import com.fcu.android.bottlerecycleapp.database.entity.Notification;
+import com.fcu.android.bottlerecycleapp.database.entity.QrCode;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleRecord;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleStation;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleStatus;
@@ -36,7 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_USER = "User";
     private static final String TABLE_DONATION_RECORD = "Donation_Record";
     private static final String TABLE_NOTIFICATIONS = "Notifications";
-    private static final String TABLE_QR_CORD_AGENCY = "QR_Cord_Agency";
+    private static final String TABLE_QR_CODE_AGENCY = "QR_Code_Agency";
     private static final String TABLE_RECYCLE_STATION = "RecycleStation";
     private static final String TABLE_REMITTANCE_RECORD = "Remittance_Record";
     private static final String TABLE_STATION_FIX_RECORD = "Station_Fix_Record";
@@ -46,6 +47,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_ACTIVITY = "Activity";
     private static final String TABLE_USER_ACTIVITY = "User_Activity";
     private static final String TABLE_STATION_STATUS_HISTORY = "Station_Status_History";
+    private static final String TABLE_USER_QR_CODE = "User_QR_Code";
 
     public DBHelper(@NonNull Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -58,7 +60,7 @@ public class DBHelper extends SQLiteOpenHelper {
         createTableUser(db);
         createTableDonationRecord(db);
         createTableNotifications(db);
-        createTableQrCordAgency(db);
+        createTableQrCodeAgency(db);
         createTableRecycleStation(db);
         createTableRemittanceRecord(db);
         createTableStationFixRecord(db);
@@ -68,6 +70,7 @@ public class DBHelper extends SQLiteOpenHelper {
         createActivityTable(db);
         createUserActivityRelationTable(db);
         createStationStatusHistory(db);
+        createTableUserQRCode(db);
     }
 
 
@@ -78,7 +81,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "E_mail TEXT NOT NULL UNIQUE, "
                 + "Password TEXT NOT NULL, "
                 + "Phone_Number TEXT NOT NULL UNIQUE, "
-                + "QR_Code String, "
+                + "QR_Code TEXT, "
                 + "Donate_Money REAL, "
                 + "Gender TEXT, "
                 + "Role TEXT, "
@@ -112,12 +115,14 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-    private void createTableQrCordAgency(@NonNull SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_QR_CORD_AGENCY + " (" +
-                "QR_Cord_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "Agency_Name TEXT NOT NULL, " +
-                "QR_CODE_ORIGIN_Name INTEGER NOT NULL, " +
-                "User_Custom_Name TEXT )";
+    private void createTableQrCodeAgency(@NonNull SQLiteDatabase db) {
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_QR_CODE_AGENCY + " (" +
+                "QR_Code_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "QR_Code_Name TEXT NOT NULL, " +
+                "Bank_Number INTEGER NOT NULL, " +
+                "Bank_Account INTEGER NOT NULL, " +
+                "Monthly_Donation REAL NOT NULL, " +
+                "Total_Donation REAL NOT NULL)";
         db.execSQL(sql);
     }
 
@@ -230,6 +235,17 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+    private void createTableUserQRCode(@NonNull SQLiteDatabase db) {
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_QR_CODE + " (" +
+                "User_Name TEXT NOT NULL, " +
+                "User_Tag TEXT NOT NULL, " +
+                "QR_Code_ID INTEGER NOT NULL, " +
+                "PRIMARY KEY (User_Name, User_Tag, QR_Code_ID), " +
+                "FOREIGN KEY(User_Name, User_Tag) REFERENCES User(User_Name, User_Tag), " +
+                "FOREIGN KEY(QR_Code_ID) REFERENCES QR_Cord_Agency(QR_Code_ID))";
+        db.execSQL(sql);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // onUpgrade 則是如果資料庫結構有改變了就會觸發 onUpgrade
@@ -296,7 +312,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return success; // 返回插入是否成功
     }
-
 
 
     /**
@@ -660,7 +675,7 @@ public class DBHelper extends SQLiteOpenHelper {
             }
 
             // 更新用戶的回收狀態
-            RecycleStatus recycleStatus = getUserRecycleStats(db,record.getUserName(), record.getUserTag());
+            RecycleStatus recycleStatus = getUserRecycleStats(db, record.getUserName(), record.getUserTag());
 
             Log.d("DBHelper", "Recycle status: " + recycleStatus.getUserName() + " # " + recycleStatus.getUserTag());
 
@@ -692,10 +707,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return isSuccess;
     }
-
-
-
-
 
 
     /**
@@ -1049,7 +1060,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 recycleStatus.setTotalCarbonReduction(cursor.getDouble(cursor.getColumnIndexOrThrow("Total_Carbon_Reduction")));
                 return recycleStatus;
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             Log.e("DBHelper", "Error getting user recycle stats: " + e.getMessage());
         }
         return recycleStatus;
@@ -1057,9 +1068,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 更新用戶回收狀態，不會自動關閉資料庫
-     * @param db 資料庫
+     *
+     * @param db       資料庫
      * @param userName 用戶名稱
-     * @param userTag 用戶標籤
+     * @param userTag  用戶標籤
      * @return 回收狀態
      */
     public RecycleStatus getUserRecycleStats(SQLiteDatabase db, String userName, String userTag) {
@@ -1147,5 +1159,107 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return exists;
     }
+
+    /**
+     * 新增合作夥伴QR Code
+     *
+     * @param qrCode QR Code
+     */
+    public void insertQrCode(@NonNull QrCode qrCode) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("QR_Code_Name", qrCode.getQrCodeName());
+        values.put("Bank_Number", qrCode.getBankNumber());
+        values.put("Bank_Account", qrCode.getBankAccount());
+        values.put("Monthly_Donation", qrCode.getMonthlyDonation());
+        values.put("Total_Donation", qrCode.getTotalDonation());
+
+        // 插入數據並檢查是否成功
+        long result = db.insert(TABLE_QR_CODE_AGENCY, null, values);
+        if (result == -1) {
+            Log.e("Database", "Failed to insert QrCode record");
+        } else {
+            Log.d("Database", "QrCode record inserted successfully with ID: " + result);
+        }
+
+        db.close();
+    }
+
+    /**
+     * 獲取所有合作夥伴QR Code
+     *
+     * @return QR Code列表
+     */
+    public List<QrCode> getAllQrCodes() {
+        List<QrCode> qrCodes = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_QR_CODE_AGENCY;
+
+        try (Cursor cursor = db.rawQuery(query, null)) {
+            if (cursor.moveToFirst()) {
+                do {
+                    QrCode qrCode = new QrCode();
+                    qrCode.setQrCodeName(cursor.getString(cursor.getColumnIndexOrThrow("QR_Code_Name")));
+                    qrCode.setBankNumber(cursor.getString(cursor.getColumnIndexOrThrow("Bank_Number")));
+                    qrCode.setBankAccount(cursor.getString(cursor.getColumnIndexOrThrow("Bank_Account")));
+                    qrCode.setMonthlyDonation(cursor.getDouble(cursor.getColumnIndexOrThrow("Monthly_Donation")));
+                    qrCode.setTotalDonation(cursor.getDouble(cursor.getColumnIndexOrThrow("Total_Donation")));
+                    qrCodes.add(qrCode);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DBHelper", "Error getting all QrCodes: " + e.getMessage());
+        } finally {
+            db.close();
+        }
+        return qrCodes;
+    }
+
+    // 個人用戶新增對應合作夥伴QrCode
+    public boolean userAddQrCode(String userName, String userTag, int qrCodeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("User_Name", userName);
+        values.put("User_Tag", userTag);
+        values.put("QR_Code_ID", qrCodeId);
+
+        long result = db.insert(TABLE_USER_QR_CODE, null, values);
+        db.close();
+        return result != -1;
+    }
+
+    // 個人用戶移除對應合作夥伴QrCode
+    public boolean userRemoveQrCode(String userName, String userTag) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.delete(TABLE_USER_QR_CODE, "User_Name = ? AND User_Tag = ?", new String[]{userName, userTag});
+        db.close();
+        return result > 0;
+    }
+
+    // 獲取個人用戶對應合作夥伴QrCode之ID和Name
+    public String getUserQrCodes(String userName, String userTag) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT QR_Code_ID, QR_Code_Name FROM " + TABLE_USER_QR_CODE
+                + " INNER JOIN " + TABLE_QR_CODE_AGENCY
+                + " ON " + TABLE_USER_QR_CODE + ".QR_Code_ID = " + TABLE_QR_CODE_AGENCY + ".QR_Code_ID"
+                + " WHERE User_Name = ? AND User_Tag = ?";
+        String result = "";
+        try (Cursor cursor = db.rawQuery(query, new String[]{userName, userTag})) {
+            if (cursor.moveToFirst()) {
+                do {
+                    int qrCodeId = cursor.getInt(cursor.getColumnIndexOrThrow("QR_Code_ID"));
+                    String qrCodeName = cursor.getString(cursor.getColumnIndexOrThrow("QR_Code_Name"));
+                    result += qrCodeId + " # " + qrCodeName + "\n";
+                } while (cursor.moveToNext());
+                return result;
+            }
+        } catch (Exception e) {
+            Log.e("DBHelper", "Error getting user QR codes: " + e.getMessage());
+        } finally {
+            db.close();
+        }
+        return result;
+    }
+
 
 }

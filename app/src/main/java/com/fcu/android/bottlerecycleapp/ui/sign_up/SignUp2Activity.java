@@ -136,17 +136,20 @@ public class SignUp2Activity extends AppCompatActivity {
                 user.setQrCode(qrcode);
                 // 將加密的密碼設置到 User 物件
                 user.setPassword(hashedPassword);
-                Log.d("SignUp2Activity", "User Tag: " + user.getUserTag());
                 // 儲存 User 到資料庫
                 try {
                     boolean isCreate = dbHelper.addUser(user);
                     if (isCreate) {
                         user.setQrCode(qrcode);
                         Toast.makeText(this, "註冊成功", Toast.LENGTH_SHORT).show();
-
-                        //將可加入的活動加入到資料庫
-                        dbHelper.addUserToAllUnExpiredActivities(user.getUserName(), user.getUserTag());
-
+                        //TODO: 處理新增活動之BUG
+//                        //將可加入的活動加入到資料庫
+//                        boolean isAddedActivities = dbHelper.addUserToAllUnExpiredActivities(user.getUserName(), user.getUserTag());
+//                        if (isAddedActivities) {
+//                            Log.d("SignUp2Activity", "加入活動成功");
+//                        } else {
+//                            Log.d("SignUp2Activity", "加入活動失敗");
+//                        }
                         // 註冊成功後，導向登入頁面
                         Intent intent = new Intent(SignUp2Activity.this, LoginActivity.class);
                         startActivity(intent);
