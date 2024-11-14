@@ -2,20 +2,25 @@ package com.fcu.android.bottlerecycleapp.database.entity;
 
 public class QrCode {
     private int qrCodeId;
-    private String qrCodeText;
-    private String userName;
-    private String userTag;
-    private String qrCodeDate;
+    private String qrCodeName;
+    private String bankNumber;
+    private String bankAccount;
+    private double monthlyDonation;
+    private double totalDonation;
 
-    public QrCode() {
+    public QrCode(int qrCodeId, String qrCodeName, String bankNumber, String bankAccount,
+                  double monthlyDonation, double totalDonation) {
+        this.qrCodeId = qrCodeId;
+        this.qrCodeName = qrCodeName;
+        this.bankNumber = bankNumber;
+        this.bankAccount = bankAccount;
+        this.monthlyDonation = monthlyDonation;
+        this.totalDonation = totalDonation;
     }
 
-    public QrCode(int qrCodeId, String qrCodeText, String userName, String userTag, String qrCodeDate) {
-        this.qrCodeId = qrCodeId;
-        this.qrCodeText = qrCodeText;
-        this.userName = userName;
-        this.userTag = userTag;
-        this.qrCodeDate = qrCodeDate;
+    public QrCode() {
+        this.totalDonation = 0.0;
+        this.monthlyDonation = 0.0;
     }
 
     public int getQrCodeId() {
@@ -26,36 +31,43 @@ public class QrCode {
         this.qrCodeId = qrCodeId;
     }
 
-    public String getQrCodeText() {
-        return qrCodeText;
+    public String getQrCodeName() {
+        return qrCodeName;
     }
 
-    public void setQrCodeText(String qrCodeText) {
-        this.qrCodeText = qrCodeText;
+    public void setQrCodeName(String qrCodeName) {
+        this.qrCodeName = qrCodeName;
     }
 
-
-    public String getUserName() {
-        return userName;
+    public String getBankNumber() {
+        return bankNumber;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setBankNumber(String bankNumber) {
+        this.bankNumber = bankNumber;
     }
 
-    public String getUserTag() {
-        return userTag;
+    public String getBankAccount() {
+        return bankAccount;
     }
 
-    public void setUserTag(String userTag) {
-        this.userTag = userTag;
+    public void setBankAccount(String bankAccount) {
+        this.bankAccount = bankAccount;
     }
 
-    public String getQrCodeDate() {
-        return qrCodeDate;
+    public double getMonthlyDonation() {
+        return monthlyDonation;
     }
 
-    public void setQrCodeDate(String qrCodeDate) {
-        this.qrCodeDate = qrCodeDate;
+    public void setMonthlyDonation(double monthlyDonation) {
+        this.monthlyDonation = monthlyDonation;
+    }
+
+    public double getTotalDonation() {
+        return totalDonation;
+    }
+
+    public void setTotalDonation(double totalDonation) {
+        this.totalDonation = totalDonation;
     }
 }

@@ -2,6 +2,7 @@ package com.fcu.android.bottlerecycleapp.ui.sign_up;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fcu.android.bottlerecycleapp.database.entity.Gender;
 import com.fcu.android.bottlerecycleapp.R;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
+import com.fcu.android.bottlerecycleapp.database.entity.Role;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
 import com.fcu.android.bottlerecycleapp.ui.login.LoginActivity;
 
@@ -63,12 +65,13 @@ public class SignUpActivity extends AppCompatActivity {
                 user.setPhoneNumber(phoneNumber);
                 user.setDonateMoney(0.0);
                 user.setGender(Gender.UNDEFINED);
+                user.setRole(Role.USER);
                 Random random = new Random();
-                String userTag = String.valueOf(1000 + random.nextInt() * 1000);
-                //檢查同一個userName是否有相同的userTag
+                String userTag = String.valueOf(1000 + random.nextInt(9000));
                 while (dbHelper.findUserByNameAndTag(user.getUserName(), userTag) != null) {
-                    userTag = String.valueOf(1000 + random.nextInt() * 1000);
+                    userTag = String.valueOf(1000 + random.nextInt(9000));
                 }
+                Log.d("SignUpActivityLog", "userTag: " + userTag);
                 user.setUserTag(userTag);
                 // 將資料傳遞給 SignUp2Activity
                 Intent intent = new Intent(SignUpActivity.this, SignUp2Activity.class);
