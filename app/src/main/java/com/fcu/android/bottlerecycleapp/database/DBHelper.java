@@ -188,10 +188,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 "RecycleStation_ID INTEGER NOT NULL, " +
                 "Recycle_Date TEXT NOT NULL, " +
                 "Recycle_Weight REAL NOT NULL, " +
+                "Is_Synced INTEGER DEFAULT 0, " + // 新增字段
                 "FOREIGN KEY(User_Name, User_Tag) REFERENCES User(User_Name, User_Tag), " +
                 "FOREIGN KEY(RecycleStation_ID) REFERENCES RecycleStation(RecycleStation_ID))";
         db.execSQL(sql);
     }
+
 
     private void createTableUserTotalRecycleStatus(@NonNull SQLiteDatabase db) {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_RECYCLE_STATUS + " (" +
@@ -253,10 +255,13 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // onUpgrade 則是如果資料庫結構有改變了就會觸發 onUpgrade
     }
+
+
 
     /**
      * 新增用戶
@@ -648,6 +653,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             // 插入或覆蓋回收記錄
             ContentValues recordValues = getContentValues(record);
+            recordValues.put("Is_Synced", 1); // 標記為已同步
 
             long recordResult = db.insertWithOnConflict(TABLE_USER_RECYCLE_RECORD, null, recordValues, SQLiteDatabase.CONFLICT_REPLACE);
             if (recordResult == -1) {
@@ -656,16 +662,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
             // 更新回收站的當前重量
             RecycleStation station = findStationById(record.getRecycleStationId());
-            if (station != null) {
-                double newWeight = station.getCurrentWeight() + record.getRecycleWeight();
-                station.setCurrentWeight(newWeight);
-
-                boolean updateResult = updateRecycleStation(station, db);
-                if (!updateResult) {
-                    throw new Exception("Failed to update recycle bin weight");
-                }
-            } else {
+            if (station == null) {
                 throw new Exception("The corresponding recycle bin cannot be found");
+            }
+            double newWeight = station.getCurrentWeight() + record.getRecycleWeight();
+            station.setCurrentWeight(newWeight);
+
+            if (!updateRecycleStation(station, db)) {
+                throw new Exception("Failed to update recycle bin weight");
             }
 
             // 獲取當前的用戶回收狀態，若不存在則初始化
@@ -677,11 +681,10 @@ public class DBHelper extends SQLiteOpenHelper {
             // 更新回收狀態數據
             recycleStatus.setRecycleTimes(recycleStatus.getRecycleTimes() + 1);
             recycleStatus.setTotalWeight(recycleStatus.getTotalWeight() + record.getRecycleWeight());
-            recycleStatus.setTotalDonation(recycleStatus.getTotalMoney() + record.getEarnMoney());
+            recycleStatus.setTotalMoney(recycleStatus.getTotalMoney() + record.getEarnMoney());
             recycleStatus.setTotalCarbonReduction(recycleStatus.getTotalCarbonReduction() + record.getRecycleWeight() * 0.05);
 
-            boolean isCreateStatus = updateRecycleStatus(recycleStatus, db);
-            if (!isCreateStatus) {
+            if (!updateRecycleStatus(recycleStatus, db)) {
                 throw new Exception("Failed to update recycle status");
             }
 
@@ -1107,13 +1110,14 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             db = getReadableDatabase();
             String query = "SELECT SUM(Recycle_Weight) AS TotalWeight, " +
-                    "SUM(Earn_Money) AS TotalDonation, COUNT(*) AS RecycleTimes " +
+                    "SUM(Earn_Money) AS TotalMoney, COUNT(*) AS RecycleTimes " +
                     "FROM " + TABLE_USER_RECYCLE_RECORD + " " +
                     "WHERE User_Name = ? AND User_Tag = ?";
             Cursor cursor = db.rawQuery(query, new String[]{userName, userTag});
+
             if (cursor != null && cursor.moveToFirst()) {
                 status.setTotalWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("TotalWeight")));
-                status.setTotalDonation(cursor.getDouble(cursor.getColumnIndexOrThrow("TotalDonation")));
+                status.setTotalMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("TotalMoney"))); // 修正為 TotalMoney
                 status.setRecycleTimes(cursor.getInt(cursor.getColumnIndexOrThrow("RecycleTimes")));
                 status.setTotalCarbonReduction(status.getTotalWeight() * 0.05); // 根據回收重量計算碳減排
             }

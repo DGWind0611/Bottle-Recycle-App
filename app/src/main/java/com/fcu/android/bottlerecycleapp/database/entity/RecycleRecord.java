@@ -8,6 +8,7 @@ public class RecycleRecord {
     private String recycleTime;
     private Double recycleWeight;
     private Double earnMoney;
+    private Integer isSynced;
 
 
     public RecycleRecord() {
@@ -15,7 +16,7 @@ public class RecycleRecord {
     }
 
     public RecycleRecord(String recycleRecordId, String userName, String userTag, int recycleStationId,
-                         String recycleTime, Double recycleWeight, Double earnMoney) {
+                         String recycleTime, Double recycleWeight, Double earnMoney, Integer isSynced) {
         this.recycleRecordId = recycleRecordId;
         this.userName = userName;
         this.userTag = userTag;
@@ -23,6 +24,7 @@ public class RecycleRecord {
         this.recycleTime = recycleTime;
         this.recycleWeight = recycleWeight;
         this.earnMoney = earnMoney;
+        this.isSynced = isSynced;
 
     }
 
@@ -89,5 +91,13 @@ public class RecycleRecord {
 
     public void setEarnMoney(Double earnMoney) {
         this.earnMoney = earnMoney;
+    }
+
+    public Integer getIsSynced() {
+        return isSynced;
+    }
+
+    public void setIsSynced(Integer isSynced) {
+        this.isSynced = isSynced;
     }
 }

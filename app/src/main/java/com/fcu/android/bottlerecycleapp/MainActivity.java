@@ -1,8 +1,6 @@
 package com.fcu.android.bottlerecycleapp;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -43,10 +41,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // 初始化 DBHelper
+        // 初始化 DBHelper 和 Firebase Database
         dbHelper = new DBHelper(this);
-        // 初始化 Firebase Database
-        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference = FirebaseDatabase.getInstance().getReference("recycle_records");
 
         // 設置 BottomNavigationView
         setupNavigation();
@@ -54,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         // 處理用戶數據
         handleUserSession();
 
-        // 測試從 Firebase 獲取回收記錄
-        fetchRecycleRecords();
+        // 獲取回收紀錄
+        syncRecycleRecordsFromFirebase();
     }
 
     private void setupNavigation() {
@@ -96,15 +93,16 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void fetchRecycleRecords() {
-        databaseReference.child("recycle_records").addListenerForSingleValueEvent(new ValueEventListener() {
+    private void syncRecycleRecordsFromFirebase() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 boolean isSuccess = true;
+
                 for (DataSnapshot recordSnapshot : dataSnapshot.getChildren()) {
                     try {
-                        // 從 Firebase 提取資料
-                        String recordId = recordSnapshot.getKey(); // 使用 Firebase 的自動生成 key 作為唯一 ID
+                        // 從 Firebase 提取數據
+                        String recordId = recordSnapshot.getKey();
                         String userName = recordSnapshot.child("user_name").getValue(String.class);
                         String userTag = recordSnapshot.child("user_tag").getValue(String.class);
                         String recycleStationIdStr = recordSnapshot.child("recycle_station_id").getValue(String.class);
@@ -118,10 +116,9 @@ public class MainActivity extends AppCompatActivity {
                             continue;
                         }
 
-                        // 將 recycleStationId 轉換為整數
                         int recycleStationId = Integer.parseInt(recycleStationIdStr);
 
-                        // 創建 RecycleRecord 物件
+                        // 創建 RecycleRecord
                         RecycleRecord record = new RecycleRecord(
                                 recordId,
                                 userName,
@@ -129,12 +126,13 @@ public class MainActivity extends AppCompatActivity {
                                 recycleStationId,
                                 recycleDate,
                                 recycleWeight,
-                                earnMoney
+                                earnMoney,
+                                0 // 默認未同步
                         );
 
-                        // 使用 addRecycleRecord 方法覆蓋或新增紀錄
+                        // 使用 addRecycleRecord 方法新增或更新數據
                         if (!dbHelper.addRecycleRecord(record)) {
-                            Log.e("FirebaseToSQLite", "Failed to add or replace record for user: " + userName);
+                            Log.e("FirebaseToSQLite", "Failed to add/replace record for user: " + userName);
                             isSuccess = false;
                         }
 
@@ -145,11 +143,9 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (isSuccess) {
-                    Log.d("FirebaseToSQLite", "所有資料已成功同步到 SQLite");
-                    Toast.makeText(MainActivity.this, "回收紀錄同步成功", Toast.LENGTH_SHORT).show();
+                    Log.d("FirebaseToSQLite", "所有數據同步成功");
                 } else {
-                    Log.e("FirebaseToSQLite", "部分資料同步失敗");
-                    Toast.makeText(MainActivity.this, "部分資料同步失敗，請檢查日誌", Toast.LENGTH_SHORT).show();
+                    Log.e("FirebaseToSQLite", "部分數據同步失敗");
                 }
             }
 
@@ -159,13 +155,13 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "從 Firebase 獲取資料失敗", Toast.LENGTH_SHORT).show();
             }
         });
-
-
     }
-
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
     }
 }
