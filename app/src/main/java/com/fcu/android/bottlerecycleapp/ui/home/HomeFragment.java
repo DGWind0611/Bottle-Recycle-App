@@ -42,6 +42,7 @@ public class HomeFragment extends Fragment {
         View root = binding.getRoot();
 
         dbHelper = new DBHelper(requireContext());
+
         final LinearLayout llTransferMoney = binding.llTransferMoney;
         final TextView textView = binding.tvTitle;
         final LinearLayout llDonate = binding.llDonate;

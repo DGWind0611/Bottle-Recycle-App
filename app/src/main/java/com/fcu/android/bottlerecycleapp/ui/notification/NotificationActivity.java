@@ -50,6 +50,8 @@ public class NotificationActivity extends AppCompatActivity {
 
         notificationItems = new ArrayList<>();
         dbHelper = new DBHelper(this);
+
+
         //TODO: 完成通知功能
 //        userName = getIntent().getIntExtra("userId", 0);
 //        notificationItems = dbHelper.getUserNotifications(userId);

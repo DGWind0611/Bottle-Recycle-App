@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.map.secret)
+    id("com.google.gms.google-services") version "4.4.2"
+
 }
 
 android {
@@ -53,10 +55,13 @@ dependencies {
     // glide
     implementation(libs.glide)
     implementation(libs.activity)
+    implementation(libs.volley)
+    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.jbcrypt)
-
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 
 }

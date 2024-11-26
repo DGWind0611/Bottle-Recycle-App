@@ -1,7 +1,7 @@
 package com.fcu.android.bottlerecycleapp.database.entity;
 
 public class RecycleRecord {
-    private int recycleRecordId;
+    private String recycleRecordId;
     private String userName;
     private String userTag;
     private int recycleStationId;
@@ -14,7 +14,7 @@ public class RecycleRecord {
 
     }
 
-    public RecycleRecord(int recycleRecordId, String userName, String userTag, int recycleStationId,
+    public RecycleRecord(String recycleRecordId, String userName, String userTag, int recycleStationId,
                          String recycleTime, Double recycleWeight, Double earnMoney) {
         this.recycleRecordId = recycleRecordId;
         this.userName = userName;
@@ -26,11 +26,20 @@ public class RecycleRecord {
 
     }
 
-    public int getRecycleRecordId() {
+    public RecycleRecord(String userName, String userTag, int recycleStationId, String recycleDate, Double recycleWeight, Double earnMoney) {
+        this.userName = userName;
+        this.userTag = userTag;
+        this.recycleStationId = recycleStationId;
+        this.recycleTime = recycleDate;
+        this.recycleWeight = recycleWeight;
+        this.earnMoney = earnMoney;
+    }
+
+    public String getRecycleRecordId() {
         return recycleRecordId;
     }
 
-    public void setRecycleRecordId(int recycleRecordId) {
+    public void setRecycleRecordId(String recycleRecordId) {
         this.recycleRecordId = recycleRecordId;
     }
 

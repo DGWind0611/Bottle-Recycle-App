@@ -36,6 +36,7 @@ public class AddActivityActivity extends AppCompatActivity {
         });
 
         dbHelper = new DBHelper(this);
+
         etActivityName = findViewById(R.id.et_activity_name);
         etActivityDescription = findViewById(R.id.et_activity_description);
         etActivityStartTime = findViewById(R.id.et_activity_start_time);

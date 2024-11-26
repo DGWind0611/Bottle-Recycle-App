@@ -80,6 +80,7 @@ public class RecycleMapFragment extends Fragment implements OnMapReadyCallback {
         final TextView textView = binding.tvRecycleMapTitle;
         recycleMapViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         dbHelper = new DBHelper(requireContext());
+
         mapView = binding.mapView;
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);

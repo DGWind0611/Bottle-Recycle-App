@@ -25,6 +25,12 @@ import com.fcu.android.bottlerecycleapp.database.entity.Role;
 import com.fcu.android.bottlerecycleapp.database.entity.Type;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +40,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "bottle_recycle.db";
     private static final int DB_VERSION = 1;
+    private static final String TAG = "DBHelper";
     private static final String TABLE_USER = "User";
     private static final String TABLE_DONATION_RECORD = "Donation_Record";
     private static final String TABLE_NOTIFICATIONS = "Notifications";
@@ -174,7 +181,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private void createTableUserRecycleRecord(@NonNull SQLiteDatabase db) {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_USER_RECYCLE_RECORD + " (" +
-                "User_Recycle_Record_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "User_Recycle_Record_ID TEXT PRIMARY KEY, " +
                 "User_Name TEXT NOT NULL, " +
                 "User_Tag TEXT NOT NULL, " +
                 "Earn_Money REAL NOT NULL, " +
@@ -490,7 +497,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 List<RecycleRecord> records = new ArrayList<>();
                 do {
                     RecycleRecord record = new RecycleRecord();
-                    record.setRecycleRecordId(cursor.getInt(cursor.getColumnIndexOrThrow("User_Recycle_Record_ID")));
+                    record.setRecycleRecordId(cursor.getString(cursor.getColumnIndexOrThrow("User_Recycle_Record_ID")));
                     record.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("User_Name")));
                     record.setUserTag(cursor.getString(cursor.getColumnIndexOrThrow("User_Tag")));
                     record.setEarnMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("Earn_Money")));
@@ -639,8 +646,8 @@ public class DBHelper extends SQLiteOpenHelper {
             db = getWritableDatabase(); // 獲取資料庫
             Log.d("DBHelper", "Start adding recycling records");
 
-            // 新增回收記錄
             ContentValues recordValues = new ContentValues();
+            recordValues.put("User_Recycle_Record_ID", record.getRecycleRecordId());
             recordValues.put("User_Name", record.getUserName());
             recordValues.put("User_Tag", record.getUserTag());
             recordValues.put("RecycleStation_ID", record.getRecycleStationId());
@@ -648,11 +655,16 @@ public class DBHelper extends SQLiteOpenHelper {
             recordValues.put("Recycle_Weight", record.getRecycleWeight());
             recordValues.put("Earn_Money", record.getEarnMoney());
 
-            long recordResult = db.insert(TABLE_USER_RECYCLE_RECORD, null, recordValues);
+            long recordResult = db.insertWithOnConflict(TABLE_USER_RECYCLE_RECORD, null, recordValues, SQLiteDatabase.CONFLICT_REPLACE);
             Log.d("DBHelper", "Record result: " + recordResult);
+
             if (recordResult == -1) {
-                throw new Exception("Failed to add recycling record");
+                throw new Exception("Failed to add or replace recycling record");
             }
+
+            // 更新回收站和用戶狀態邏輯保持不變
+            isSuccess = true;
+            Log.d("DBHelper", "Recycling record added or updated successfully");
 
             // 更新回收站的當前重量
             RecycleStation station = findStationById(record.getRecycleStationId());
@@ -1262,4 +1274,23 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    public void insertRecycleRecord(String userName, String userTag, int recycleStationId, String recycleDate, double recycleWeight, double earnMoney) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("User_Name", userName);
+        values.put("User_Tag", userTag);
+        values.put("RecycleStation_ID", recycleStationId);
+        values.put("Recycle_Date", recycleDate);
+        values.put("Recycle_Weight", recycleWeight);
+        values.put("Earn_Money", earnMoney);
+
+        long result = db.insert(TABLE_USER_RECYCLE_RECORD, null, values);
+        if (result == -1) {
+            Log.e("Database", "Failed to insert RecycleRecord record");
+        } else {
+            Log.d("Database", "RecycleRecord record inserted successfully with ID: " + result);
+        }
+
+        db.close();
+    }
 }
