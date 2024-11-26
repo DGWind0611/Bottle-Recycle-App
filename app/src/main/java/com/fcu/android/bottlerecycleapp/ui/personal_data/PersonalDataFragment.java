@@ -89,6 +89,8 @@ public class PersonalDataFragment extends Fragment {
                 RecycleStatus recycleStatus = dbHelper.getUserRecycleStats(userName, userTag);
                 if (recycleStatus != null) {
                     double userPrice = recycleStatus.getTotalMoney();
+                    // 取道小數點後兩位
+                    userPrice = Math.round(userPrice * 100.0) / 100.0;
                     tvPriceValue.setText("$ " + userPrice);
                 } else {
                     Log.d("PersonalDataFragment", "RecycleStatus is null for user: " + userName + ", tag: " + userTag);

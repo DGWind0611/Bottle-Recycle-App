@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "82292572528",
+    "project_id": "bottlerecycleapp",
+    "storage_bucket": "bottlerecycleapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82292572528:android:0f26e0cac12a921f5a8fb5",
+        "android_client_info": {
+          "package_name": "com.fcu.android.bottlerecycleapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1sP3dd-Pmx152BN20zJ7EtdnPaYHgnYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

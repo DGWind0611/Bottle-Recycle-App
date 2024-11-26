@@ -41,6 +41,7 @@ public class AddReycleStationActivity extends AppCompatActivity {
         });
 
         dbHelper = new DBHelper(this);
+
         etStationName = findViewById(R.id.et_station_name);
         etStationAddress = findViewById(R.id.et_station_address);
         etStationLongitude = findViewById(R.id.et_longitude);

@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private ImageButton btnLoginTogglePassword;
     private DBHelper dbHelper;
-    private final String USER_EMAIL = "admin@test.com";
+    private final String USER_EMAIL = "test@test.com";
     private final String TEST_PASSWORD = "Test123456";
 
     @Override
@@ -50,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // 初始化 DBHelper
         dbHelper = new DBHelper(this);
+
         if (dbHelper == null) {
             Log.e("LoginActivity", "DBHelper 初始化失敗！");
             Toast.makeText(this, "資料庫初始化失敗，請重新啟動應用程式", Toast.LENGTH_LONG).show();

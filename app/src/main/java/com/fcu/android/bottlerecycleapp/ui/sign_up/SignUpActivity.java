@@ -27,13 +27,16 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText etPhoneNumber;
     private TextView tvBackToLogin;
     private Button btnSignUpNext;
-    private DBHelper dbHelper = new DBHelper(this);
+    private DBHelper dbHelper;
     private ImageButton btnBackToLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+
+        dbHelper = new DBHelper(this);
 
         // Initialize views
         etUserName = findViewById(R.id.et_user_email);

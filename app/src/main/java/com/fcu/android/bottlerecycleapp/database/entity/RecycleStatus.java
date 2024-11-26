@@ -27,6 +27,12 @@ public class RecycleStatus {
         this.totalCarbonReduction = 0.0;
     }
 
+    public RecycleStatus(String userName, String userTag) {
+        this.userName = userName;
+        this.userTag = userTag;
+
+    }
+
     public String getUserName() {
         return userName;
     }
