@@ -26,6 +26,7 @@ import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleStatus;
 import com.fcu.android.bottlerecycleapp.database.entity.User;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentPersonalDataBinding;
+import com.fcu.android.bottlerecycleapp.service.FirebaseSync;
 import com.fcu.android.bottlerecycleapp.ui.notification.NotificationActivity;
 import com.fcu.android.bottlerecycleapp.ui.recycle_record.RecycleRecordActivity;
 
@@ -43,6 +44,16 @@ public class PersonalDataFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         dbHelper = new DBHelper(requireContext());
+
+        // FirebaseSync 監聽資料變更
+        FirebaseSync firebaseSync = new FirebaseSync(requireContext());
+        firebaseSync.setOnDataChangedListener(newRecordCount -> {
+            Log.d("PersonalDataFragment", "New records detected: " + newRecordCount);
+
+            // 更新回收狀態並刷新 UI
+            requireActivity().runOnUiThread(this::refreshRecycleStatus);
+        });
+        firebaseSync.startListeningForUpdates();
 
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
@@ -65,9 +76,6 @@ public class PersonalDataFragment extends Fragment {
     @SuppressLint("SetTextI18n")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        PersonalDataViewModel personalDataViewModel =
-                new ViewModelProvider(this).get(PersonalDataViewModel.class);
-
         binding = FragmentPersonalDataBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -77,7 +85,6 @@ public class PersonalDataFragment extends Fragment {
         final TextView tvPriceValue = binding.tvPriceValue;
         final ImageView ivAvatar = binding.ivAvatar;
         final LinearLayout btnRecycleRecord = binding.btnRecycleRecord;
-        final LinearLayout btnTransferRecord = binding.btnTransferRecord;
         final ImageButton btnNotification = binding.btnNotification;
 
         sharedViewModel.getData().observe(getViewLifecycleOwner(), data -> {
@@ -85,26 +92,17 @@ public class PersonalDataFragment extends Fragment {
                 String userName = data.getUserName();
                 String userTag = data.getUserTag();
 
-                // 嘗試獲取 RecycleStatus 資料
-                RecycleStatus recycleStatus = dbHelper.getUserRecycleStats(userName, userTag);
-                if (recycleStatus != null) {
-                    double userPrice = recycleStatus.getTotalMoney();
-                    // 取道小數點後兩位
-                    userPrice = Math.round(userPrice * 100.0) / 100.0;
-                    tvPriceValue.setText("$ " + userPrice);
-                } else {
-                    Log.d("PersonalDataFragment", "RecycleStatus is null for user: " + userName + ", tag: " + userTag);
-                    tvPriceValue.setText("$ 0");
-                }
+                // 嘗試獲取最新回收狀態
+                refreshRecycleStatus();
 
-                String avatarUrl = data.getUserImage();  // 這是儲存的圖片路徑
+                // 更新用戶頭像
+                String avatarUrl = data.getUserImage();  // 儲存的圖片路徑
                 tvUserName.setText(userName);
 
                 if (avatarUrl == null) {
                     ivAvatar.setImageResource(R.drawable.avatar);
                 } else {
                     File avatarFile = new File(avatarUrl);
-                    Log.d("PersonalDataFragment", "avatarUrl: " + avatarUrl);
                     if (avatarFile.exists()) {
                         // 使用 Glide 載入並裁切成圓形圖片
                         Glide.with(this)
@@ -118,7 +116,6 @@ public class PersonalDataFragment extends Fragment {
                 }
             }
         });
-
 
         btnSetting.setOnClickListener(v -> {
             // 跳轉到個人資料設定頁面
@@ -136,23 +133,12 @@ public class PersonalDataFragment extends Fragment {
             startActivity(intent);
         });
 
-        //TODO: 轉帳記錄功能尚未實作
-//        btnTransferRecord.setOnClickListener(v -> {
-//            // 跳轉到轉帳記錄頁面
-//            Intent intent = new Intent(requireActivity(), TransferRecordActivity.class);
-//            intent.putExtra("userId", userId);
-//            startActivity(intent);
-//        });
-        //TODO: 個人化通知實作
         btnNotification.setOnClickListener(v -> {
             // 跳轉到通知頁面
             Intent intent = new Intent(requireActivity(), NotificationActivity.class);
-//            intent.putExtra("userName", userName);
-//            intent.putExtra("userTag", userTag);
             startActivity(intent);
         });
 
-        personalDataViewModel.getText().observe(getViewLifecycleOwner(), tvUserName::setText);
         return root;
     }
 
@@ -160,5 +146,28 @@ public class PersonalDataFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    /**
+     * 刷新回收狀態，避免數據重複累加
+     */
+    private void refreshRecycleStatus() {
+        if (sharedViewModel.getData().getValue() != null) {
+            String userName = sharedViewModel.getData().getValue().getUserName();
+            String userTag = sharedViewModel.getData().getValue().getUserTag();
+
+            // 更新狀態表
+            dbHelper.recalculateRecycleStatus(userName, userTag);
+
+            // 從狀態表中獲取最新狀態
+            RecycleStatus recycleStatus = dbHelper.getUserRecycleStats(dbHelper.getReadableDatabase(), userName, userTag);
+
+            if (recycleStatus != null) {
+                double userPrice = Math.round(recycleStatus.getTotalMoney() * 100.0) / 100.0;
+                binding.tvPriceValue.setText("$ " + userPrice);
+            } else {
+                binding.tvPriceValue.setText("$ 0");
+            }
+        }
     }
 }

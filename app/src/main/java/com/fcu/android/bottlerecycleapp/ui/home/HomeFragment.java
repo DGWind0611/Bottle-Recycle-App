@@ -1,5 +1,6 @@
 package com.fcu.android.bottlerecycleapp.ui.home;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +17,6 @@ import com.fcu.android.bottlerecycleapp.SharedViewModel;
 import com.fcu.android.bottlerecycleapp.database.DBHelper;
 import com.fcu.android.bottlerecycleapp.database.entity.ActivityItem;
 import com.fcu.android.bottlerecycleapp.database.entity.RecycleStatus;
-import com.fcu.android.bottlerecycleapp.database.entity.User;
 import com.fcu.android.bottlerecycleapp.databinding.FragmentHomeBinding;
 import com.fcu.android.bottlerecycleapp.service.FirebaseSync;
 
@@ -66,18 +66,37 @@ public class HomeFragment extends Fragment {
 
         // 初始化 FirebaseSync
         FirebaseSync firebaseSync = new FirebaseSync(requireContext());
+        firebaseSync.setOnDataChangedListener(newRecordCount -> {
+            // 當有新的回收紀錄時顯示通知
+            if (newRecordCount > 0) {
+                showNewRecordsDialog(newRecordCount);
+            }
+        });
         firebaseSync.startListeningForUpdates();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void showNewRecordsDialog(int newRecordCount) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("回收通知")
+                .setMessage(String.format(Locale.getDefault(), "成功新增了 %d 筆回收紀錄", newRecordCount))
+                .setPositiveButton("確定", (dialog, which) -> {
+                    dialog.dismiss();
+                    refreshUI();
+                })
+                .setCancelable(false)
+                .show();
+    }
 
+    private void refreshUI() {
         if (userName != null && userTag != null) {
-            // 重新計算並更新回收狀態
+            // 更新用戶的活動列表
+            updateUserActivities();
+
+            // 更新回收狀態
             updateRecycleStatus();
         }
     }
+
 
     private void updateUserActivities() {
         // 獲取用戶活動列表
@@ -113,9 +132,4 @@ public class HomeFragment extends Fragment {
         Log.d("HomeFragment", "RecycleStatus updated in UI");
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
 }
