@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.fcu.android.bottlerecycleapp" />
+                  <option name="mobileSdkAppId" value="1:82292572528:android:0f26e0cac12a921f5a8fb5" />
+                  <option name="projectId" value="bottlerecycleapp" />
+                  <option name="projectNumber" value="82292572528" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

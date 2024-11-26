@@ -1052,7 +1052,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param userTag  用戶標籤
      * @return 回收狀態
      */
-    public RecycleStatus getUserRecycleStats(String userName, String userTag) {
+    public RecycleStatus getUserRecycleStatus(String userName, String userTag) {
         String query = "SELECT * FROM " + TABLE_USER_RECYCLE_STATUS + " WHERE User_Name = ? AND User_Tag = ?";
         RecycleStatus recycleStatus = new RecycleStatus();
         try (SQLiteDatabase db = getReadableDatabase();
@@ -1081,7 +1081,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param userTag  用戶標籤
      * @return 回收狀態
      */
-    public RecycleStatus getUserRecycleStats(SQLiteDatabase db, String userName, String userTag) {
+    public RecycleStatus getUserRecycleStats(@NonNull SQLiteDatabase db, String userName, String userTag) {
         RecycleStatus recycleStatus = null;
 
         String sql = "SELECT * FROM " + TABLE_USER_RECYCLE_STATUS + " WHERE User_Name = ? AND User_Tag = ?";
@@ -1108,7 +1108,9 @@ public class DBHelper extends SQLiteOpenHelper {
         RecycleStatus status = new RecycleStatus(userName, userTag);
 
         try {
-            db = getReadableDatabase();
+            db = getWritableDatabase(); // 使用可寫入的資料庫，便於同步更新狀態表
+
+            // 查詢回收紀錄表中的累計數據
             String query = "SELECT SUM(Recycle_Weight) AS TotalWeight, " +
                     "SUM(Earn_Money) AS TotalMoney, COUNT(*) AS RecycleTimes " +
                     "FROM " + TABLE_USER_RECYCLE_RECORD + " " +
@@ -1117,7 +1119,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             if (cursor != null && cursor.moveToFirst()) {
                 status.setTotalWeight(cursor.getDouble(cursor.getColumnIndexOrThrow("TotalWeight")));
-                status.setTotalMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("TotalMoney"))); // 修正為 TotalMoney
+                status.setTotalMoney(cursor.getDouble(cursor.getColumnIndexOrThrow("TotalMoney")));
                 status.setRecycleTimes(cursor.getInt(cursor.getColumnIndexOrThrow("RecycleTimes")));
                 status.setTotalCarbonReduction(status.getTotalWeight() * 0.05); // 根據回收重量計算碳減排
             }
@@ -1126,7 +1128,25 @@ public class DBHelper extends SQLiteOpenHelper {
                 cursor.close();
             }
 
-            Log.d("DBHelper", "Recalculated RecycleStatus: " + status);
+            // 更新用戶回收狀態表
+            ContentValues values = new ContentValues();
+            values.put("Recycle_Times", status.getRecycleTimes());
+            values.put("Total_Weight", status.getTotalWeight());
+            values.put("Total_Money", status.getTotalMoney());
+            values.put("Total_Carbon_Reduction", status.getTotalCarbonReduction());
+
+            int rows = db.update(TABLE_USER_RECYCLE_STATUS, values, "User_Name = ? AND User_Tag = ?",
+                    new String[]{userName, userTag});
+
+            if (rows == 0) {
+                // 如果沒有更新到任何行，則插入一條新的記錄
+                values.put("User_Name", userName);
+                values.put("User_Tag", userTag);
+                db.insert(TABLE_USER_RECYCLE_STATUS, null, values);
+            }
+
+            Log.d("DBHelper", "Recalculated and updated RecycleStatus: " + status);
+
         } catch (Exception e) {
             Log.e("DBHelper", "Error recalculating recycle status: " + e.getMessage());
         } finally {
@@ -1137,6 +1157,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return status;
     }
+
 
     /**
      * 更新用戶回收狀態
@@ -1323,4 +1344,28 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.close();
     }
+
+    public boolean isRecordSynced(String recordId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT Is_Synced FROM " + TABLE_USER_RECYCLE_RECORD + " WHERE User_Recycle_Record_ID = ?", new String[]{recordId});
+        boolean isSynced = false;
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                isSynced = cursor.getInt(cursor.getColumnIndexOrThrow("Is_Synced")) == 1;
+            }
+            cursor.close();
+        }
+        db.close();
+        return isSynced;
+    }
+
+    public void markRecordAsSynced(String recordId) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("Is_Synced", 1);
+        db.update(TABLE_USER_RECYCLE_RECORD, values, "User_Recycle_Record_ID = ?", new String[]{recordId});
+        db.close();
+    }
+
 }
